@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Генерація білетів</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #17212b;
+      color: white;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .admin-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #6ab2f2;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: #1d2b3a;
+      border: 1px solid #6ab2f2;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 36px;
+      font-weight: 700;
+      color: #6ab2f2;
+      margin: 10px 0;
+    }
+    .stat-label {
+      font-size: 14px;
+      opacity: 0.85;
+    }
+    .control-panel {
+      background: #1d2b3a;
+      border: 1px solid #6ab2f2;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 14px 24px;
+      margin: 5px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      font-size: 15px;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:active {
+      transform: scale(0.96);
+    }
+    .btn-primary {
+      background: #1d3a22;
+      border: 1px solid #6af27d;
+      color: #6af27d;
+    }
+    .btn-danger {
+      background: #3a1d2b;
+      border: 1px solid #f27db0;
+      color: #f27db0;
+    }
+    .btn-secondary {
+      background: #1d2b3a;
+      border: 1px solid #6ab2f2;
+      color: #6ab2f2;
+    }
+    .ticket-output {
+      background: #0f1419;
+      border: 1px solid #6af27d;
+      border-radius: 4px;
+      padding: 15px;
+      margin: 15px 0;
+      word-wrap: break-word;
+      font-family: monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .ticket-link {
+      color: #6af27d;
+      text-decoration: none;
+      display: block;
+      margin: 5px 0;
+      word-break: break-all;
+    }
+    .dashboard {
+      background: #1d2b3a;
+      border: 1px solid #6ab2f2;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .dashboard h2 {
+      color: #6ab2f2;
+      margin-top: 0;
+    }
+    .tickets-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .tickets-table th {
+      background: #0f1419;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 2px solid #6ab2f2;
+      font-size: 14px;
+    }
+    .tickets-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(106, 178, 242, 0.2);
+      font-size: 14px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .status-active {
+      background: #1d3a22;
+      color: #6af27d;
+      border: 1px solid #6af27d;
+    }
+    .status-used {
+      background: #3a1d2b;
+      color: #f27db0;
+      border: 1px solid #f27db0;
+    }
+    .ticket-code {
+      font-family: monospace;
+      font-weight: 600;
+      color: #6ab2f2;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      opacity: 0.5;
+    }
+    .copy-icon {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+      font-size: 18px;
+    }
+    .copy-icon:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <h1>🎫 Панель керування білетами</h1>
+    
+    <!-- Статистика -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Всього білетів</div>
+        <div class="stat-number" id="totalTickets">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">✅ Активні</div>
+        <div class="stat-number" style="color: #6af27d;" id="activeTickets">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">❌ Використані</div>
+        <div class="stat-number" style="color: #f27db0;" id="usedTicketsCount">0</div>
+      </div>
+    </div>
+    
+    <!-- Панель управления -->
+    <div class="control-panel">
+      <button class="btn btn-primary" onclick="generateTicket()">
+        ➕ Згенерувати білет
+      </button>
+      <button class="btn btn-secondary" onclick="refreshDashboard()">
+        🔄 Оновити
+      </button>
+      <button class="btn btn-danger" onclick="clearAll()">
+        🗑️ Очистити всі дані
+      </button>
+      
+      <div id="output"></div>
+    </div>
+    
+    <!-- Дашборд билетов -->
+    <div class="dashboard">
+      <h2>📊 Всі білети</h2>
+      <div id="ticketsDashboard">
+        <div class="empty-state">
+          Немає згенерованих білетів
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <script>
+// ⚠️ СЕКРЕТНЫЙ КЛЮЧ - ХРАНИ В СЕКРЕТЕ! СМЕНИ НА СВОЙ!
+const SECRET_KEY = "your-super-secret-key-change-this-12345";
+
+let lastTicket = '';
+
+// Функция генерации HMAC-SHA256
+async function generateHMAC(secret, message) {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const messageData = encoder.encode(message);
+  
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+  
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .substring(0, 16); // Первые 16 символов для компактности
+}
+
+function generateTicketCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 8; i++) {
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+async function generateTicket() {
+  // Генерируем данные билета
+  const timestamp = Date.now();
+  const randomData = generateTicketCode();
+  const ticketData = `${timestamp}-${randomData}`;
+  
+  // Создаём подпись
+  const signature = await generateHMAC(SECRET_KEY, ticketData);
+  
+  // Финальный код: TIMESTAMP-RANDOM-SIGNATURE
+  const ticketCode = `${ticketData}-${signature}`;
+  const created = new Date().toISOString();
+  
+  // Сохраняем в список сгенерированных билетов (для статистики)
+  const generatedTickets = JSON.parse(localStorage.getItem('generated_tickets') || '[]');
+  generatedTickets.push({
+    code: ticketCode,
+    created: created,
+    shortCode: randomData
+  });
+  localStorage.setItem('generated_tickets', JSON.stringify(generatedTickets));
+  
+  // ✅ ИСПРАВЛЕННАЯ ГЕНЕРАЦИЯ URL
+  const currentUrl = window.location.href;
+  const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+  const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}`;
+  
+  lastTicket = ticketUrl;
+  
+  // Показываем результат
+  const output = document.getElementById('output');
+  output.innerHTML = `
+    <div class="ticket-output">
+      <strong>🎉 Новий білет згенеровано!</strong><br><br>
+      <strong>Короткий код:</strong> ${randomData}<br>
+      <strong>Повний код:</strong> ${ticketCode.substring(0, 40)}...<br><br>
+      <strong>Посилання:</strong><br>
+      <a href="${ticketUrl}" target="_blank" class="ticket-link">${ticketUrl}</a><br>
+      <button class="btn btn-secondary" onclick="copyToClipboard('${ticketUrl}')">
+        📋 Скопіювати посилання
+      </button>
+    </div>
+  `;
+  
+  refreshDashboard();
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert('✅ Посилання скопійовано!');
+  });
+}
+
+function refreshDashboard() {
+  const generatedTickets = JSON.parse(localStorage.getItem('generated_tickets') || '[]');
+  const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
+  
+  // Обновляем статистику
+  const activeCount = generatedTickets.filter(t => !usedTickets.includes(t.code)).length;
+  document.getElementById('totalTickets').textContent = generatedTickets.length;
+  document.getElementById('activeTickets').textContent = activeCount;
+  document.getElementById('usedTicketsCount').textContent = usedTickets.length;
+  
+  // Создаем таблицу билетов
+  const dashboard = document.getElementById('ticketsDashboard');
+  
+  if (generatedTickets.length === 0) {
+    dashboard.innerHTML = '<div class="empty-state">Немає згенерованих білетів</div>';
+    return;
+  }
+  
+ const currentUrl = window.location.href;
+  const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+  
+  let tableHTML = `
+    <table class="tickets-table">
+      <thead>
+        <tr>
+          <th>Код</th>
+          <th>Статус</th>
+          <th>Створено</th>
+          <th>Дії</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  // Сортируем: сначала активные, потом использованные
+  const sortedTickets = [...generatedTickets].sort((a, b) => {
+    const aUsed = usedTickets.includes(a.code);
+    const bUsed = usedTickets.includes(b.code);
+    if (aUsed === bUsed) return new Date(b.created) - new Date(a.created);
+    return aUsed ? 1 : -1;
+  });
+  
+  sortedTickets.forEach(ticket => {
+    const isUsed = usedTickets.includes(ticket.code);
+    const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}`;
+    const date = new Date(ticket.created).toLocaleString('uk-UA', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    tableHTML += `
+      <tr>
+        <td><span class="ticket-code">${ticket.shortCode || ticket.code.substring(0, 8)}</span></td>
+        <td>
+          <span class="status-badge ${isUsed ? 'status-used' : 'status-active'}">
+            ${isUsed ? '❌ Використаний' : '✅ Активний'}
+          </span>
+        </td>
+        <td>${date}</td>
+        <td>
+          ${!isUsed ? `
+            <span class="copy-icon" onclick="copyToClipboard('${ticketUrl}')" title="Скопіювати посилання">
+              📋
+            </span>
+          ` : '—'}
+        </td>
+      </tr>
+    `;
+  });
+  
+  tableHTML += '</tbody></table>';
+  dashboard.innerHTML = tableHTML;
+}
+
+function clearAll() {
+  if (confirm('⚠️ Видалити ВСІ білети та дані? Це незворотна дія!')) {
+    localStorage.removeItem('generated_tickets');
+    localStorage.removeItem('used_tickets');
+    localStorage.removeItem('lottery_last_spin');
+    document.getElementById('output').innerHTML = '';
+    refreshDashboard();
+    alert('✅ Всі дані очищено!');
+  }
+}
+
+// Обновляем дашборд при загрузке
+refreshDashboard();
+
+// Автообновление каждые 5 секунд
+setInterval(refreshDashboard, 5000);
+</script>
+</body>
+</html>
