@@ -36,7 +36,7 @@
     }
     .stat-card {
       background: #1d2b3a;
-      border: 1px solid #6ab2f2;
+      border: none;
       border-radius: 8px;
       padding: 20px;
       text-align: center;
@@ -97,8 +97,8 @@
       color: #6ab2f2;
     }
     .ticket-output {
-      background: #0f1419;
-      border: 1px solid #6af27d;
+      background: transparent;
+      border: none;
       border-radius: 4px;
       padding: 15px;
       margin: 15px 0;
@@ -108,22 +108,25 @@
       line-height: 1.6;
     }
     .ticket-link {
-      color: #6af27d;
+      color: #6ab2f2;
       text-decoration: none;
       display: block;
       margin: 5px 0;
       word-break: break-all;
     }
     .dashboard {
-      background: #1d2b3a;
-      border: 1px solid #6ab2f2;
+      background: transparent;
+      border: none;
       border-radius: 8px;
-      padding: 20px;
+      padding: 0;
     }
     .tickets-table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 0;
+      border: 1px solid #6ab2f2;
+      border-radius: 8px;
+      overflow: hidden;
     }
     .tickets-table th {
       background: #6ab2f2;
@@ -209,7 +212,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-label"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Использованные</div>
-        <div class="stat-number" style="color: #f27db0;" id="usedTicketsCount">0</div>
+        <div class="stat-number" style="color: #8b0000;" id="usedTicketsCount">0</div>
       </div>
     </div>
     
@@ -309,7 +312,6 @@ async function generateTicket() {
     <div class="ticket-output">
       <strong><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Новый билет сгенерирован!</strong><br><br>
       <strong>Короткий код:</strong> ${randomData}<br><br>
-      <strong>Ссылка:</strong><br>
       <a href="${ticketUrl}" target="_blank" class="ticket-link">${ticketUrl}</a><br>
       <button class="btn btn-secondary btn-full" onclick="copyToClipboard('${ticketUrl}')">
         <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Memo.webp?raw=true" class="icon"> Скопировать ссылку
