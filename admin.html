@@ -189,7 +189,7 @@
 </head>
 <body>
   <div class="admin-container">
-    <h1><img src="https://cdn-icons-png.flaticon.com/512/2329/2329876.png" class="icon-lg"> Панель управления билетами</h1>
+    <h1><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Activity/Ticket.webp?raw=true" class="icon-lg"> Панель управления билетами</h1>
     
     <!-- Статистика -->
     <div class="stats-grid">
@@ -198,11 +198,11 @@
         <div class="stat-number" id="totalTickets">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label"><img src="https://cdn-icons-png.flaticon.com/512/5290/5290058.png" class="icon"> Активные</div>
+        <div class="stat-label"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Активные</div>
         <div class="stat-number" style="color: #6af27d;" id="activeTickets">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828665.png" class="icon"> Использованные</div>
+        <div class="stat-label"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp" class="icon"> Использованные</div>
         <div class="stat-number" style="color: #f27db0;" id="usedTicketsCount">0</div>
       </div>
     </div>
@@ -210,13 +210,13 @@
     <!-- Панель управления -->
     <div class="control-panel">
       <button class="btn btn-primary" onclick="generateTicket()">
-        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" class="icon"> Сгенерировать билет
+        <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/New%20Button.webp?raw=true" class="icon"> Сгенерировать билет
       </button>
       <button class="btn btn-secondary" onclick="refreshDashboard()">
-        <img src="https://cdn-icons-png.flaticon.com/512/2805/2805355.png" class="icon"> Обновить
+        <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Currency%20Exchange.webp?raw=true" class="icon"> Обновить
       </button>
       <button class="btn btn-danger" onclick="clearAll()">
-        <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" class="icon"> Очистить все данные
+        <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cup%20With%20Straw.webp?raw=true" class="icon"> Очистить все данные
       </button>
       
       <div id="output"></div>
@@ -224,7 +224,7 @@
     
     <!-- Дашборд билетов -->
     <div class="dashboard">
-      <h2><img src="https://cdn-icons-png.flaticon.com/512/2329/2329876.png" class="icon"> Все билеты</h2>
+      <h2><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Activity/Ticket.webp?raw=true" class="icon"> Все билеты</h2>
       <div id="ticketsDashboard">
         <div class="empty-state">
           Нет сгенерированных билетов
@@ -397,22 +397,22 @@ function refreshDashboard() {
         <td><span class="ticket-code">${ticket.shortCode || ticket.code.substring(0, 8)}</span></td>
         <td>
           <span class="status-badge ${isUsed ? 'status-used' : 'status-active'}">
-            ${isUsed ? '<img src="https://cdn-icons-png.flaticon.com/512/1828/1828665.png" class="icon"> Использован' : '<img src="https://cdn-icons-png.flaticon.com/512/5290/5290058.png" class="icon"> Активный'}
+            ${isUsed ? '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Использован' : '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Активный'}
           </span>
         </td>
         <td>${date}</td>
         <td>
           <div class="action-icons">
             ${!isUsed ? `
-              <img src="https://cdn-icons-png.flaticon.com/512/54/54702.png" 
+              <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Memo.webp?raw=true" 
                    class="copy-icon" 
                    onclick="copyToClipboard('${ticketUrl}')" 
                    title="Скопировать ссылку">
               <a href="${ticketUrl}" target="_blank" title="Открыть ссылку">
-                <img src="https://cdn-icons-png.flaticon.com/512/2983/2983788.png" class="copy-icon">
+                <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Travel%20and%20Places/Airplane.webp?raw=true" class="copy-icon">
               </a>
             ` : ''}
-            <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" 
+            <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Bomb.webp?raw=true" 
                  class="copy-icon" 
                  onclick="deleteTicket('${ticket.code}')" 
                  title="Удалить билет"
