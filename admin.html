@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Admin - Генерація білетів</title>
+  <title>Admin - Генерация билетов</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -21,6 +21,16 @@
       color: #6ab2f2;
       text-align: center;
       margin-bottom: 30px;
+    }
+    .icon {
+      width: 20px;
+      height: 20px;
+      vertical-align: middle;
+      display: inline-block;
+    }
+    .icon-lg {
+      width: 32px;
+      height: 32px;
     }
     .stats-grid {
       display: grid;
@@ -117,11 +127,13 @@
       margin-top: 15px;
     }
     .tickets-table th {
-      background: #0f1419;
+      background: #6ab2f2;
+      color: #17212b;
       padding: 12px;
       text-align: left;
       border-bottom: 2px solid #6ab2f2;
       font-size: 14px;
+      font-weight: 700;
     }
     .tickets-table td {
       padding: 12px;
@@ -159,29 +171,38 @@
       cursor: pointer;
       opacity: 0.7;
       transition: opacity 0.2s;
-      font-size: 18px;
+      margin: 0 8px;
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      vertical-align: middle;
     }
     .copy-icon:hover {
       opacity: 1;
+    }
+    .action-icons {
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
   </style>
 </head>
 <body>
   <div class="admin-container">
-    <h1>🎫 Панель керування білетами</h1>
+    <h1><img src="https://cdn-icons-png.flaticon.com/512/2329/2329876.png" class="icon-lg"> Панель управления билетами</h1>
     
     <!-- Статистика -->
     <div class="stats-grid">
       <div class="stat-card">
-        <div class="stat-label">Всього білетів</div>
+        <div class="stat-label">Всего билетов</div>
         <div class="stat-number" id="totalTickets">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">✅ Активні</div>
+        <div class="stat-label"><img src="https://cdn-icons-png.flaticon.com/512/5290/5290058.png" class="icon"> Активные</div>
         <div class="stat-number" style="color: #6af27d;" id="activeTickets">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">❌ Використані</div>
+        <div class="stat-label"><img src="https://cdn-icons-png.flaticon.com/512/1828/1828665.png" class="icon"> Использованные</div>
         <div class="stat-number" style="color: #f27db0;" id="usedTicketsCount">0</div>
       </div>
     </div>
@@ -189,13 +210,13 @@
     <!-- Панель управления -->
     <div class="control-panel">
       <button class="btn btn-primary" onclick="generateTicket()">
-        ➕ Згенерувати білет
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828817.png" class="icon"> Сгенерировать билет
       </button>
       <button class="btn btn-secondary" onclick="refreshDashboard()">
-        🔄 Оновити
+        <img src="https://cdn-icons-png.flaticon.com/512/2805/2805355.png" class="icon"> Обновить
       </button>
       <button class="btn btn-danger" onclick="clearAll()">
-        🗑️ Очистити всі дані
+        <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" class="icon"> Очистить все данные
       </button>
       
       <div id="output"></div>
@@ -203,10 +224,10 @@
     
     <!-- Дашборд билетов -->
     <div class="dashboard">
-      <h2>📊 Всі білети</h2>
+      <h2><img src="https://cdn-icons-png.flaticon.com/512/2329/2329876.png" class="icon"> Все билеты</h2>
       <div id="ticketsDashboard">
         <div class="empty-state">
-          Немає згенерованих білетів
+          Нет сгенерированных билетов
         </div>
       </div>
     </div>
@@ -282,13 +303,13 @@ async function generateTicket() {
   const output = document.getElementById('output');
   output.innerHTML = `
     <div class="ticket-output">
-      <strong>🎉 Новий білет згенеровано!</strong><br><br>
+      <strong><img src="https://cdn-icons-png.flaticon.com/512/5290/5290058.png" class="icon"> Новый билет сгенерирован!</strong><br><br>
       <strong>Короткий код:</strong> ${randomData}<br>
-      <strong>Повний код:</strong> ${ticketCode.substring(0, 40)}...<br><br>
-      <strong>Посилання:</strong><br>
+      <strong>Полный код:</strong> ${ticketCode.substring(0, 40)}...<br><br>
+      <strong>Ссылка:</strong><br>
       <a href="${ticketUrl}" target="_blank" class="ticket-link">${ticketUrl}</a><br>
       <button class="btn btn-secondary" onclick="copyToClipboard('${ticketUrl}')">
-        📋 Скопіювати посилання
+        <img src="https://cdn-icons-png.flaticon.com/512/54/54702.png" class="icon"> Скопировать ссылку
       </button>
     </div>
   `;
@@ -298,8 +319,24 @@ async function generateTicket() {
 
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(() => {
-    alert('✅ Посилання скопійовано!');
+    alert('✅ Ссылка скопирована!');
   });
+}
+
+function deleteTicket(ticketCode) {
+  if (confirm('Вы уверены, что хотите удалить этот билет?')) {
+    const generatedTickets = JSON.parse(localStorage.getItem('generated_tickets') || '[]');
+    const filtered = generatedTickets.filter(t => t.code !== ticketCode);
+    localStorage.setItem('generated_tickets', JSON.stringify(filtered));
+    
+    // Также удаляем из использованных, если там есть
+    const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
+    const filteredUsed = usedTickets.filter(code => code !== ticketCode);
+    localStorage.setItem('used_tickets', JSON.stringify(filteredUsed));
+    
+    refreshDashboard();
+    alert('✅ Билет удален!');
+  }
 }
 
 function refreshDashboard() {
@@ -316,7 +353,7 @@ function refreshDashboard() {
   const dashboard = document.getElementById('ticketsDashboard');
   
   if (generatedTickets.length === 0) {
-    dashboard.innerHTML = '<div class="empty-state">Немає згенерованих білетів</div>';
+    dashboard.innerHTML = '<div class="empty-state">Нет сгенерированных билетов</div>';
     return;
   }
   
@@ -329,8 +366,8 @@ function refreshDashboard() {
         <tr>
           <th>Код</th>
           <th>Статус</th>
-          <th>Створено</th>
-          <th>Дії</th>
+          <th>Создано</th>
+          <th>Действия</th>
         </tr>
       </thead>
       <tbody>
@@ -347,7 +384,7 @@ function refreshDashboard() {
   sortedTickets.forEach(ticket => {
     const isUsed = usedTickets.includes(ticket.code);
     const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}`;
-    const date = new Date(ticket.created).toLocaleString('uk-UA', {
+    const date = new Date(ticket.created).toLocaleString('ru-RU', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -360,16 +397,27 @@ function refreshDashboard() {
         <td><span class="ticket-code">${ticket.shortCode || ticket.code.substring(0, 8)}</span></td>
         <td>
           <span class="status-badge ${isUsed ? 'status-used' : 'status-active'}">
-            ${isUsed ? '❌ Використаний' : '✅ Активний'}
+            ${isUsed ? '<img src="https://cdn-icons-png.flaticon.com/512/1828/1828665.png" class="icon"> Использован' : '<img src="https://cdn-icons-png.flaticon.com/512/5290/5290058.png" class="icon"> Активный'}
           </span>
         </td>
         <td>${date}</td>
         <td>
-          ${!isUsed ? `
-            <span class="copy-icon" onclick="copyToClipboard('${ticketUrl}')" title="Скопіювати посилання">
-              📋
-            </span>
-          ` : '—'}
+          <div class="action-icons">
+            ${!isUsed ? `
+              <img src="https://cdn-icons-png.flaticon.com/512/54/54702.png" 
+                   class="copy-icon" 
+                   onclick="copyToClipboard('${ticketUrl}')" 
+                   title="Скопировать ссылку">
+              <a href="${ticketUrl}" target="_blank" title="Открыть ссылку">
+                <img src="https://cdn-icons-png.flaticon.com/512/2983/2983788.png" class="copy-icon">
+              </a>
+            ` : ''}
+            <img src="https://cdn-icons-png.flaticon.com/512/1214/1214428.png" 
+                 class="copy-icon" 
+                 onclick="deleteTicket('${ticket.code}')" 
+                 title="Удалить билет"
+                 style="opacity: 0.5;">
+          </div>
         </td>
       </tr>
     `;
@@ -380,13 +428,13 @@ function refreshDashboard() {
 }
 
 function clearAll() {
-  if (confirm('⚠️ Видалити ВСІ білети та дані? Це незворотна дія!')) {
+  if (confirm('⚠️ Удалить ВСЕ билеты и данные? Это необратимое действие!')) {
     localStorage.removeItem('generated_tickets');
     localStorage.removeItem('used_tickets');
     localStorage.removeItem('lottery_last_spin');
     document.getElementById('output').innerHTML = '';
     refreshDashboard();
-    alert('✅ Всі дані очищено!');
+    alert('✅ Все данные очищены!');
   }
 }
 
