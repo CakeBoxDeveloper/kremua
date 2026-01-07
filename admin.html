@@ -17,11 +17,6 @@
       max-width: 900px;
       margin: 0 auto;
     }
-    h1 {
-      color: #6ab2f2;
-      text-align: center;
-      margin-bottom: 30px;
-    }
     .icon {
       width: 20px;
       height: 20px;
@@ -31,6 +26,7 @@
     .icon-lg {
       width: 32px;
       height: 32px;
+      vertical-align: middle;
     }
     .stats-grid {
       display: grid;
@@ -62,9 +58,14 @@
       padding: 20px;
       margin-bottom: 20px;
     }
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
     .btn {
       padding: 14px 24px;
-      margin: 5px;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
@@ -73,7 +74,9 @@
       border: none;
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 8px;
+      width: 100%;
     }
     .btn:active {
       transform: scale(0.96);
@@ -117,23 +120,24 @@
       border-radius: 8px;
       padding: 20px;
     }
-    .dashboard h2 {
-      color: #6ab2f2;
-      margin-top: 0;
-    }
     .tickets-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 0;
     }
     .tickets-table th {
       background: #6ab2f2;
       color: #17212b;
       padding: 12px;
       text-align: left;
-      border-bottom: 2px solid #6ab2f2;
       font-size: 14px;
       font-weight: 700;
+    }
+    .tickets-table th:first-child {
+      border-top-left-radius: 8px;
+    }
+    .tickets-table th:last-child {
+      border-top-right-radius: 8px;
     }
     .tickets-table td {
       padding: 12px;
@@ -185,12 +189,14 @@
       gap: 8px;
       align-items: center;
     }
+    .btn-full {
+      width: 100%;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <div class="admin-container">
-    <h1><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Activity/Ticket.webp?raw=true" class="icon-lg"> Панель управления билетами</h1>
-    
     <!-- Статистика -->
     <div class="stats-grid">
       <div class="stat-card">
@@ -202,29 +208,27 @@
         <div class="stat-number" style="color: #6af27d;" id="activeTickets">0</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp" class="icon"> Использованные</div>
+        <div class="stat-label"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Использованные</div>
         <div class="stat-number" style="color: #f27db0;" id="usedTicketsCount">0</div>
       </div>
     </div>
     
     <!-- Панель управления -->
     <div class="control-panel">
-      <button class="btn btn-primary" onclick="generateTicket()">
-        <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/New%20Button.webp?raw=true" class="icon"> Сгенерировать билет
-      </button>
-      <button class="btn btn-secondary" onclick="refreshDashboard()">
-        <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Currency%20Exchange.webp?raw=true" class="icon"> Обновить
-      </button>
-      <button class="btn btn-danger" onclick="clearAll()">
-        <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cup%20With%20Straw.webp?raw=true" class="icon"> Очистить все данные
-      </button>
+      <div class="button-row">
+        <button class="btn btn-primary" onclick="generateTicket()">
+          <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/New%20Button.webp?raw=true" class="icon"> Сгенерировать билет
+        </button>
+        <button class="btn btn-danger" onclick="clearAll()">
+          <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cup%20With%20Straw.webp?raw=true" class="icon"> Удалить все билеты
+        </button>
+      </div>
       
       <div id="output"></div>
     </div>
     
     <!-- Дашборд билетов -->
     <div class="dashboard">
-      <h2><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Activity/Ticket.webp?raw=true" class="icon"> Все билеты</h2>
       <div id="ticketsDashboard">
         <div class="empty-state">
           Нет сгенерированных билетов
@@ -303,13 +307,12 @@ async function generateTicket() {
   const output = document.getElementById('output');
   output.innerHTML = `
     <div class="ticket-output">
-      <strong><img src="https://cdn-icons-png.flaticon.com/512/5290/5290058.png" class="icon"> Новый билет сгенерирован!</strong><br><br>
-      <strong>Короткий код:</strong> ${randomData}<br>
-      <strong>Полный код:</strong> ${ticketCode.substring(0, 40)}...<br><br>
+      <strong><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Новый билет сгенерирован!</strong><br><br>
+      <strong>Короткий код:</strong> ${randomData}<br><br>
       <strong>Ссылка:</strong><br>
       <a href="${ticketUrl}" target="_blank" class="ticket-link">${ticketUrl}</a><br>
-      <button class="btn btn-secondary" onclick="copyToClipboard('${ticketUrl}')">
-        <img src="https://cdn-icons-png.flaticon.com/512/54/54702.png" class="icon"> Скопировать ссылку
+      <button class="btn btn-secondary btn-full" onclick="copyToClipboard('${ticketUrl}')">
+        <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Memo.webp?raw=true" class="icon"> Скопировать ссылку
       </button>
     </div>
   `;
@@ -397,7 +400,7 @@ function refreshDashboard() {
         <td><span class="ticket-code">${ticket.shortCode || ticket.code.substring(0, 8)}</span></td>
         <td>
           <span class="status-badge ${isUsed ? 'status-used' : 'status-active'}">
-            ${isUsed ? '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Использован' : '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Активный'}
+            ${isUsed ? '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Использован' : '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Активный'}
           </span>
         </td>
         <td>${date}</td>
