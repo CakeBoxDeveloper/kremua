@@ -154,13 +154,6 @@ input, textarea {
   transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
 }
 
-/* 🎯 ФОРМАТЫ БЕЗ СКРОЛЛА */
-.slider-container.formats-grid {
-  overflow-x: visible;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-
 /* 🎯 РАЗМЫТИЕ СЛЕВА */
 .slider-container.blur-left {
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
@@ -693,9 +686,6 @@ createSlider('typeSlider', cakeTypes, 'type-tag');
 createSlider('fillingsSlider', allFillings, 'slider-tag');
 createSlider('additivesSlider', additives, 'additive-tag');
 createSlider('formatsSlider', formats, 'format-tag');
-
-// 🎯 ДОБАВЛЯЕМ КЛАСС ДЛЯ ФОРМАТОВ
-document.getElementById('formatsSlider').classList.add('formats-grid');
 
 // ===== СБОР ДАННЫХ =====
 function getSelectedData() {
