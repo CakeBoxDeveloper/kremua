@@ -126,8 +126,8 @@ input, textarea {
 
 .slider-label {
   font-size: 15px;
-  font-weight: 600;
-  color: #ffffff;
+  font-weight: 400;
+  color: #6ab2f2;
   margin-bottom: 8px;
   display: block;
   text-align: center;
@@ -302,6 +302,7 @@ input, textarea {
   transition: transform 0.15s ease;
   text-decoration: none;
   margin-bottom: 10px;
+  box-sizing: border-box;
 }
 
 .back-btn-full:active {
@@ -388,6 +389,13 @@ input, textarea {
   opacity: 1;
 }
 
+.pdf-hint {
+  font-size: 13px;
+  color: #6ab2f2;
+  margin-bottom: 16px;
+  line-height: 1.4;
+}
+
 .pdf-preview {
   width: 100%;
   max-height: 400px;
@@ -395,19 +403,6 @@ input, textarea {
   border-radius: 8px;
   margin-bottom: 16px;
   overflow: hidden;
-}
-
-.pdf-preview svg {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.pdf-hint {
-  font-size: 13px;
-  color: #6ab2f2;
-  margin-bottom: 16px;
-  line-height: 1.4;
 }
 
 .download-btn {
@@ -599,10 +594,10 @@ input, textarea {
 <!-- МОДАЛЬНОЕ ОКНО PDF -->
 <div id="pdfModal" class="pdf-modal">
   <div class="pdf-modal-content">
-    <div class="pdf-preview" id="pdfPreview"></div>
     <p class="pdf-hint">
       Це технічне завдання потрібно відправити кондитеру у першому повідомленні разом із фото бажаного дизайну торта
     </p>
+    <div class="pdf-preview" id="pdfPreview"></div>
     <button class="download-btn" id="downloadBtn">
       Завантажити PDF
     </button>
