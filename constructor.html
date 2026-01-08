@@ -17,6 +17,22 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Спеціальний стиль для контейнера форматів */
+#formatsSlider {
+  display: flex;
+  justify-content: space-between; /* Розподіляє кнопки рівномірно */
+  overflow: hidden;              /* Прибираємо зайвий скрол */
+  gap: 4px;                      /* Мінімальний відступ між кнопками */
+}
+
+#formatsSlider .format-tag {
+  flex: 1;                       /* Кожна кнопка займає однакову частину простору */
+  text-align: center;            /* Текст по центру всередині кнопки */
+  padding: 10px 4px;             /* Зменшуємо бічні відступи, щоб влізло на малих екранах */
+  font-size: 13px;               /* Трохи менший шрифт для гарантії входу в рядок */
+  min-width: 0;                  /* Дозволяє флекс-елементу стискатися менше за його контент */
+}
+  
 html {
   overflow-x: hidden;
   width: 100%;
