@@ -77,6 +77,8 @@ input, textarea {
   font-size: 22px;
   font-weight: 700;
   color: #6ab2f2;
+  z-index: 1000;
+  position: relative;
 }
 
 .service-icon {
@@ -123,11 +125,16 @@ input, textarea {
 }
 
 .slider-label {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  color: #6ab2f2;
+  color: #ffffff;
   margin-bottom: 8px;
   display: block;
+  text-align: center;
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 4px;
+  padding: 8px;
 }
 
 .slider-container {
@@ -140,6 +147,29 @@ input, textarea {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  
+  /* 🎯 РАЗМЫТИЕ */
+  mask-image: none;
+  -webkit-mask-image: none;
+  transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
+}
+
+/* 🎯 РАЗМЫТИЕ СЛЕВА */
+.slider-container.blur-left {
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
+}
+
+/* 🎯 РАЗМЫТИЕ СПРАВА */
+.slider-container.blur-right {
+  mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
+}
+
+/* 🎯 РАЗМЫТИЕ С ОБЕИХ СТОРОН */
+.slider-container.blur-both {
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 .slider-container::-webkit-scrollbar {
@@ -509,31 +539,31 @@ input, textarea {
 
   <!-- ТИП ТОРТА -->
   <div class="slider-section">
-    <label class="slider-label">Тип торта</label>
+    <div class="slider-label">Тип торта</div>
     <div class="slider-container" id="typeSlider"></div>
   </div>
 
   <!-- НАЧИНКИ -->
   <div class="slider-section">
-    <label class="slider-label">Начинка</label>
+    <div class="slider-label">Начинка</div>
     <div class="slider-container" id="fillingsSlider"></div>
   </div>
 
   <!-- ДОБАВКИ -->
   <div class="slider-section">
-    <label class="slider-label">Добавки</label>
+    <div class="slider-label">Добавки</div>
     <div class="slider-container" id="additivesSlider"></div>
   </div>
 
   <!-- ФОРМАТЫ -->
   <div class="slider-section">
-    <label class="slider-label">Формат</label>
+    <div class="slider-label">Формат</div>
     <div class="slider-container" id="formatsSlider"></div>
   </div>
 
   <!-- КОММЕНТАРИЙ -->
   <div class="comment-section">
-    <label class="slider-label">Додатковий коментар</label>
+    <div class="slider-label">Додатковий коментар</div>
     <textarea 
       id="commentField" 
       class="comment-textarea" 
@@ -628,6 +658,33 @@ function createSlider(containerId, items, className) {
     };
     container.appendChild(tag);
   });
+  
+  // 🎯 ДОБАВЛЯЕМ РАЗМЫТИЕ (кроме форматов)
+  if (containerId !== 'formatsSlider') {
+    updateSliderBlur(container);
+    container.addEventListener('scroll', () => updateSliderBlur(container));
+    window.addEventListener('resize', () => updateSliderBlur(container));
+  }
+}
+
+// 🎯 ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЫТИЯ
+function updateSliderBlur(container) {
+  const scrollLeft = container.scrollLeft;
+  const maxScroll = container.scrollWidth - container.clientWidth;
+  const threshold = 5;
+  
+  const atStart = scrollLeft <= threshold;
+  const atEnd = scrollLeft >= maxScroll - threshold;
+  
+  container.classList.remove('blur-left', 'blur-right', 'blur-both');
+  
+  if (atStart && !atEnd) {
+    container.classList.add('blur-right');
+  } else if (atEnd && !atStart) {
+    container.classList.add('blur-left');
+  } else if (!atStart && !atEnd) {
+    container.classList.add('blur-both');
+  }
 }
 
 createSlider('typeSlider', cakeTypes, 'type-tag');
@@ -721,23 +778,58 @@ async function generatePDF(svgString) {
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p', 'mm', 'a4');
   
-  const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svgElement.innerHTML = svgString;
-  svgElement.setAttribute('width', '600');
-  svgElement.setAttribute('height', '800');
+  // Создаём временный элемент для SVG
+  const tempDiv = document.createElement('div');
+  tempDiv.style.position = 'absolute';
+  tempDiv.style.left = '-9999px';
+  tempDiv.innerHTML = svgString;
+  document.body.appendChild(tempDiv);
+  
+  const svgElement = tempDiv.querySelector('svg');
+  
+  if (!svgElement) {
+    console.error('SVG элемент не найден');
+    document.body.removeChild(tempDiv);
+    return null;
+  }
   
   try {
-    await pdf.svg(svgElement, {
+    // Используем svg2pdf для корректной конвертации
+    await svg2pdf(svgElement, pdf, {
       x: 5,
       y: 5,
       width: 200,
       height: 267
     });
     
+    document.body.removeChild(tempDiv);
     return pdf;
   } catch (error) {
     console.error('Ошибка создания PDF:', error);
-    return null;
+    document.body.removeChild(tempDiv);
+    
+    // Запасной вариант - создаём простой PDF с текстом
+    pdf.setFontSize(16);
+    pdf.text('ТЕХНІЧНЕ ЗАВДАННЯ', 105, 20, { align: 'center' });
+    pdf.setFontSize(12);
+    
+    const data = getSelectedData();
+    let y = 40;
+    pdf.text(`Тип торта: ${data.type}`, 20, y);
+    y += 10;
+    pdf.text(`Начинка: ${data.filling}`, 20, y);
+    y += 10;
+    pdf.text(`Добавки: ${data.additive}`, 20, y);
+    y += 10;
+    pdf.text(`Формат: ${data.format}`, 20, y);
+    y += 20;
+    pdf.text('Коментар:', 20, y);
+    y += 10;
+    
+    const commentLines = pdf.splitTextToSize(data.comment, 170);
+    pdf.text(commentLines, 20, y);
+    
+    return pdf;
   }
 }
 
