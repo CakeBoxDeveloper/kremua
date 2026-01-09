@@ -216,7 +216,8 @@ input, textarea {
 .slider-tag.selected {
   background: #6ab2f2 !important;
   color: #17212b !important;
-  }
+  transform: scale(1.08);
+}
 
 /* Цвета для разных типов слайдеров */
 .type-tag {
@@ -656,29 +657,25 @@ const formats = [
 // ===== СОЗДАНИЕ СЛАЙДЕРОВ =====
 function createSlider(containerId, items, className) {
   const container = document.getElementById(containerId);
-  const isMulti = containerId === 'additivesSlider'; 
-
   items.forEach(item => {
     const tag = document.createElement('span');
     tag.className = `slider-tag ${className}`;
     tag.textContent = item;
-    
     tag.onclick = function() {
-      if (isMulti) {
-        // Multi-select для добавок
-        this.classList.toggle('selected');
-      } else {
-        // Deselect (снятие выделения) для остальных
-        if (this.classList.contains('selected')) {
-          this.classList.remove('selected');
-        } else {
-          container.querySelectorAll('.slider-tag').forEach(t => t.classList.remove('selected'));
-          this.classList.add('selected');
-        }
-      }
+      // Снять выделение с других
+      container.querySelectorAll('.slider-tag').forEach(t => t.classList.remove('selected'));
+      // Выделить текущий
+      this.classList.add('selected');
     };
     container.appendChild(tag);
   });
+  
+  // 🎯 ДОБАВЛЯЕМ РАЗМЫТИЕ (кроме форматов)
+  if (containerId !== 'formatsSlider') {
+    updateSliderBlur(container);
+    container.addEventListener('scroll', () => updateSliderBlur(container));
+    window.addEventListener('resize', () => updateSliderBlur(container));
+  }
 }
 
 // 🎯 ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЫТИЯ
@@ -708,69 +705,85 @@ createSlider('formatsSlider', formats, 'format-tag');
 
 // ===== СБОР ДАННЫХ =====
 function getSelectedData() {
-  const type = document.querySelector('#typeSlider .slider-tag.selected')?.textContent || '...';
-  const filling = document.querySelector('#fillingsSlider .slider-tag.selected')?.textContent || '...';
-  const format = document.querySelector('#formatsSlider .slider-tag.selected')?.textContent || '...';
+  const type = document.querySelector('#typeSlider .slider-tag.selected')?.textContent || 'не обрано';
+  const filling = document.querySelector('#fillingsSlider .slider-tag.selected')?.textContent || 'не обрано';
+  const additive = document.querySelector('#additivesSlider .slider-tag.selected')?.textContent || 'не обрано';
+  const format = document.querySelector('#formatsSlider .slider-tag.selected')?.textContent || 'не обрано';
+  const comment = document.getElementById('commentField').value || 'немає';
   
-  // Собираем добавки через запятую
-  const additiveEls = document.querySelectorAll('#additivesSlider .slider-tag.selected');
-  const additive = additiveEls.length > 0 
-    ? Array.from(additiveEls).map(el => el.textContent).join(', ') 
-    : 'без добавок';
-
-  const userComment = document.getElementById('commentField').value.trim();
-  
-  // Логика комментария: если пусто - твой дефолтный текст
-  const comment = userComment !== "" 
-    ? userComment 
-    : "Вижу, что вы ничего не написали, значит доверяете нам. Круто, мы вас не подведём!";
-
-  const orderNumber = Math.floor(10000 + Math.random() * 90000);
-  
-  // Формируем Info текст
-  const infoText = `Сделайте ${type} торт с ${filling} начинкой. Добавьте в него ${additive}. Формат: ${format}.`;
-
-  return { orderNumber, infoText, comment };
+  return { type, filling, additive, format, comment };
 }
 
 // ===== SVG ЧЕРТЁЖ =====
 function generateBlueprintSVG(data) {
-  // Мы вставляем твой SVG целиком, заменяя текст в нужных слоях на переменные ${data...}
   return `
-<svg width="600" height="800" viewBox="0 0 600 800" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="All">
-<rect id="background" width="600" height="800" fill="#17212B"/>
-<g id="decor">
-<path d="M578 22L578 778L22 778L22 22L578 22Z" stroke="#6AB2F2" stroke-width="2" stroke-linejoin="round"/>
-<path d="M564 36V764H36V36H564Z" stroke="#6AB2F2" stroke-width="0.5" stroke-linejoin="round"/>
-<path d="M51 36V764" stroke="#6AB2F2" stroke-width="0.5" stroke-linejoin="round"/>
-<path d="M549 36V764" stroke="#6AB2F2" stroke-width="0.5" stroke-linejoin="round"/>
-<path d="M36 51H564" stroke="#6AB2F2" stroke-width="0.5" stroke-linejoin="round"/>
-<path d="M36 749H564" stroke="#6AB2F2" stroke-width="0.5" stroke-linejoin="round"/>
-</g>
-<g id="order_group">
-<text id="order" x="65" y="100" fill="#6AB2F2" font-family="Arial" font-size="24" font-weight="bold">№${data.orderNumber}</text>
-</g>
-<g id="info_group">
-<text x="65" y="150" fill="#6AB2F2" font-family="Arial" font-size="14" font-weight="bold">ТЕХНІЧНЕ ЗАВДАННЯ:</text>
-<foreignObject id="info" x="65" y="165" width="470" height="150">
-  <div xmlns="http://www.w3.org/1999/xhtml" style="color: #fff; font-family: Arial; font-size: 16px; line-height: 1.4;">
-    ${data.infoText}
-  </div>
-</foreignObject>
-</g>
-<g id="comment_group">
-<text x="65" y="350" fill="#6AB2F2" font-family="Arial" font-size="14" font-weight="bold">КОМЕНТАР ЗАМОВНИКА:</text>
-<foreignObject id="comment" x="65" y="365" width="470" height="350">
-  <div xmlns="http://www.w3.org/1999/xhtml" style="color: #fff; font-family: Arial; font-size: 14px; line-height: 1.4; font-style: italic;">
-    ${data.comment}
-  </div>
-</foreignObject>
-</g>
-</g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" style="background: #0a1628;">
+  <!-- Заголовок -->
+  <text x="300" y="40" font-family="Arial" font-size="24" font-weight="bold" fill="#6ab2f2" text-anchor="middle">
+    ТЕХНІЧНЕ ЗАВДАННЯ
+  </text>
+  <text x="300" y="65" font-family="Arial" font-size="14" fill="#6ab2f2" text-anchor="middle" opacity="0.7">
+    Кремуа | Конструктор тортів
+  </text>
+  
+  <!-- Рамка -->
+  <rect x="40" y="90" width="520" height="650" fill="none" stroke="#6ab2f2" stroke-width="2" stroke-dasharray="10,5"/>
+  
+  <!-- Сетка фона -->
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#6ab2f2" stroke-width="0.5" opacity="0.1"/>
+    </pattern>
+  </defs>
+  <rect x="40" y="90" width="520" height="650" fill="url(#grid)"/>
+  
+  <!-- Данные -->
+  <text x="70" y="140" font-family="Arial" font-size="16" font-weight="bold" fill="#f27db0">
+    Тип торта:
+  </text>
+  <text id="blueprint-cake-type" x="200" y="140" font-family="Arial" font-size="16" fill="#ffffff">
+    ${data.type}
+  </text>
+  
+  <text x="70" y="190" font-family="Arial" font-size="16" font-weight="bold" fill="#6ab2f2">
+    Начинка:
+  </text>
+  <text id="blueprint-filling" x="200" y="190" font-family="Arial" font-size="16" fill="#ffffff">
+    ${data.filling}
+  </text>
+  
+  <text x="70" y="240" font-family="Arial" font-size="16" font-weight="bold" fill="#a3f26a">
+    Добавки:
+  </text>
+  <text id="blueprint-additives" x="200" y="240" font-family="Arial" font-size="16" fill="#ffffff">
+    ${data.additive}
+  </text>
+  
+  <text x="70" y="290" font-family="Arial" font-size="16" font-weight="bold" fill="#f7a632">
+    Формат:
+  </text>
+  <text id="blueprint-format" x="200" y="290" font-family="Arial" font-size="16" fill="#ffffff">
+    ${data.format}
+  </text>
+  
+  <!-- Комментарий -->
+  <text x="70" y="350" font-family="Arial" font-size="16" font-weight="bold" fill="#6ab2f2">
+    Коментар:
+  </text>
+  <foreignObject x="70" y="365" width="460" height="350">
+    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial; font-size: 14px; color: #ffffff; line-height: 1.6; word-wrap: break-word;">
+      ${data.comment}
+    </div>
+  </foreignObject>
+  
+  <!-- Футер -->
+  <text x="300" y="760" font-family="Arial" font-size="12" fill="#6ab2f2" text-anchor="middle" opacity="0.6">
+    Відправте це ТЗ кондитеру разом із фото бажаного дизайну
+  </text>
 </svg>
   `;
 }
+
 // ===== СОЗДАНИЕ PDF =====
 async function generatePDF(svgString) {
   const { jsPDF } = window.jspdf;
