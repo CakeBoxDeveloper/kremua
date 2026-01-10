@@ -56,7 +56,6 @@
     position: relative;
   }
 
-  /* Заголовки блоков, перечеркнутые линией */
   .box-title {
     text-transform: uppercase;
     font-size: 14px;
@@ -64,32 +63,32 @@
     text-align: center;
     white-space: nowrap;
     position: relative;
-    z-index: 2; /* Текст поверх линии */
-    margin-bottom: -10px; /* Прижимаем заголовок к линии */
+    z-index: 2;
+    margin-bottom: -10px;
   }
 
   .box-title span {
-    background: #ffffff; /* Белая подложка для "разрыва" линии */
+    background: #ffffff;
     padding: 0 10px;
   }
 
   .info-box {
     border: 1px dashed #000;
-    padding: 25px 15px 15px 15px; /* Увеличен верхний паддинг из-за наезда заголовка */
+    padding: 25px 20px 20px 20px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: center; /* Центрирование по вертикали */
     position: relative;
     z-index: 1;
   }
 
-  /* Текст комментария идентичен заголовку */
-  #comment {
+  /* Общий стиль для интерактивного текста и комментария */
+  .main-text-style {
     font-size: 14px;
     font-weight: normal;
     text-transform: uppercase;
-    text-align: center;
+    text-align: center; /* Центрирование по горизонтали */
     line-height: 1.6;
   }
 
@@ -98,21 +97,6 @@
     height: 100%;
     object-fit: contain;
     border: 1px dashed #000;
-  }
-
-  .data-item {
-    margin-bottom: 8px;
-    font-size: 14px;
-    line-height: 1.2;
-    text-align: left;
-  }
-
-  .data-item b {
-    color: #333;
-    display: block;
-    font-size: 11px;
-    text-transform: uppercase;
-    margin-bottom: 2px;
   }
 
   .footer-box {
@@ -154,10 +138,7 @@
       <div class="box-container">
         <div class="box-title"><span>ПОДРОБИЦІ ЗАМОВЛЕННЯ</span></div>
         <div class="info-box">
-          <div class="data-item"><b>Тип торта:</b> <span id="cake-type">...</span></div>
-          <div class="data-item"><b>Начинка:</b> <span id="filling">...</span></div>
-          <div class="data-item"><b>Добавки:</b> <span id="additives">...</span></div>
-          <div class="data-item"><b>Формат:</b> <span id="format">...</span></div>
+          <div id="order-details-text" class="main-text-style">завантаження...</div>
         </div>
       </div>
     </div>
@@ -166,7 +147,7 @@
       <div class="box-container">
         <div class="box-title"><span>КОМЕНТАР ДО ЗАМОВЛЕННЯ</span></div>
         <div class="info-box">
-          <div id="comment">...</div>
+          <div id="comment" class="main-text-style">...</div>
         </div>
       </div>
 
@@ -195,17 +176,22 @@ const isPreview = urlParams.get('preview') === 'true';
 const orderId = urlParams.get('id') || Math.floor(Math.random() * 9000) + 1000;
 document.getElementById('order-id').textContent = orderId;
 
+// Получаем переменные
+const type = decodeURIComponent(urlParams.get('type') || 'не обрано');
+const filling = decodeURIComponent(urlParams.get('filling') || 'не обрано');
+const additive = decodeURIComponent(urlParams.get('additive') || 'не обрано');
+const format = decodeURIComponent(urlParams.get('format') || 'не обрано');
 const rawComment = urlParams.get('comment');
-let finalComment = rawComment ? decodeURIComponent(rawComment).trim() : '';
 
+// Формируем связный текст для заказа
+const detailsText = `Мені потрібен ${type} торт формату ${format} з ${filling} начинкою. Додайте в торт наступні додатки: ${additive}.`;
+document.getElementById('order-details-text').textContent = detailsText;
+
+// Обработка комментария
+let finalComment = rawComment ? decodeURIComponent(rawComment).trim() : '';
 if (!finalComment || finalComment.toLowerCase() === 'немає') {
   finalComment = 'Я залишив це поле порожнім, оскільки конструктор допоміг мені повністю визначитися. Я довіряю вашому професіоналізму та з нетерпінням чекаю на цей шедевр!';
 }
-
-document.getElementById('cake-type').textContent = decodeURIComponent(urlParams.get('type') || 'не обрано');
-document.getElementById('filling').textContent = decodeURIComponent(urlParams.get('filling') || 'не обрано');
-document.getElementById('additives').textContent = decodeURIComponent(urlParams.get('additive') || 'не обрано');
-document.getElementById('format').textContent = decodeURIComponent(urlParams.get('format') || 'не обрано');
 document.getElementById('comment').textContent = finalComment;
 
 if (!isPreview) {
