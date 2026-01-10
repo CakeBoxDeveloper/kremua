@@ -611,8 +611,8 @@ input, textarea {
 <div id="pdfModal" class="pdf-modal">
   <div class="pdf-modal-content">
     <p class="pdf-hint">
-      Це технічне завдання потрібно відправити кондитеру у першому повідомленні разом із фото бажаного дизайну торта
-    </p>
+  Це ваше технічне завдання. Збережіть його та відправте кондитеру разом із фото бажаного дизайну торта.
+</p>
     <div class="pdf-preview" id="pdfPreview"></div>
     <button class="download-btn" id="downloadBtn">
       Завантажити PDF
@@ -623,8 +623,7 @@ input, textarea {
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/svg2pdf.js/2.2.1/svg2pdf.min.js"></script>
+ 
 
 <script>
 // ===== ДАННЫЕ =====
@@ -864,18 +863,97 @@ async function generatePDF(svgString) {
 }
 
 // ===== ПОКАЗ МОДАЛКИ =====
-function showPDFModal(svgString, pdfDoc) {
+// ===== ОСНОВНАЯ ЛОГИКА =====
+// ===== ОСНОВНАЯ ЛОГИКА =====
+document.getElementById('createBtn').onclick = async function() {
+  const data = getSelectedData();
+  
+  // Показываем лоадер
+  const loader = document.getElementById('loader');
+  loader.querySelector('.loader-text').textContent = 'Створюємо креслення...';
+  loader.classList.add('active');
+  
+  // Создаём iframe для рендеринга blueprint
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'absolute';
+  iframe.style.left = '-9999px';
+  iframe.style.width = '600px';
+  iframe.style.height = '800px';
+  document.body.appendChild(iframe);
+  
+  // Формируем URL blueprint с параметрами
+  const params = new URLSearchParams({
+    type: data.type,
+    filling: data.filling,
+    additive: data.additive,
+    format: data.format,
+    comment: data.comment,
+    preview: 'true' // флаг что это preview-режим
+  });
+  
+  iframe.src = `blueprint.html?${params.toString()}`;
+  
+  // Ждём загрузки iframe
+  iframe.onload = async function() {
+    // Даём время на рендеринг
+    setTimeout(async () => {
+      try {
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const blueprintContainer = iframeDoc.getElementById('blueprint-container');
+        
+        if (!blueprintContainer) {
+          console.error('Blueprint container not found');
+          loader.classList.remove('active');
+          document.body.removeChild(iframe);
+          return;
+        }
+        
+        // Конвертируем в canvas
+        const canvas = await html2canvas(blueprintContainer, {
+          backgroundColor: '#0a1628',
+          scale: 2,
+          logging: false,
+          useCORS: true
+        });
+        
+        // Получаем data URL для preview
+        const imageUrl = canvas.toDataURL('image/png');
+        
+        // Удаляем iframe
+        document.body.removeChild(iframe);
+        
+        // Скрываем лоадер и показываем модалку
+        loader.classList.remove('active');
+        showPDFModal(imageUrl, canvas);
+        
+      } catch (error) {
+        console.error('Ошибка создания preview:', error);
+        loader.classList.remove('active');
+        document.body.removeChild(iframe);
+        alert('Помилка створення креслення. Спробуйте ще раз.');
+      }
+    }, 1000); // даём 1 секунду на полный рендеринг
+  };
+};
+// ===== ПОКАЗ МОДАЛКИ =====
+function showPDFModal(imageUrl, canvas) {
   const modal = document.getElementById('pdfModal');
   const preview = document.getElementById('pdfPreview');
   
-  preview.innerHTML = svgString;
+  // Вставляем изображение в preview
+  preview.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto; display: block; border-radius: 8px;">`;
   modal.classList.add('active');
   
   // Кнопка скачивания
   document.getElementById('downloadBtn').onclick = function() {
-    if (pdfDoc) {
-      pdfDoc.save('kremua-cake-blueprint.pdf');
-    }
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'kremua-cake-blueprint.png';
+      link.click();
+      URL.revokeObjectURL(url);
+    });
   };
   
   // Закрытие
@@ -889,28 +967,6 @@ function showPDFModal(svgString, pdfDoc) {
     }
   };
 }
-
-// ===== ОСНОВНАЯ ЛОГИКА =====
-document.getElementById('createBtn').onclick = async function() {
-  const data = getSelectedData();
-  
-  // Показываем лоадер
-  const loader = document.getElementById('loader');
-  loader.classList.add('active');
-  
-  // Генерируем SVG
-  const svgString = generateBlueprintSVG(data);
-  
-  // Создаём PDF
-  const pdfDoc = await generatePDF(svgString);
-  
-  // Через 2 секунды показываем модалку
-  setTimeout(() => {
-    loader.classList.remove('active');
-    showPDFModal(svgString, pdfDoc);
-  }, 2000);
-};
-
 // ===== СКРЫТИЕ ЛОАДЕРА ПРИ ЗАГРУЗКЕ =====
 window.addEventListener('load', () => {
   setTimeout(() => {
@@ -918,6 +974,6 @@ window.addEventListener('load', () => {
   }, 1500); // 1.5 секунды
 });
 </script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
 </html>
