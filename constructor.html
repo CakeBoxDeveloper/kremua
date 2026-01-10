@@ -866,6 +866,7 @@ async function generatePDF(svgString) {
 // ===== ОСНОВНАЯ ЛОГИКА =====
 // ===== ОСНОВНАЯ ЛОГИКА =====
 // ===== ОСНОВНАЯ ЛОГИКА =====
+// ===== ОСНОВНАЯ ЛОГИКА =====
 document.getElementById('createBtn').onclick = async function() {
   const data = getSelectedData();
   
@@ -880,6 +881,18 @@ document.getElementById('createBtn').onclick = async function() {
   loader.querySelector('.loader-text').textContent = 'Створюємо креслення...';
   loader.classList.add('active');
   
+  // Создаём скрытый iframe вместо popup
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'fixed';
+  iframe.style.left = '-9999px';
+  iframe.style.top = '0';
+  iframe.style.width = '600px';
+  iframe.style.height = '800px';
+  iframe.style.border = 'none';
+  iframe.style.opacity = '0';
+  iframe.style.pointerEvents = 'none';
+  document.body.appendChild(iframe);
+  
   // Формируем URL с параметрами
   const params = new URLSearchParams({
     type: data.type,
@@ -890,44 +903,37 @@ document.getElementById('createBtn').onclick = async function() {
     preview: 'true'
   });
   
-  // Открываем blueprint в скрытом popup для рендеринга
-  const blueprintWindow = window.open(
-    `blueprint.html?${params.toString()}`, 
-    '_blank',
-    'width=600,height=800,left=-9999,top=-9999'
-  );
+  iframe.src = `blueprint.html?${params.toString()}`;
   
-  if (!blueprintWindow) {
-    loader.classList.remove('active');
-    alert('Будь ласка, дозвольте спливаючі вікна для цього сайту');
-    return;
-  }
-  
-  // Ждём загрузки blueprint
-  blueprintWindow.addEventListener('load', async function() {
+  // Ждём загрузки iframe
+  iframe.onload = async function() {
     setTimeout(async () => {
       try {
-        const blueprintContainer = blueprintWindow.document.getElementById('blueprint-container');
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        const blueprintContainer = iframeDoc.getElementById('blueprint-container');
         
         if (!blueprintContainer) {
           console.error('Blueprint container not found');
           loader.classList.remove('active');
-          blueprintWindow.close();
+          document.body.removeChild(iframe);
+          alert('Помилка створення креслення. Спробуйте ще раз.');
           return;
         }
         
-        // Конвертируем в canvas используя html2canvas из popup окна
-        const canvas = await blueprintWindow.html2canvas(blueprintContainer, {
+        // Конвертируем в canvas
+        const canvas = await html2canvas(blueprintContainer, {
           backgroundColor: '#0a1628',
           scale: 2,
-          logging: false
+          logging: false,
+          useCORS: true,
+          allowTaint: true
         });
         
         // Получаем data URL
         const imageUrl = canvas.toDataURL('image/png');
         
-        // Закрываем popup
-        blueprintWindow.close();
+        // Удаляем iframe
+        document.body.removeChild(iframe);
         
         // Скрываем лоадер и показываем модалку
         loader.classList.remove('active');
@@ -935,12 +941,20 @@ document.getElementById('createBtn').onclick = async function() {
         
       } catch (error) {
         console.error('Помилка створення креслення:', error);
+        document.body.removeChild(iframe);
         loader.classList.remove('active');
-        blueprintWindow.close();
         alert('Помилка створення креслення. Спробуйте ще раз.');
       }
-    }, 2500); // увеличиваем время ожидания для надёжности
-  });
+    }, 1000); // даём 1 секунду на рендеринг
+  };
+  
+  // Обработка ошибки загрузки
+  iframe.onerror = function() {
+    console.error('Помилка завантаження blueprint.html');
+    document.body.removeChild(iframe);
+    loader.classList.remove('active');
+    alert('Помилка завантаження сторінки креслення. Перевірте, чи файл blueprint.html знаходиться в тій же папці.');
+  };
 };
 // ===== ПОКАЗ МОДАЛКИ =====
 function showPDFModal(imageUrl, canvas) {
