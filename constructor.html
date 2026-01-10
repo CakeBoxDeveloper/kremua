@@ -257,11 +257,11 @@ input, textarea {
 }
 .pdf-modal.active .pdf-modal-content { transform: scale(1); }
 
-/* ПРЕВ'Ю З ІНВЕРСІЄЮ ТА ШИММЕРОМ */
+/* ПРЕВ'Ю: ВИТРИМАНИЙ ФОРМАТ ТА BLUEPRINT */
 .pdf-preview {
   width: 100%;
-  max-height: 65vh;
-  background: #17212b; /* Темний фон замість білого */
+  aspect-ratio: 1 / 1.414; /* Точне співвідношення А4 */
+  background: #0a1118;
   border-radius: 8px;
   margin-bottom: 16px;
   overflow: hidden;
@@ -269,40 +269,43 @@ input, textarea {
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+  border: 1px solid #6ab2f233;
 }
 
 .pdf-preview img {
-  max-width: 90%;
-  max-height: 90%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
-  /* ІНВЕРСІЯ ТА СИНІЙ ТОН */
-  filter: invert(1) hue-rotate(180deg) brightness(1.2) contrast(1.1);
-  border: none;
+  /* BLUEPRINT ЕФЕКТ: СИНІЙ ТОН */
+  filter: invert(1) sepia(100%) saturate(500%) hue-rotate(190deg) brightness(0.9) contrast(1.2);
 }
 
-/* ШИММЕР АНІМАЦІЯ */
+/* ШИММЕР: ПЛАВНА ДІАГОНАЛЬНА ЛІНІЯ */
 .pdf-preview::after {
   content: "";
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  top: 0;
+  left: -150%;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0) 45%,
-    rgba(255, 255, 255, 0.1) 50%,
-    rgba(255, 255, 255, 0) 55%
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0) 70%
   );
-  animation: shimmer 3s infinite;
+  animation: shimmer-swipe 3.5s infinite ease-in-out;
   pointer-events: none;
 }
 
-@keyframes shimmer {
-  0% { transform: translate(-30%, -30%); }
-  100% { transform: translate(30%, 30%); }
+@keyframes shimmer-swipe {
+  0% { left: -150%; opacity: 0; }
+  15% { opacity: 0; }
+  50% { opacity: 1; }
+  85% { opacity: 0; }
+  100% { left: 150%; opacity: 0; }
 }
 
 .bottom-actions { display: flex; gap: 8px; margin-top: 12px; }
@@ -474,13 +477,8 @@ document.getElementById('createBtn').onclick = async function() {
     setTimeout(async () => {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        
         const canvas = await html2canvas(iframeDoc.getElementById('blueprint-container'), {
-          backgroundColor: '#ffffff', 
-          scale: 2, 
-          useCORS: true, 
-          allowTaint: false,
-          logging: false
+          backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: false, logging: false
         });
         
         const imageUrl = canvas.toDataURL('image/png');
@@ -489,18 +487,22 @@ document.getElementById('createBtn').onclick = async function() {
         loader.classList.remove('active');
         loaderText.style.display = 'none';
         
-        // Відображаємо модалку
-        document.getElementById('pdfPreview').innerHTML = `<img src="${imageUrl}">`;
+        const previewContainer = document.getElementById('pdfPreview');
+        previewContainer.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.setAttribute('crossorigin', 'anonymous');
+        previewContainer.appendChild(img);
+        
         document.getElementById('pdfModal').classList.add('active');
         
-        // ГРАЄМО ЗВУК
         sound.currentTime = 0;
-        sound.play().catch(e => console.log("Sound play blocked by browser"));
+        sound.play().catch(e => console.log("Interaction required for audio"));
         
         document.getElementById('downloadBtn').onclick = () => {
           const link = document.createElement('a');
           link.href = imageUrl;
-          link.download = 'kremua-order.png';
+          link.download = `kremua-order-${data.format.replace('#','')}.png`;
           link.click();
         };
       } catch (e) {
@@ -515,9 +517,7 @@ document.getElementById('createBtn').onclick = async function() {
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
 
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loader').classList.remove('active');
-  }, 1500);
+  setTimeout(() => { document.getElementById('loader').classList.remove('active'); }, 1500);
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
