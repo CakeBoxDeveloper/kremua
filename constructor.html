@@ -470,23 +470,12 @@ document.getElementById('createBtn').onclick = async function() {
   const params = new URLSearchParams({...data, preview: 'true'});
   iframe.src = `blueprint.html?${params.toString()}`;
 
-iframe.onload = function() {
+  iframe.onload = function() {
     setTimeout(async () => {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        const blueprintContainer = iframeDoc.getElementById('blueprint-container');
-
-        // МОДИФІКАЦІЯ ДЛЯ СИНЬОГО КОЛЬОРУ У ФАЙЛІ
-        blueprintContainer.style.backgroundColor = '#004a99';
-        blueprintContainer.style.filter = 'invert(1) brightness(1.1) contrast(1.2)';
-        // Кінець модифікації
-
-        const canvas = await html2canvas(blueprintContainer, {
-          backgroundColor: null, // Щоб врахувати наш синій фон
-          scale: 2, 
-          useCORS: true, 
-          allowTaint: false, 
-          logging: false
+        const canvas = await html2canvas(iframeDoc.getElementById('blueprint-container'), {
+          backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: false, logging: false
         });
         
         const imageUrl = canvas.toDataURL('image/png');
@@ -499,18 +488,8 @@ iframe.onload = function() {
         previewContainer.innerHTML = '';
         const img = document.createElement('img');
         img.src = imageUrl;
-        
-        // Тепер картинка вже синя, тому в прев'ю фільтри більше не потрібні
-        img.style.width = '100%';
-        img.style.height = '100%';
-        img.style.objectFit = 'contain';
-        // Прибираємо фільтри тут, бо вони вже "впечені" в картинку
-        img.style.filter = 'none'; 
-        img.style.mixBlendMode = 'normal';
-
+        img.setAttribute('crossorigin', 'anonymous');
         previewContainer.appendChild(img);
-        
-       
         
         document.getElementById('pdfModal').classList.add('active');
         
