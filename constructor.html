@@ -518,7 +518,7 @@ input, textarea {
 <!-- ЛОАДЕР -->
 <div id="loader" class="loader active">
   <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Done.webp?raw=true" alt="Загрузка">
-  <div class="loader-text">Створюємо креслення...</div>
+  <div class="loader-text"></div>
 </div>
 
 <div class="app">
@@ -865,75 +865,82 @@ async function generatePDF(svgString) {
 // ===== ПОКАЗ МОДАЛКИ =====
 // ===== ОСНОВНАЯ ЛОГИКА =====
 // ===== ОСНОВНАЯ ЛОГИКА =====
+// ===== ОСНОВНАЯ ЛОГИКА =====
 document.getElementById('createBtn').onclick = async function() {
   const data = getSelectedData();
+  
+  // Проверяем, загружен ли html2canvas
+  if (typeof html2canvas === 'undefined') {
+    alert('Бібліотека html2canvas не завантажена. Перезавантажте сторінку.');
+    return;
+  }
   
   // Показываем лоадер
   const loader = document.getElementById('loader');
   loader.querySelector('.loader-text').textContent = 'Створюємо креслення...';
   loader.classList.add('active');
   
-  // Создаём iframe для рендеринга blueprint
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'absolute';
-  iframe.style.left = '-9999px';
-  iframe.style.width = '600px';
-  iframe.style.height = '800px';
-  document.body.appendChild(iframe);
-  
-  // Формируем URL blueprint с параметрами
+  // Формируем URL с параметрами
   const params = new URLSearchParams({
     type: data.type,
     filling: data.filling,
     additive: data.additive,
     format: data.format,
     comment: data.comment,
-    preview: 'true' // флаг что это preview-режим
+    preview: 'true'
   });
   
-  iframe.src = `blueprint.html?${params.toString()}`;
+  // Открываем blueprint в скрытом popup для рендеринга
+  const blueprintWindow = window.open(
+    `blueprint.html?${params.toString()}`, 
+    '_blank',
+    'width=600,height=800,left=-9999,top=-9999'
+  );
   
-  // Ждём загрузки iframe
-  iframe.onload = async function() {
-    // Даём время на рендеринг
+  if (!blueprintWindow) {
+    loader.classList.remove('active');
+    alert('Будь ласка, дозвольте спливаючі вікна для цього сайту');
+    return;
+  }
+  
+  // Ждём загрузки blueprint
+  blueprintWindow.addEventListener('load', async function() {
     setTimeout(async () => {
       try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        const blueprintContainer = iframeDoc.getElementById('blueprint-container');
+        const blueprintContainer = blueprintWindow.document.getElementById('blueprint-container');
         
         if (!blueprintContainer) {
           console.error('Blueprint container not found');
           loader.classList.remove('active');
-          document.body.removeChild(iframe);
+          blueprintWindow.close();
           return;
         }
         
-        // Конвертируем в canvas
-        const canvas = await html2canvas(blueprintContainer, {
+        // Конвертируем в canvas используя html2canvas из popup окна
+        const canvas = await blueprintWindow.html2canvas(blueprintContainer, {
           backgroundColor: '#0a1628',
           scale: 2,
-          logging: false,
-          useCORS: true
+          logging: false
         });
         
-        // Получаем data URL для preview
+        // Получаем data URL
         const imageUrl = canvas.toDataURL('image/png');
         
-        // Удаляем iframe
-        document.body.removeChild(iframe);
+        // Закрываем popup
+        blueprintWindow.close();
         
         // Скрываем лоадер и показываем модалку
         loader.classList.remove('active');
         showPDFModal(imageUrl, canvas);
         
       } catch (error) {
-        console.error('Ошибка создания preview:', error);
+        console.error('Помилка створення креслення:', error);
         loader.classList.remove('active');
-        document.body.removeChild(iframe);
+        blueprintWindow.close();
         alert('Помилка створення креслення. Спробуйте ще раз.');
       }
-    }, 1000); // даём 1 секунду на полный рендеринг
-  };
+    }, 2500); // увеличиваем время ожидания для надёжности
+  });
 };
 // ===== ПОКАЗ МОДАЛКИ =====
 function showPDFModal(imageUrl, canvas) {
