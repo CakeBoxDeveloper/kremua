@@ -34,56 +34,61 @@
     flex-grow: 1;
   }
 
-  /* 1. Заголовок по центру */
   .header-title {
     text-transform: uppercase;
     font-size: 22px;
-    margin: 0 0 40px 0;
+    margin: 0 0 50px 0; /* Увеличил отступ, так как заголовки блоков теперь выше */
     text-align: center;
     font-weight: 900;
   }
 
   .grid-row {
     display: grid;
-    grid-template-columns: 1.2fr 0.8fr; 
-    gap: 20px;
-    margin-bottom: 35px;
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px;
+    margin-bottom: 40px;
   }
 
-  /* 3. Вынос заголовков за пределы рамок */
+  /* Контейнер блока с вынесенным заглавием */
   .box-container {
+    position: relative;
     display: flex;
     flex-direction: column;
   }
 
+  /* Заголовки блоков "на линии" */
   .box-title {
+    position: absolute;
+    top: -10px; /* Сдвиг на линию границы */
+    left: 15px;
+    background: #ffffff; /* Белый фон, чтобы перекрыть линию */
+    padding: 0 8px;
     text-transform: uppercase;
     font-size: 14px;
     font-weight: bold;
-    margin-bottom: 8px; /* Отступ заголовка от рамки */
     white-space: nowrap;
+    z-index: 10;
   }
 
-  /* 2. Пунктирная обводка для всех блоков */
   .info-box {
     border: 1px dashed #000;
-    padding: 15px;
+    padding: 20px 15px 15px 15px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    min-height: 250px; /* Выравнивание высоты */
   }
 
   .image-container img {
     width: 100%;
-    height: 100%;
+    height: 250px;
     object-fit: contain;
     border: 1px dashed #000;
   }
 
   .data-item {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-size: 14px;
-    line-height: 1.2;
   }
 
   .data-item b {
@@ -94,32 +99,25 @@
     margin-bottom: 2px;
   }
 
-  /* 4. Подпись снизу во всю ширину контента */
+  /* Футер на 100% ширины контента */
   .footer-box {
     width: 100%; 
-    height: 168px; /* Примерно 15% от высоты контента */
+    height: 150px;
     margin: auto 0 0 0;
     border: 1px dashed #000;
-    padding: 20px;
+    padding: 25px;
     box-sizing: border-box;
-    position: relative;
     display: flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
   }
 
   .footer-text {
-    font-size: 13px;
+    font-size: 14px;
     text-transform: uppercase;
     font-weight: bold;
-    padding-right: 100px;
     line-height: 1.6;
-  }
-
-  .logo-stamp {
-    position: absolute;
-    right: 20px;
-    width: 80px;
-    height: 80px;
   }
 
 </style>
@@ -132,20 +130,17 @@
     <h1 class="header-title">ТЕХНІЧНЕ ЗАВДАННЯ ПО ЗАМОВЛЕННЮ #<span id="order-id">0000</span></h1>
 
     <div class="grid-row">
-      <div class="box-container">
-        <div class="box-title">СХЕМА ТОРТА (ВИД ЗВЕРХУ)</div>
-        <div class="image-container">
-          <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Cake1.png?raw=true" alt="Вид зверху">
-        </div>
+      <div class="image-container">
+        <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Cake1.png?raw=true" alt="Схема 1">
       </div>
       
       <div class="box-container">
         <div class="box-title">ПОДРОБИЦІ ЗАМОВЛЕННЯ</div>
         <div class="info-box">
-          <div class="data-item"><b>Тип торта:</b> <span id="cake-type">завантаження...</span></div>
-          <div class="data-item"><b>Начинка:</b> <span id="filling">завантаження...</span></div>
-          <div class="data-item"><b>Добавки:</b> <span id="additives">завантаження...</span></div>
-          <div class="data-item"><b>Формат:</b> <span id="format">завантаження...</span></div>
+          <div class="data-item"><b>Тип торта:</b> <span id="cake-type">...</span></div>
+          <div class="data-item"><b>Начинка:</b> <span id="filling">...</span></div>
+          <div class="data-item"><b>Добавки:</b> <span id="additives">...</span></div>
+          <div class="data-item"><b>Формат:</b> <span id="format">...</span></div>
         </div>
       </div>
     </div>
@@ -154,27 +149,21 @@
       <div class="box-container">
         <div class="box-title">КОМЕНТАР ДО ЗАМОВЛЕННЯ</div>
         <div class="info-box">
-          <div id="comment" style="font-size: 14px;">немає</div>
+          <div id="comment" style="font-size: 14px; line-height: 1.4;">немає</div>
         </div>
       </div>
 
-      <div class="box-container">
-        <div class="box-title">СХЕМА ТОРТА (ВИД ЗБОКУ)</div>
-        <div class="image-container">
-          <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Cake2.png?raw=true" alt="Вид збоку">
-        </div>
+      <div class="image-container">
+        <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Cake2.png?raw=true" alt="Схема 2">
       </div>
     </div>
 
     <div class="footer-box">
       <div class="footer-text">
-        ВАШЕ ТЗ СФОРМОВАНЕ. НАДІШЛІТЬ ЦЕЙ ДОКУМЕНТ КОНДИТЕРУ В ПЕРШОМУ ПОВІДОМЛЕННІ. 
-        ЦЕ ДОПОМОЖЕ ШВИДШЕ РОЗПОЧАТИ РОБОТУ І ВИ ШВИДШЕ ОТРИМАЄТЕ СВОЄ ЗАМОВЛЕННЯ!
+        ВАШЕ ТЗ СФОРМОВАНЕ. НАДІШЛІТЬ ЦЕЙ ДОКУМЕНТ КОНДИТЕРУ В ПЕРШОМУ ПОВІДОМЛЕННІ. <br>
+        ЦЕ ДОПОМОЖЕ ШВИДШЕ РОЗПОЧАТИ РОБОТУ І ВИ ШВИДШЕ ОТРИМАЄТЕ СВОЄ ЗАМОВЛЕННЯ! <br>
         А ЩЕ ВИ ДОДАТКОВО ОТРИМАЄТЕ ПЕРСОНАЛЬНУ ЗНИЖКУ НА ЦЕ ЗАМОВЛЕННЯ В 5%!
       </div>
-      <svg class="logo-stamp" viewBox="0 0 100 100">
-        <path d="M50 5 L61 35 L95 35 L68 55 L78 85 L50 65 L22 85 L32 55 L5 35 L39 35 Z" fill="black" />
-      </svg>
     </div>
 
   </div>
@@ -222,7 +211,7 @@ if (!isPreview) {
           URL.revokeObjectURL(url);
         });
       });
-    }, 1500); // Немного увеличил задержку для прогрузки фото из GitHub
+    }, 1500);
   });
 }
 </script>
