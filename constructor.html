@@ -258,31 +258,33 @@ input, textarea {
 .pdf-modal.active .pdf-modal-content { transform: scale(1); }
 
 /* ПРЕВ'Ю: ВИТРИМАНИЙ ФОРМАТ ТА BLUEPRINT */
+/* ПРЕВ'Ю: BLUEPRINT СТИЛЬ */
 .pdf-preview {
   width: 100%;
   aspect-ratio: 1 / 1.414; /* Точне співвідношення А4 */
-  background: #0a1118;
+  background-color: #003366; /* Глибокий синій колір фону креслення */
   border-radius: 8px;
   margin-bottom: 16px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   position: relative;
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-  border: 1px solid #6ab2f233;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  border: 1px solid #6ab2f255;
 }
 
 .pdf-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 100%; /* Заповнює всю ширину */
+  height: 100%; /* Заповнює всю висоту */
+  object-fit: cover; /* Прибирає порожні місця по краях */
   display: block;
-  /* BLUEPRINT ЕФЕКТ: СИНІЙ ТОН */
-  filter: invert(1) sepia(100%) saturate(500%) hue-rotate(190deg) brightness(0.9) contrast(1.2);
+  
+  /* МАГІЯ КОЛЬОРУ: */
+  /* mix-blend-mode: screen змушує чорний фон стати прозорим, 
+     проявляючи синій фон контейнера, а білий текст залишається білим */
+  mix-blend-mode: screen; 
+  filter: brightness(1.1) contrast(1.1);
 }
 
-/* ШИММЕР: ПЛАВНА ДІАГОНАЛЬНА ЛІНІЯ */
+/* ОНОВЛЕНИЙ ШИММЕР (більш м'який) */
 .pdf-preview::after {
   content: "";
   position: absolute;
@@ -293,10 +295,10 @@ input, textarea {
   background: linear-gradient(
     120deg,
     rgba(255, 255, 255, 0) 30%,
-    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.1) 50%,
     rgba(255, 255, 255, 0) 70%
   );
-  animation: shimmer-swipe 3.5s infinite ease-in-out;
+  animation: shimmer-swipe 4s infinite ease-in-out;
   pointer-events: none;
 }
 
