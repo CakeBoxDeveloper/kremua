@@ -106,14 +106,11 @@ input, textarea {
   gap: 6px;
   font-size: 13px;
   color: #ffffff;
-  opacity: 1;
   margin-bottom: 10px;
 }
 
 .users-count {
   font-weight: 700;
-  color: #ffffff;
-  font-size: 13px;
 }
 
 .faq-block {
@@ -155,11 +152,12 @@ input, textarea {
   overflow-y: hidden;
   padding: 4px 0;
   scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
+  transition: mask-image 0.3s ease;
 }
+
+.slider-container::-webkit-scrollbar { display: none; }
 
 .slider-container.blur-left {
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
@@ -176,10 +174,6 @@ input, textarea {
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
-.slider-container::-webkit-scrollbar {
-  display: none;
-}
-
 .slider-tag {
   display: inline-block;
   padding: 10px 18px;
@@ -191,12 +185,9 @@ input, textarea {
   white-space: nowrap;
   flex-shrink: 0;
   cursor: pointer;
-  user-select: none;
   border: 2px solid transparent;
   transition: all 0.2s ease;
 }
-
-.slider-tag:hover { opacity: 0.85; }
 
 .slider-tag.selected {
   background: #6ab2f2 !important;
@@ -210,6 +201,7 @@ input, textarea {
 .format-tag { color: #f7a632; background: #443621; }
 .format-tag.selected { background: #f7a632 !important; color: #17212b !important; }
 
+/* ===== ПОЛЕ КОМЕНТАРЯ ===== */
 .comment-section { margin-bottom: 16px; }
 .comment-textarea {
   width: 100%;
@@ -218,155 +210,81 @@ input, textarea {
   background: #1d2b3a;
   border: 1px solid #6ab2f2;
   border-radius: 4px;
-  color: #ffffff;
+  color: #6ab2f2; /* ПРЕДЗАПОЛНЕННЫЙ ТЕКСТ ГОЛУБОЙ */
   font-size: 14px;
   font-family: Arial, sans-serif;
   resize: vertical;
   box-sizing: border-box;
+  outline: none;
 }
+.comment-textarea::placeholder { color: #6ab2f2; opacity: 0.5; }
 
+/* ===== КНОПКИ ТА ІКОНКИ ===== */
 .create-btn {
-  width: 100%;
-  padding: 14px 0;
-  margin-bottom: 10px;
-  text-align: center;
-  font-size: 16px;
-  font-weight: 700;
-  color: #6af27d;
-  background: #1d3a22;
-  border: 1px solid #6af27d;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  width: 100%; padding: 14px 0; margin-bottom: 10px;
+  text-align: center; font-size: 16px; font-weight: 700;
+  color: #6af27d; background: #1d3a22;
+  border: 1px solid #6af27d; border-radius: 6px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 
 .back-btn-full {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-  color: #6ab2f2;
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  border-radius: 6px;
-  padding: 12px;
-  cursor: pointer;
-  text-decoration: none;
-  margin-bottom: 10px;
-  box-sizing: border-box;
+  width: 100%; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: #6ab2f2;
+  background: #1d2b3a; border: 1px solid #6ab2f2;
+  border-radius: 6px; padding: 12px; cursor: pointer;
+  text-decoration: none; margin-bottom: 10px; box-sizing: border-box;
 }
 
+/* ===== ЛОАДЕР (ЯК БУЛО) ===== */
 .loader {
-  position: fixed;
-  inset: 0;
-  background: #17212b;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.35s ease;
+  position: fixed; inset: 0; background: #17212b;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
 }
-
 .loader.active { opacity: 1; pointer-events: all; }
+.loader img { width: 150px; height: 150px; }
+.loader-text { margin-top: 16px; font-size: 16px; color: #6ab2f2; font-weight: 600; }
 
+/* ===== МОДАЛКА ТА ПРЕВ'Ю ===== */
 .pdf-modal {
-  position: fixed;
-  inset: 0;
-  background: transparent;
-  backdrop-filter: blur(0);
-  -webkit-backdrop-filter: blur(0);
-  z-index: 9998;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.4s ease;
+  position: fixed; inset: 0; z-index: 9998;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: all 0.4s ease;
+  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
 }
-
-.pdf-modal.active {
-  opacity: 1;
-  pointer-events: all;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background: rgba(0, 0, 0, 0.5);
-}
-
+.pdf-modal.active { opacity: 1; pointer-events: all; }
 .pdf-modal-content {
-  background: #1d2b3a;
-  border: 2px solid #6ab2f2;
-  border-radius: 12px;
-  padding: 24px;
-  max-width: 90%;
-  width: 350px;
-  text-align: center;
-  transform: scale(0.8);
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: #1d2b3a; border: 2px solid #6ab2f2;
+  border-radius: 12px; padding: 20px; max-width: 90%;
+  width: 350px; text-align: center; transform: scale(0.8); transition: 0.4s;
 }
-
-.pdf-modal.active .pdf-modal-content { transform: scale(1); opacity: 1; }
+.pdf-modal.active .pdf-modal-content { transform: scale(1); }
 
 .pdf-preview {
   width: 100%;
-  max-height: 60vh;
+  max-height: 65vh; /* Щоб влізло повністю на екран */
   background: white;
   border-radius: 8px;
   margin-bottom: 16px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-.download-btn {
-  width: 100%;
-  padding: 14px;
-  background: #1d3a22;
-  border: 1px solid #6af27d;
-  color: #6af27d;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-bottom: 8px;
-}
-
-.close-modal-btn {
-  width: 100%;
-  padding: 12px;
-  background: transparent;
-  border: 1px solid #6ab2f2;
-  color: #6ab2f2;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
+.pdf-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .bottom-actions { display: flex; gap: 8px; margin-top: 12px; }
 .action-btn {
-  flex: 1;
-  padding: 14px 0;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 600;
-  text-decoration: none;
-  color: #fff;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
+  flex: 1; padding: 14px 0; font-size: 15px; font-weight: 600;
+  text-decoration: none; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
 }
-
 .telegram-btn { background: #1d2b3a; border: 1px solid #6ab2f2; color: #6ab2f2; }
 .instagram-btn { background: #3a1d2b; border: 1px solid #f27db0; color: #f27db0; }
 </style>
@@ -375,7 +293,7 @@ input, textarea {
 
 <div id="loader" class="loader active">
   <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Done.webp?raw=true" alt="Загрузка">
-  <div class="loader-text"></div>
+  <div class="loader-text">Створюємо креслення...</div>
 </div>
 
 <div class="app">
@@ -428,12 +346,12 @@ input, textarea {
   </div>
 
   <button class="create-btn" id="createBtn">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/drafting-compass.svg" style="width: 20px; height: 20px; filter: invert(78%);">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/drafting-compass.svg" style="width: 20px; height: 20px; filter: invert(81%) sepia(38%) saturate(464%) hue-rotate(72deg) brightness(98%) contrast(96%);">
     Накреслити торт
   </button>
 
   <a href="index.html" class="back-btn-full">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/arrow-left.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: invert(64%);">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/arrow-left.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: invert(72%) sepia(18%) saturate(1106%) hue-rotate(178deg) brightness(101%) contrast(93%);">
     Назад на головну
   </a>
 
@@ -445,17 +363,17 @@ input, textarea {
 
 <div id="pdfModal" class="pdf-modal">
   <div class="pdf-modal-content">
-    <p class="pdf-hint">Це ваше технічне завдання. Збережіть його та відправте кондитеру.</p>
+    <p style="font-size: 13px; color: #6ab2f2; margin-bottom: 12px;">Це ваше ТЗ. Збережіть та відправте кондитеру.</p>
     <div class="pdf-preview" id="pdfPreview"></div>
-    <button class="download-btn" id="downloadBtn">Завантажити PNG</button>
-    <button class="close-modal-btn" id="closeModalBtn">Закрити</button>
+    <button class="create-btn" id="downloadBtn" style="color: #6af27d; border-color: #6af27d; margin-bottom: 8px;">Завантажити PNG</button>
+    <button class="back-btn-full" id="closeModalBtn" style="padding: 10px;">Закрити</button>
   </div>
 </div>
 
 <script>
 const cakeTypes = ["#безе", "#бісквіт", "#слоєне тісто", "#горіховий", "#шоколадний", "#сирний"];
-const allFillings = ["#фісташка", "#брауні", "#карамель", "#латте", "#пломбір", "#ром", "#пінаколада", "#сінабон", "#мускат", "#ірландський віскі", "#мультифрукт", "#лісові ягоди", "#банан", "#мохіто", "#матча", "#баблгам", "#снікерс", "#орео", "#тірамісу", "#ваніль", "#глінтвейн", "#мед", "#цитрус", "#тропік", "#абрикос", "#вишня", "#праліне"];
-const additives = ["#волоські горіхи", "#мигдаль", "#фундук", "#желе", "#рисові кульки", "#маршмелоу", "#шоколадні чіпси", "#кокосова стружка", "#сухофрукти", "#карамельний попкорн"];
+const allFillings = ["#фісташка", "#брауні", "#карамель", "#латте", "#пломбір", "#ром", "#пінаколада", "#сінабон", "#мускат", "#банан", "#мохіто", "#матча", "#снікерс", "#орео", "#тірамісу", "#ваніль", "#вишня"];
+const additives = ["#горіхи", "#мигдаль", "#желе", "#рисові кульки", "#маршмелоу", "#шоколад", "#кокос", "#попкорн"];
 const formats = ["#спліт", "#бенто", "#максі", "#XXL"];
 
 function createSlider(containerId, items, className, multiSelect = false) {
@@ -468,12 +386,8 @@ function createSlider(containerId, items, className, multiSelect = false) {
       if (multiSelect) {
         this.classList.toggle('selected');
       } else {
-        if (this.classList.contains('selected')) {
-          this.classList.remove('selected');
-        } else {
-          container.querySelectorAll('.slider-tag').forEach(t => t.classList.remove('selected'));
-          this.classList.add('selected');
-        }
+        container.querySelectorAll('.slider-tag').forEach(t => t.classList.remove('selected'));
+        this.classList.add('selected');
       }
     };
     container.appendChild(tag);
@@ -487,12 +401,10 @@ function createSlider(containerId, items, className, multiSelect = false) {
 function updateSliderBlur(container) {
   const scrollLeft = container.scrollLeft;
   const maxScroll = container.scrollWidth - container.clientWidth;
-  const atStart = scrollLeft <= 5;
-  const atEnd = scrollLeft >= maxScroll - 5;
   container.classList.remove('blur-left', 'blur-right', 'blur-both');
-  if (atStart && !atEnd) container.classList.add('blur-right');
-  else if (atEnd && !atStart) container.classList.add('blur-left');
-  else if (!atStart && !atEnd) container.classList.add('blur-both');
+  if (scrollLeft <= 5 && maxScroll > 5) container.classList.add('blur-right');
+  else if (scrollLeft >= maxScroll - 5) container.classList.add('blur-left');
+  else if (maxScroll > 5) container.classList.add('blur-both');
 }
 
 createSlider('typeSlider', cakeTypes, 'type-tag');
@@ -501,92 +413,61 @@ createSlider('additivesSlider', additives, 'additive-tag', true);
 createSlider('formatsSlider', formats, 'format-tag');
 
 function getSelectedData() {
-  const type = document.querySelector('#typeSlider .slider-tag.selected')?.textContent || 'не обрано';
-  const fillingTags = document.querySelectorAll('#fillingsSlider .slider-tag.selected');
-  const filling = fillingTags.length > 0 ? Array.from(fillingTags).map(tag => tag.textContent).join(', ') : 'не обрано';
-  const additiveTags = document.querySelectorAll('#additivesSlider .slider-tag.selected');
-  const additive = additiveTags.length > 0 ? Array.from(additiveTags).map(tag => tag.textContent).join(', ') : 'не обрано';
-  const format = document.querySelector('#formatsSlider .slider-tag.selected')?.textContent || 'не обрано';
+  const type = document.querySelector('#typeSlider .selected')?.textContent || 'не обрано';
+  const filling = Array.from(document.querySelectorAll('#fillingsSlider .selected')).map(t => t.textContent).join(', ') || 'не обрано';
+  const additive = Array.from(document.querySelectorAll('#additivesSlider .selected')).map(t => t.textContent).join(', ') || 'не обрано';
+  const format = document.querySelector('#formatsSlider .selected')?.textContent || 'не обрано';
   const comment = document.getElementById('commentField').value.trim() || 'немає';
-
-  let price = 0;
-  if (format !== 'не обрано' || type !== 'не обрано') {
-      const prices = { "#спліт": 450, "#бенто": 600, "#максі": 1200, "#XXL": 2500 };
-      price = prices[format] || 800;
-  }
+  
+  const prices = { "#спліт": 450, "#бенто": 600, "#максі": 1200, "#XXL": 2500 };
+  const price = (type === 'не обрано' && format === 'не обрано') ? 0 : (prices[format] || 800);
+  
   return { type, filling, additive, format, comment, price };
 }
 
 document.getElementById('createBtn').onclick = async function() {
   const data = getSelectedData();
-  if (typeof html2canvas === 'undefined') {
-    alert('Помилка завантаження бібліотеки.');
-    return;
-  }
   const loader = document.getElementById('loader');
   loader.querySelector('.loader-text').textContent = 'Створюємо креслення...';
   loader.classList.add('active');
-  
+
   const iframe = document.createElement('iframe');
-  iframe.style.position = 'fixed';
-  iframe.style.left = '-9999px';
-  iframe.style.width = '794px';
-  iframe.style.height = '1123px';
+  iframe.style.position = 'fixed'; iframe.style.left = '-9999px';
+  iframe.style.width = '794px'; iframe.style.height = '1123px';
   document.body.appendChild(iframe);
-  
-  const params = new URLSearchParams({
-    type: data.type,
-    filling: data.filling,
-    additive: data.additive,
-    format: data.format,
-    comment: data.comment,
-    price: data.price,
-    preview: 'true'
-  });
-  
+
+  const params = new URLSearchParams({...data, preview: 'true'});
   iframe.src = `blueprint.html?${params.toString()}`;
-  
+
   iframe.onload = function() {
     setTimeout(async () => {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        const blueprintContainer = iframeDoc.getElementById('blueprint-container');
-        const canvas = await html2canvas(blueprintContainer, {
-          backgroundColor: '#ffffff',
-          scale: 2,
-          useCORS: true,
-          windowWidth: 794,
-          windowHeight: 1123
+        const canvas = await html2canvas(iframeDoc.getElementById('blueprint-container'), {
+          backgroundColor: '#ffffff', scale: 2, useCORS: true, allowTaint: true
         });
         const imageUrl = canvas.toDataURL('image/png');
         document.body.removeChild(iframe);
         loader.classList.remove('active');
-        showPDFModal(imageUrl, canvas);
-      } catch (error) {
-        console.error(error);
-        document.body.removeChild(iframe);
+        
+        document.getElementById('pdfPreview').innerHTML = `<img src="${imageUrl}">`;
+        document.getElementById('pdfModal').classList.add('active');
+        
+        document.getElementById('downloadBtn').onclick = () => {
+          const link = document.createElement('a');
+          link.href = imageUrl;
+          link.download = 'kremua-order.png';
+          link.click();
+        };
+      } catch (e) {
         loader.classList.remove('active');
+        alert('Помилка створення');
       }
     }, 2000);
   };
 };
 
-function showPDFModal(imageUrl, canvas) {
-  const modal = document.getElementById('pdfModal');
-  const preview = document.getElementById('pdfPreview');
-  preview.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto; display: block;">`;
-  modal.classList.add('active');
-  document.getElementById('downloadBtn').onclick = function() {
-    canvas.toBlob(blob => {
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `kremua-order.png`;
-      link.click();
-    });
-  };
-  document.getElementById('closeModalBtn').onclick = () => modal.classList.remove('active');
-}
+document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
 
 window.addEventListener('load', () => {
   setTimeout(() => document.getElementById('loader').classList.remove('active'), 1500);
