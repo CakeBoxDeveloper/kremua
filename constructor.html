@@ -262,45 +262,58 @@ input, textarea {
 /* ПРЕВ'Ю: ВИТРИМАНИЙ ФОРМАТ ТА BLUEPRINT ЕФЕКТ */
 .pdf-preview {
   width: 100%;
-  aspect-ratio: 1 / 1.414; 
-  background-color: #004a99; 
+  aspect-ratio: 1 / 1.414; /* Формат А4 */
+  background-color: #003366; /* Глибокий синій колір (Blueprint background) */
   border-radius: 8px;
   margin-bottom: 16px;
   overflow: hidden;
   position: relative;
-  /* ТІНЬ ПРИБРАНО */
-  box-shadow: none; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
   border: 1px solid #6ab2f255;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* ОНОВЛЕНИЙ ШИММЕР: ДОВГИЙ ТА ПЛАВНИЙ */
+.pdf-preview img {
+  /* ВИПРАВЛЕННЯ МАСШТАБУ: розтягуємо на весь контейнер без зазоров */
+  width: 100.2%; 
+  height: 100.2%;
+  object-fit: cover; 
+  display: block;
+
+  /* ЕФЕКТ БІЛОГО ТЕКСТУ НА СИНЬОМУ */
+  /* 1. Інвертуємо: стає білий текст на чорному фоні */
+  /* 2. mix-blend-mode: screen робить чорний фон прозорим, проявляючи синій фон контейнера */
+  filter: invert(1) brightness(1.1) contrast(1.2);
+  mix-blend-mode: screen; 
+}
+
+/* ШИММЕР: ПЛАВНА ДІАГОНАЛЬНА ЛІНІЯ */
 .pdf-preview::after {
   content: "";
   position: absolute;
-  top: -50%; /* Виходимо за межі, щоб не обрізався */
+  top: 0;
   left: -150%;
-  width: 200%; /* Робимо ширшим за контейнер */
-  height: 200%;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(
-    110deg, /* Змінили кут для кращої діагоналі */
-    rgba(255, 255, 255, 0) 40%,
+    120deg,
+    rgba(255, 255, 255, 0) 30%,
     rgba(255, 255, 255, 0.12) 50%,
-    rgba(255, 255, 255, 0) 60%
+    rgba(255, 255, 255, 0) 70%
   );
-  animation: shimmer-swipe 4s infinite linear; /* linear для стабільної швидкості */
+  animation: shimmer-swipe 4s infinite ease-in-out;
   pointer-events: none;
-  transform: rotate(0deg);
+  z-index: 2;
 }
 
 @keyframes shimmer-swipe {
-  0% { transform: translateX(-50%) opacity(0); left: -150%; }
+  0% { left: -150%; opacity: 0; }
   10% { opacity: 0; }
   50% { opacity: 1; }
   90% { opacity: 0; }
-  100% { transform: translateX(50%) opacity(0); left: 150%; }
+  100% { left: 150%; opacity: 0; }
 }
 
  
