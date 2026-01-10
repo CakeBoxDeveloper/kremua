@@ -867,11 +867,12 @@ async function generatePDF(svgString) {
 // ===== ОСНОВНАЯ ЛОГИКА =====
 // ===== ОСНОВНАЯ ЛОГИКА =====
 // ===== ОСНОВНАЯ ЛОГИКА =====
+// ===== ОСНОВНАЯ ЛОГИКА =====
 document.getElementById('createBtn').onclick = async function() {
   const data = getSelectedData();
   
   if (typeof html2canvas === 'undefined') {
-    alert('Бібліотека html2canvas не завантажена.');
+    alert('Бібліотека html2canvas не завантажена. Перезавантажте сторінку.');
     return;
   }
   
@@ -883,8 +884,8 @@ document.getElementById('createBtn').onclick = async function() {
   iframe.style.position = 'fixed';
   iframe.style.left = '-9999px';
   iframe.style.top = '0';
-  iframe.style.width = '794px';  // Встановлюємо ширину А4
-  iframe.style.height = '1123px'; // Встановлюємо висоту А4
+  iframe.style.width = '794px'; 
+  iframe.style.height = '1123px';
   iframe.style.border = 'none';
   document.body.appendChild(iframe);
   
@@ -894,25 +895,28 @@ document.getElementById('createBtn').onclick = async function() {
     additive: data.additive,
     format: data.format,
     comment: data.comment,
-    price: "1200", // Сюди потім додаси реальну ціну
+    price: "1200", // Сюди пізніше підставимо динамічну ціну
     preview: 'true'
   });
   
   iframe.src = `blueprint.html?${params.toString()}`;
   
   iframe.onload = function() {
-    // Чекаємо 2 секунди, щоб картинки та шрифти ТОЧНО завантажились
     setTimeout(async () => {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
         const blueprintContainer = iframeDoc.getElementById('blueprint-container');
         
+        if (!blueprintContainer) {
+          throw new Error('Контейнер креслення не знайдено в iframe');
+        }
+
         const canvas = await html2canvas(blueprintContainer, {
           backgroundColor: '#ffffff',
-          scale: 3, // Вища якість (можна 2 або 3)
+          scale: 2, 
           logging: false,
           useCORS: true,
-          allowTaint: false, // Краще false для CORS
+          allowTaint: false,
           scrollX: 0,
           scrollY: 0,
           windowWidth: 794,
@@ -926,51 +930,45 @@ document.getElementById('createBtn').onclick = async function() {
         
       } catch (error) {
         console.error('Помилка рендеру:', error);
-        document.body.removeChild(iframe);
+        if (iframe.parentNode) document.body.removeChild(iframe);
         loader.classList.remove('active');
+        alert('Помилка створення креслення. Перевірте консоль.');
       }
     }, 2000); 
   };
-};
-  
-  // Обработка ошибки загрузки
+
   iframe.onerror = function() {
-    console.error('Помилка завантаження blueprint.html');
     document.body.removeChild(iframe);
     loader.classList.remove('active');
-    alert('Помилка завантаження сторінки креслення. Перевірте, чи файл blueprint.html знаходиться в тій же папці.');
+    alert('Помилка завантаження blueprint.html');
   };
 };
+
 // ===== ПОКАЗ МОДАЛКИ =====
 function showPDFModal(imageUrl, canvas) {
   const modal = document.getElementById('pdfModal');
   const preview = document.getElementById('pdfPreview');
   
-  // Вставляем изображение в preview
   preview.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto; display: block; border-radius: 8px;">`;
   modal.classList.add('active');
   
-  // Кнопка скачивания
   document.getElementById('downloadBtn').onclick = function() {
     canvas.toBlob(blob => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = 'kremua-cake-blueprint.png';
+      link.download = `kremua-order-${Math.floor(Date.now()/1000)}.png`;
       link.click();
       URL.revokeObjectURL(url);
     });
   };
   
-  // Закрытие
   document.getElementById('closeModalBtn').onclick = function() {
     modal.classList.remove('active');
   };
   
   modal.onclick = function(e) {
-    if (e.target === modal) {
-      modal.classList.remove('active');
-    }
+    if (e.target === modal) modal.classList.remove('active');
   };
 }
 // ===== СКРЫТИЕ ЛОАДЕРА ПРИ ЗАГРУЗКЕ =====
