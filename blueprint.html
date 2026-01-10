@@ -15,7 +15,7 @@
   }
 
   #blueprint-container {
-    width: 794px;
+    width: 794px; /* A4 при 96 DPI */
     min-height: 1123px;
     background: #ffffff;
     padding: 40px;
@@ -23,12 +23,12 @@
     display: flex;
     flex-direction: column;
     border: 1px solid #ccc;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
     position: relative;
+    overflow: hidden;
   }
 
   .content-wrapper {
-    width: 90%;
+    width: 95%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
@@ -47,7 +47,6 @@
     width: 100%;
   }
 
-  /* Блоки інструкції та ціни */
   .info-banner {
     width: 100%; 
     height: 110px;
@@ -60,7 +59,7 @@
   }
 
   .instruction-box { margin-bottom: 40px; }
-  .price-box { margin-top: auto; } /* Притискає блок ціни до низу */
+  .price-box { margin-top: auto; }
 
   .banner-text {
     font-size: 14px;
@@ -72,10 +71,12 @@
     width: 100%;
   }
 
-  /* Виділення ціни */
+  /* ВИПРАВЛЕННЯ ТЕКСТУ ЦІНИ */
   #total-price {
-    font-weight: 900;
+    font-weight: 600; /* Зменшено жирність */
     font-size: 16px;
+    vertical-align: baseline; /* Рівне положення */
+    display: inline-block;
   }
 
   .grid-row {
@@ -117,6 +118,7 @@
     justify-content: center;
     position: relative;
     z-index: 1;
+    overflow: hidden;
   }
 
   .main-text-style {
@@ -125,6 +127,11 @@
     text-transform: uppercase;
     text-align: center;
     line-height: 1.6;
+    word-wrap: break-word;
+  }
+
+  .image-container {
+    height: 300px;
   }
 
   .image-container img {
@@ -153,7 +160,7 @@
 
     <div class="grid-row">
       <div class="image-container">
-        <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Cake1.png?raw=true" alt="Схема 1">
+        <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Cake1.png" crossorigin="anonymous" alt="Схема 1">
       </div>
       <div class="box-container">
         <div class="box-title"><span>ПОДРОБИЦІ ЗАМОВЛЕННЯ</span></div>
@@ -171,7 +178,7 @@
         </div>
       </div>
       <div class="image-container">
-        <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Cake2.png?raw=true" alt="Схема 2">
+        <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Cake2.png" crossorigin="anonymous" alt="Схема 2">
       </div>
     </div>
 
@@ -186,29 +193,30 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
 <script>
 const urlParams = new URLSearchParams(window.location.search);
-const isPreview = urlParams.get('preview') === 'true';
 
+// Отримуємо ID або генеруємо новий
 const orderId = urlParams.get('id') || Math.floor(Math.random() * 9000) + 1000;
 document.getElementById('order-id').textContent = orderId;
 
+// Отримуємо дані
 const type = decodeURIComponent(urlParams.get('type') || 'не обрано');
 const filling = decodeURIComponent(urlParams.get('filling') || 'не обрано');
 const additive = decodeURIComponent(urlParams.get('additive') || 'не обрано');
 const format = decodeURIComponent(urlParams.get('format') || 'не обрано');
-const price = urlParams.get('price') || '0';
+const priceValue = urlParams.get('price') || '0';
 const rawComment = urlParams.get('comment');
 
-document.getElementById('total-price').textContent = price;
+document.getElementById('total-price').textContent = priceValue;
 
+// Формуємо текст ТЗ
 const detailsText = `Мені потрібен ${type} торт формату ${format} з ${filling} начинкою. Додайте в торт наступні додатки: ${additive}.`;
 document.getElementById('order-details-text').textContent = detailsText;
 
+// Логіка коментаря
 let finalComment = rawComment ? decodeURIComponent(rawComment).trim() : '';
-if (!finalComment || finalComment.toLowerCase() === 'немає') {
+if (!finalComment || finalComment.toLowerCase() === 'немає' || finalComment.toLowerCase() === 'null') {
   finalComment = 'Я залишив це поле порожнім, оскільки конструктор допоміг мені повністю визначитися. Я довіряю вашому професіоналізму та з нетерпінням чекаю на цей шедевр!';
 }
 document.getElementById('comment').textContent = finalComment;
