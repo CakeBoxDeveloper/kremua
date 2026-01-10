@@ -72,6 +72,12 @@
     width: 100%;
   }
 
+  /* Виділення ціни */
+  #total-price {
+    font-weight: 900;
+    font-size: 16px;
+  }
+
   .grid-row {
     display: grid;
     grid-template-columns: 1.2fr 0.8fr; 
@@ -128,24 +134,11 @@
     border: 1px dashed #000;
   }
 
-  .stamp-overlay {
-    position: absolute;
-    bottom: 30px;
-    right: 30px;
-    width: 160px;
-    height: auto;
-    z-index: 100;
-    pointer-events: none;
-    opacity: 0.95;
-  }
-
 </style>
 </head>
 <body>
 
 <div id="blueprint-container">
-  <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/StampPNG.png?raw=true" class="stamp-overlay" alt="Печатка">
-
   <div class="content-wrapper">
     
     <h1 class="header-title">ТЕХНІЧНЕ ЗАВДАННЯ ПО ЗАМОВЛЕННЮ #<span id="order-id">0000</span></h1>
@@ -220,7 +213,7 @@ if (!finalComment || finalComment.toLowerCase() === 'немає') {
 }
 document.getElementById('comment').textContent = finalComment;
 
-// Авто-масштабування заголовка
+// Авто-масштабування заголовка під ширину
 window.addEventListener('load', () => {
   const title = document.querySelector('.header-title');
   const containerWidth = document.querySelector('.content-wrapper').offsetWidth;
@@ -231,8 +224,6 @@ window.addEventListener('load', () => {
     title.style.fontSize = fontSize + 'px';
   }
 });
-
-// Налаштування для html2canvas (без автоматичного завантаження тут, якщо ви так просили)
 </script>
 
 </body>
