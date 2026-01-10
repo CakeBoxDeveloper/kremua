@@ -17,20 +17,19 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Спеціальний стиль для контейнера форматів */
 #formatsSlider {
   display: flex;
-  justify-content: space-between; /* Розподіляє кнопки рівномірно */
-  overflow: hidden;              /* Прибираємо зайвий скрол */
-  gap: 4px;                      /* Мінімальний відступ між кнопками */
+  justify-content: space-between;
+  overflow: hidden;
+  gap: 4px;
 }
 
 #formatsSlider .format-tag {
-  flex: 1;                       /* Кожна кнопка займає однакову частину простору */
-  text-align: center;            /* Текст по центру всередині кнопки */
-  padding: 10px 4px;             /* Зменшуємо бічні відступи, щоб влізло на малих екранах */
-  font-size: 13px;               /* Трохи менший шрифт для гарантії входу в рядок */
-  min-width: 0;                  /* Дозволяє флекс-елементу стискатися менше за його контент */
+  flex: 1;
+  text-align: center;
+  padding: 10px 4px;
+  font-size: 13px;
+  min-width: 0;
 }
   
 html {
@@ -58,7 +57,6 @@ input, textarea {
   padding: 16px;
 }
 
-/* ===== ЛОГО ===== */
 .header {
   text-align: center;
   margin-top: -40px;
@@ -76,7 +74,6 @@ input, textarea {
                       linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
 }
 
-/* ===== СЕРВИС ИНФО ===== */
 .service-info {
   display: flex;
   flex-direction: column;
@@ -119,7 +116,6 @@ input, textarea {
   font-size: 13px;
 }
 
-/* ===== FAQ БЛОК ===== */
 .faq-block {
   text-align: center;
   margin-bottom: 20px;
@@ -135,7 +131,6 @@ input, textarea {
   color: #ffffff;
 }
 
-/* ===== СЛАЙДЕРЫ ===== */
 .slider-section {
   margin-bottom: 16px;
 }
@@ -163,26 +158,19 @@ input, textarea {
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  
-  /* 🎯 РАЗМЫТИЕ */
-  mask-image: none;
-  -webkit-mask-image: none;
   transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
 }
 
-/* 🎯 РАЗМЫТИЕ СЛЕВА */
 .slider-container.blur-left {
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
 }
 
-/* 🎯 РАЗМЫТИЕ СПРАВА */
 .slider-container.blur-right {
   mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
 }
 
-/* 🎯 РАЗМЫТИЕ С ОБЕИХ СТОРОН */
 .slider-container.blur-both {
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
@@ -208,52 +196,21 @@ input, textarea {
   transition: all 0.2s ease;
 }
 
-.slider-tag:hover {
- 
-  opacity: 0.85;
-}
+.slider-tag:hover { opacity: 0.85; }
 
 .slider-tag.selected {
   background: #6ab2f2 !important;
   color: #17212b !important;
-  
 }
 
-/* Цвета для разных типов слайдеров */
-.type-tag {
-  color: #f27db0;
-  background: #3a1d2b;
-}
+.type-tag { color: #f27db0; background: #3a1d2b; }
+.type-tag.selected { background: #f27db0 !important; }
+.additive-tag { color: #a3f26a; background: #1d3a22; }
+.additive-tag.selected { background: #a3f26a !important; color: #17212b !important; }
+.format-tag { color: #f7a632; background: #443621; }
+.format-tag.selected { background: #f7a632 !important; color: #17212b !important; }
 
-.type-tag.selected {
-  background: #f27db0 !important;
-}
-
-.additive-tag {
-  color: #a3f26a;
-  background: #1d3a22;
-}
-
-.additive-tag.selected {
-  background: #a3f26a !important;
-  color: #17212b !important;
-}
-
-.format-tag {
-  color: #f7a632;
-  background: #443621;
-}
-
-.format-tag.selected {
-  background: #f7a632 !important;
-  color: #17212b !important;
-}
-
-/* ===== ПОЛЕ КОММЕНТАРИЯ ===== */
-.comment-section {
-  margin-bottom: 16px;
-}
-
+.comment-section { margin-bottom: 16px; }
 .comment-textarea {
   width: 100%;
   min-height: 100px;
@@ -268,12 +225,6 @@ input, textarea {
   box-sizing: border-box;
 }
 
-.comment-textarea::placeholder {
-  color: #6ab2f2;
-  opacity: 0.6;
-}
-
-/* ===== КНОПКА СОЗДАТЬ ===== */
 .create-btn {
   width: 100%;
   padding: 14px 0;
@@ -293,15 +244,6 @@ input, textarea {
   gap: 8px;
 }
 
-.create-btn:hover {
-  background: #24502f;
-}
-
-.create-btn:active {
-  transform: scale(0.96);
-}
-
-/* ===== КНОПКА НАЗАД ===== */
 .back-btn-full {
   width: 100%;
   display: flex;
@@ -315,17 +257,11 @@ input, textarea {
   border-radius: 6px;
   padding: 12px;
   cursor: pointer;
-  transition: transform 0.15s ease;
   text-decoration: none;
   margin-bottom: 10px;
   box-sizing: border-box;
 }
 
-.back-btn-full:active {
-  transform: scale(0.96);
-}
-
-/* ===== ЛОАДЕР ===== */
 .loader {
   position: fixed;
   inset: 0;
@@ -340,30 +276,8 @@ input, textarea {
   transition: opacity 0.35s ease;
 }
 
-.loader.active {
-  opacity: 1;
-  pointer-events: all;
-}
+.loader.active { opacity: 1; pointer-events: all; }
 
-.loader img {
-  width: 150px;
-  height: 150px;
-}
-
-.loader-text {
-  margin-top: 16px;
-  font-size: 16px;
-  color: #6ab2f2;
-  font-weight: 600;
-}
-
-.loader.blur-mode {
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* ===== МОДАЛЬНОЕ ОКНО PDF ===== */
 .pdf-modal {
   position: fixed;
   inset: 0;
@@ -400,25 +314,16 @@ input, textarea {
   transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.pdf-modal.active .pdf-modal-content {
-  transform: scale(1);
-  opacity: 1;
-}
-
-.pdf-hint {
-  font-size: 13px;
-  color: #6ab2f2;
-  margin-bottom: 16px;
-  line-height: 1.4;
-}
+.pdf-modal.active .pdf-modal-content { transform: scale(1); opacity: 1; }
 
 .pdf-preview {
   width: 100%;
-  max-height: 400px;
+  max-height: 60vh;
   background: white;
   border-radius: 8px;
   margin-bottom: 16px;
-  overflow: hidden;
+  overflow-y: auto;
+  border: 1px solid #ccc;
 }
 
 .download-btn {
@@ -431,16 +336,7 @@ input, textarea {
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
   margin-bottom: 8px;
-}
-
-.download-btn:hover {
-  background: #24502f;
-}
-
-.download-btn:active {
-  transform: scale(0.96);
 }
 
 .close-modal-btn {
@@ -453,24 +349,9 @@ input, textarea {
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.close-modal-btn:hover {
-  background: #22364a;
-}
-
-.close-modal-btn:active {
-  transform: scale(0.96);
-}
-
-/* ===== СОЦСЕТИ ===== */
-.bottom-actions {
-  display: flex;
-  gap: 8px;
-  margin-top: 12px;
-}
-
+.bottom-actions { display: flex; gap: 8px; margin-top: 12px; }
 .action-btn {
   flex: 1;
   padding: 14px 0;
@@ -480,56 +361,30 @@ input, textarea {
   text-decoration: none;
   color: #fff;
   border-radius: 6px;
-  transition: transform 0.15s ease;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
 }
 
-.action-btn:active {
-  transform: scale(0.96);
-}
-
-.telegram-btn {
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  color: #6ab2f2;
-}
-
-.telegram-btn:hover {
-  background: #22364a;
-}
-
-.instagram-btn {
-  background: #3a1d2b;
-  border: 1px solid #f27db0;
-  color: #f27db0;
-}
-
-.instagram-btn:hover {
-  background: #4a2236;
-}
+.telegram-btn { background: #1d2b3a; border: 1px solid #6ab2f2; color: #6ab2f2; }
+.instagram-btn { background: #3a1d2b; border: 1px solid #f27db0; color: #f27db0; }
 </style>
 </head>
 <body>
 
-<!-- ЛОАДЕР -->
 <div id="loader" class="loader active">
   <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Done.webp?raw=true" alt="Загрузка">
   <div class="loader-text"></div>
 </div>
 
 <div class="app">
-  <!-- HEADER -->
   <div class="header">
     <video autoplay loop muted playsinline>
       <source src="https://cdn.jsdelivr.net/gh/cakeboxdeveloper/kremua@main/ModAvatarModRender.webm" type="video/webm">
     </video>
   </div>
 
-  <!-- СЕРВИС ИНФО -->
   <div class="service-info">
     <div class="service-name">
       <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/73b661456b59a8bc190ef95c25d08af249023969/5258506.svg" alt="" class="service-icon">
@@ -541,119 +396,68 @@ input, textarea {
     </div>
   </div>
 
-  <!-- ОПИСАНИЕ -->
   <div class="faq-block">
     <div class="faq-content1">
       Створіть власний торт за допомогою конструктора. Оберіть тип, начинку, добавки та формат — ми підготуємо технічне завдання для кондитера.
     </div>
   </div>
 
-  <!-- ТИП ТОРТА -->
   <div class="slider-section">
     <div class="slider-label">Тип торта</div>
     <div class="slider-container" id="typeSlider"></div>
   </div>
 
-  <!-- НАЧИНКИ -->
   <div class="slider-section">
     <div class="slider-label">Начинка</div>
     <div class="slider-container" id="fillingsSlider"></div>
   </div>
 
-  <!-- ДОБАВКИ -->
   <div class="slider-section">
     <div class="slider-label">Добавки</div>
     <div class="slider-container" id="additivesSlider"></div>
   </div>
 
-  <!-- ФОРМАТЫ -->
   <div class="slider-section">
     <div class="slider-label">Формат</div>
     <div class="slider-container" id="formatsSlider"></div>
   </div>
 
-  <!-- КОММЕНТАРИЙ -->
   <div class="comment-section">
     <div class="slider-label">Додатковий коментар</div>
-    <textarea 
-      id="commentField" 
-      class="comment-textarea" 
-      placeholder="Впишіть сюди що завгодно: особливі побажання, дизайн, дату виготовлення..."
-    ></textarea>
+    <textarea id="commentField" class="comment-textarea" placeholder="Впишіть сюди що завгодно..."></textarea>
   </div>
 
-  <!-- КНОПКА СОЗДАТЬ -->
   <button class="create-btn" id="createBtn">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/drafting-compass.svg" style="width: 20px; height: 20px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/drafting-compass.svg" style="width: 20px; height: 20px; filter: invert(78%);">
     Накреслити торт
   </button>
 
-  <!-- КНОПКА НАЗАД -->
   <a href="index.html" class="back-btn-full">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/arrow-left.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: brightness(0) saturate(100%) invert(64%) sepia(66%) saturate(1044%) hue-rotate(178deg) brightness(101%) contrast(93%);">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/arrow-left.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: invert(64%);">
     Назад на головну
   </a>
 
-  <!-- СОЦСЕТИ -->
   <div class="bottom-actions">
-    <a href="https://t.me/Olga_Dind" class="action-btn telegram-btn">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/send.svg" style="width: 18px; height: 18px; filter: brightness(0) saturate(100%) invert(64%) sepia(66%) saturate(1044%) hue-rotate(178deg) brightness(101%) contrast(93%);">
-      Telegram
-    </a>
-    <a href="https://www.instagram.com/kremua_studio" class="action-btn instagram-btn">
-      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/instagram.svg" style="width: 18px; height: 18px; filter: brightness(0) saturate(100%) invert(70%) sepia(58%) saturate(1313%) hue-rotate(298deg) brightness(102%) contrast(90%);">
-      Instagram
-    </a>
+    <a href="https://t.me/Olga_Dind" class="action-btn telegram-btn">Telegram</a>
+    <a href="https://www.instagram.com/kremua_studio" class="action-btn instagram-btn">Instagram</a>
   </div>
 </div>
 
-<!-- МОДАЛЬНОЕ ОКНО PDF -->
 <div id="pdfModal" class="pdf-modal">
   <div class="pdf-modal-content">
-    <p class="pdf-hint">
-  Це ваше технічне завдання. Збережіть його та відправте кондитеру разом із фото бажаного дизайну торта.
-</p>
+    <p class="pdf-hint">Це ваше технічне завдання. Збережіть його та відправте кондитеру.</p>
     <div class="pdf-preview" id="pdfPreview"></div>
-    <button class="download-btn" id="downloadBtn">
-      Завантажити PDF
-    </button>
-    <button class="close-modal-btn" id="closeModalBtn">
-      Закрити
-    </button>
+    <button class="download-btn" id="downloadBtn">Завантажити PNG</button>
+    <button class="close-modal-btn" id="closeModalBtn">Закрити</button>
   </div>
 </div>
 
- 
-
 <script>
-// ===== ДАННЫЕ =====
-const cakeTypes = [
-  "#безе", "#бісквіт", "#слоєне тісто", 
-  "#горіховий", "#шоколадний", "#сирний"
-];
+const cakeTypes = ["#безе", "#бісквіт", "#слоєне тісто", "#горіховий", "#шоколадний", "#сирний"];
+const allFillings = ["#фісташка", "#брауні", "#карамель", "#латте", "#пломбір", "#ром", "#пінаколада", "#сінабон", "#мускат", "#ірландський віскі", "#мультифрукт", "#лісові ягоди", "#банан", "#мохіто", "#матча", "#баблгам", "#снікерс", "#орео", "#тірамісу", "#ваніль", "#глінтвейн", "#мед", "#цитрус", "#тропік", "#абрикос", "#вишня", "#праліне"];
+const additives = ["#волоські горіхи", "#мигдаль", "#фундук", "#желе", "#рисові кульки", "#маршмелоу", "#шоколадні чіпси", "#кокосова стружка", "#сухофрукти", "#карамельний попкорн"];
+const formats = ["#спліт", "#бенто", "#максі", "#XXL"];
 
-const allFillings = [
-  "#фісташка", "#брауні", "#карамель", "#латте", 
-  "#пломбір", "#ром", "#пінаколада", "#сінабон",
-  "#мускат", "#ірландський віскі", "#мультифрукт",
-  "#лісові ягоди", "#банан", "#мохіто", "#матча",
-  "#баблгам", "#снікерс", "#орео", "#тірамісу",
-  "#ваніль", "#глінтвейн", "#мед", "#цитрус",
-  "#тропік", "#абрикос", "#вишня", "#праліне"
-];
-
-const additives = [
-  "#волоські горіхи", "#мигдаль", "#фундук",
-  "#желе", "#рисові кульки", "#маршмелоу",
-  "#шоколадні чіпси", "#кокосова стружка",
-  "#сухофрукти", "#карамельний попкорн"
-];
-
-const formats = [
-  "#спліт", "#бенто", "#максі", "#XXL"
-];
-
-// ===== СОЗДАНИЕ СЛАЙДЕРОВ =====
 function createSlider(containerId, items, className, multiSelect = false) {
   const container = document.getElementById(containerId);
   items.forEach(item => {
@@ -662,10 +466,8 @@ function createSlider(containerId, items, className, multiSelect = false) {
     tag.textContent = item;
     tag.onclick = function() {
       if (multiSelect) {
-        // Multi-select: просто переключаем выделение
         this.classList.toggle('selected');
       } else {
-        // Single-select: deselect или выбор одного
         if (this.classList.contains('selected')) {
           this.classList.remove('selected');
         } else {
@@ -676,206 +478,51 @@ function createSlider(containerId, items, className, multiSelect = false) {
     };
     container.appendChild(tag);
   });
-  
-  // 🎯 ДОБАВЛЯЕМ РАЗМЫТИЕ (кроме форматов)
   if (containerId !== 'formatsSlider') {
     updateSliderBlur(container);
     container.addEventListener('scroll', () => updateSliderBlur(container));
-    window.addEventListener('resize', () => updateSliderBlur(container));
   }
 }
 
-// 🎯 ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЫТИЯ
 function updateSliderBlur(container) {
   const scrollLeft = container.scrollLeft;
   const maxScroll = container.scrollWidth - container.clientWidth;
-  const threshold = 5;
-  
-  const atStart = scrollLeft <= threshold;
-  const atEnd = scrollLeft >= maxScroll - threshold;
-  
+  const atStart = scrollLeft <= 5;
+  const atEnd = scrollLeft >= maxScroll - 5;
   container.classList.remove('blur-left', 'blur-right', 'blur-both');
-  
-  if (atStart && !atEnd) {
-    container.classList.add('blur-right');
-  } else if (atEnd && !atStart) {
-    container.classList.add('blur-left');
-  } else if (!atStart && !atEnd) {
-    container.classList.add('blur-both');
-  }
+  if (atStart && !atEnd) container.classList.add('blur-right');
+  else if (atEnd && !atStart) container.classList.add('blur-left');
+  else if (!atStart && !atEnd) container.classList.add('blur-both');
 }
 
 createSlider('typeSlider', cakeTypes, 'type-tag');
-createSlider('fillingsSlider', allFillings, 'slider-tag', true); // true = multi-select
-createSlider('additivesSlider', additives, 'additive-tag', true); // true = multi-select
+createSlider('fillingsSlider', allFillings, 'slider-tag', true);
+createSlider('additivesSlider', additives, 'additive-tag', true);
 createSlider('formatsSlider', formats, 'format-tag');
 
-// ===== СБОР ДАННЫХ =====
 function getSelectedData() {
   const type = document.querySelector('#typeSlider .slider-tag.selected')?.textContent || 'не обрано';
-  
-  // Для начинок — собираем ВСЕ выбранные
   const fillingTags = document.querySelectorAll('#fillingsSlider .slider-tag.selected');
-  const filling = fillingTags.length > 0 
-    ? Array.from(fillingTags).map(tag => tag.textContent).join(', ') 
-    : 'не обрано';
-  
-  // Для добавок — собираем ВСЕ выбранные
+  const filling = fillingTags.length > 0 ? Array.from(fillingTags).map(tag => tag.textContent).join(', ') : 'не обрано';
   const additiveTags = document.querySelectorAll('#additivesSlider .slider-tag.selected');
-  const additive = additiveTags.length > 0 
-    ? Array.from(additiveTags).map(tag => tag.textContent).join(', ') 
-    : 'не обрано';
-  
+  const additive = additiveTags.length > 0 ? Array.from(additiveTags).map(tag => tag.textContent).join(', ') : 'не обрано';
   const format = document.querySelector('#formatsSlider .slider-tag.selected')?.textContent || 'не обрано';
-  const comment = document.getElementById('commentField').value || 'немає';
-  
-  return { type, filling, additive, format, comment };
-}
+  const comment = document.getElementById('commentField').value.trim() || 'немає';
 
-// ===== SVG ЧЕРТЁЖ =====
-function generateBlueprintSVG(data) {
-  return `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" style="background: #0a1628;">
-  <!-- Заголовок -->
-  <text x="300" y="40" font-family="Arial" font-size="24" font-weight="bold" fill="#6ab2f2" text-anchor="middle">
-    ТЕХНІЧНЕ ЗАВДАННЯ
-  </text>
-  <text x="300" y="65" font-family="Arial" font-size="14" fill="#6ab2f2" text-anchor="middle" opacity="0.7">
-    Кремуа | Конструктор тортів
-  </text>
-  
-  <!-- Рамка -->
-  <rect x="40" y="90" width="520" height="650" fill="none" stroke="#6ab2f2" stroke-width="2" stroke-dasharray="10,5"/>
-  
-  <!-- Сетка фона -->
-  <defs>
-    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#6ab2f2" stroke-width="0.5" opacity="0.1"/>
-    </pattern>
-  </defs>
-  <rect x="40" y="90" width="520" height="650" fill="url(#grid)"/>
-  
-  <!-- Данные -->
-  <text x="70" y="140" font-family="Arial" font-size="16" font-weight="bold" fill="#f27db0">
-    Тип торта:
-  </text>
-  <text id="blueprint-cake-type" x="200" y="140" font-family="Arial" font-size="16" fill="#ffffff">
-    ${data.type}
-  </text>
-  
-  <text x="70" y="190" font-family="Arial" font-size="16" font-weight="bold" fill="#6ab2f2">
-    Начинка:
-  </text>
-  <text id="blueprint-filling" x="200" y="190" font-family="Arial" font-size="16" fill="#ffffff">
-    ${data.filling}
-  </text>
-  
-  <text x="70" y="240" font-family="Arial" font-size="16" font-weight="bold" fill="#a3f26a">
-    Добавки:
-  </text>
-  <text id="blueprint-additives" x="200" y="240" font-family="Arial" font-size="16" fill="#ffffff">
-    ${data.additive}
-  </text>
-  
-  <text x="70" y="290" font-family="Arial" font-size="16" font-weight="bold" fill="#f7a632">
-    Формат:
-  </text>
-  <text id="blueprint-format" x="200" y="290" font-family="Arial" font-size="16" fill="#ffffff">
-    ${data.format}
-  </text>
-  
-  <!-- Комментарий -->
-  <text x="70" y="350" font-family="Arial" font-size="16" font-weight="bold" fill="#6ab2f2">
-    Коментар:
-  </text>
-  <foreignObject x="70" y="365" width="460" height="350">
-    <div xmlns="http://www.w3.org/1999/xhtml" style="font-family: Arial; font-size: 14px; color: #ffffff; line-height: 1.6; word-wrap: break-word;">
-      ${data.comment}
-    </div>
-  </foreignObject>
-  
-  <!-- Футер -->
-  <text x="300" y="760" font-family="Arial" font-size="12" fill="#6ab2f2" text-anchor="middle" opacity="0.6">
-    Відправте це ТЗ кондитеру разом із фото бажаного дизайну
-  </text>
-</svg>
-  `;
-}
-
-// ===== СОЗДАНИЕ PDF =====
-async function generatePDF(svgString) {
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF('p', 'mm', 'a4');
-  
-  // Создаём временный элемент для SVG
-  const tempDiv = document.createElement('div');
-  tempDiv.style.position = 'absolute';
-  tempDiv.style.left = '-9999px';
-  tempDiv.innerHTML = svgString;
-  document.body.appendChild(tempDiv);
-  
-  const svgElement = tempDiv.querySelector('svg');
-  
-  if (!svgElement) {
-    console.error('SVG элемент не найден');
-    document.body.removeChild(tempDiv);
-    return null;
+  let price = 0;
+  if (format !== 'не обрано' || type !== 'не обрано') {
+      const prices = { "#спліт": 450, "#бенто": 600, "#максі": 1200, "#XXL": 2500 };
+      price = prices[format] || 800;
   }
-  
-  try {
-    // Используем svg2pdf для корректной конвертации
-    await svg2pdf(svgElement, pdf, {
-      x: 5,
-      y: 5,
-      width: 200,
-      height: 267
-    });
-    
-    document.body.removeChild(tempDiv);
-    return pdf;
-  } catch (error) {
-    console.error('Ошибка создания PDF:', error);
-    document.body.removeChild(tempDiv);
-    
-    // Запасной вариант - создаём простой PDF с текстом
-    pdf.setFontSize(16);
-    pdf.text('ТЕХНІЧНЕ ЗАВДАННЯ', 105, 20, { align: 'center' });
-    pdf.setFontSize(12);
-    
-    const data = getSelectedData();
-    let y = 40;
-    pdf.text(`Тип торта: ${data.type}`, 20, y);
-    y += 10;
-    pdf.text(`Начинка: ${data.filling}`, 20, y);
-    y += 10;
-    pdf.text(`Добавки: ${data.additive}`, 20, y);
-    y += 10;
-    pdf.text(`Формат: ${data.format}`, 20, y);
-    y += 20;
-    pdf.text('Коментар:', 20, y);
-    y += 10;
-    
-    const commentLines = pdf.splitTextToSize(data.comment, 170);
-    pdf.text(commentLines, 20, y);
-    
-    return pdf;
-  }
+  return { type, filling, additive, format, comment, price };
 }
 
-// ===== ПОКАЗ МОДАЛКИ =====
-// ===== ОСНОВНАЯ ЛОГИКА =====
-// ===== ОСНОВНАЯ ЛОГИКА =====
-// ===== ОСНОВНАЯ ЛОГИКА =====
-// ===== ОСНОВНАЯ ЛОГИКА =====
-// ===== ОСНОВНАЯ ЛОГИКА =====
 document.getElementById('createBtn').onclick = async function() {
   const data = getSelectedData();
-  
   if (typeof html2canvas === 'undefined') {
-    alert('Бібліотека html2canvas не завантажена. Перезавантажте сторінку.');
+    alert('Помилка завантаження бібліотеки.');
     return;
   }
-  
   const loader = document.getElementById('loader');
   loader.querySelector('.loader-text').textContent = 'Створюємо креслення...';
   loader.classList.add('active');
@@ -883,10 +530,8 @@ document.getElementById('createBtn').onclick = async function() {
   const iframe = document.createElement('iframe');
   iframe.style.position = 'fixed';
   iframe.style.left = '-9999px';
-  iframe.style.top = '0';
-  iframe.style.width = '794px'; 
+  iframe.style.width = '794px';
   iframe.style.height = '1123px';
-  iframe.style.border = 'none';
   document.body.appendChild(iframe);
   
   const params = new URLSearchParams({
@@ -895,7 +540,7 @@ document.getElementById('createBtn').onclick = async function() {
     additive: data.additive,
     format: data.format,
     comment: data.comment,
-    price: "1200", // Сюди пізніше підставимо динамічну ціну
+    price: data.price,
     preview: 'true'
   });
   
@@ -906,76 +551,45 @@ document.getElementById('createBtn').onclick = async function() {
       try {
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
         const blueprintContainer = iframeDoc.getElementById('blueprint-container');
-        
-        if (!blueprintContainer) {
-          throw new Error('Контейнер креслення не знайдено в iframe');
-        }
-
         const canvas = await html2canvas(blueprintContainer, {
           backgroundColor: '#ffffff',
-          scale: 2, 
-          logging: false,
+          scale: 2,
           useCORS: true,
-          allowTaint: false,
-          scrollX: 0,
-          scrollY: 0,
           windowWidth: 794,
           windowHeight: 1123
         });
-        
         const imageUrl = canvas.toDataURL('image/png');
         document.body.removeChild(iframe);
         loader.classList.remove('active');
         showPDFModal(imageUrl, canvas);
-        
       } catch (error) {
-        console.error('Помилка рендеру:', error);
-        if (iframe.parentNode) document.body.removeChild(iframe);
+        console.error(error);
+        document.body.removeChild(iframe);
         loader.classList.remove('active');
-        alert('Помилка створення креслення. Перевірте консоль.');
       }
-    }, 2000); 
-  };
-
-  iframe.onerror = function() {
-    document.body.removeChild(iframe);
-    loader.classList.remove('active');
-    alert('Помилка завантаження blueprint.html');
+    }, 2000);
   };
 };
 
-// ===== ПОКАЗ МОДАЛКИ =====
 function showPDFModal(imageUrl, canvas) {
   const modal = document.getElementById('pdfModal');
   const preview = document.getElementById('pdfPreview');
-  
-  preview.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto; display: block; border-radius: 8px;">`;
+  preview.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: auto; display: block;">`;
   modal.classList.add('active');
-  
   document.getElementById('downloadBtn').onclick = function() {
     canvas.toBlob(blob => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `kremua-order-${Math.floor(Date.now()/1000)}.png`;
+      link.download = `kremua-order.png`;
       link.click();
-      URL.revokeObjectURL(url);
     });
   };
-  
-  document.getElementById('closeModalBtn').onclick = function() {
-    modal.classList.remove('active');
-  };
-  
-  modal.onclick = function(e) {
-    if (e.target === modal) modal.classList.remove('active');
-  };
+  document.getElementById('closeModalBtn').onclick = () => modal.classList.remove('active');
 }
-// ===== СКРЫТИЕ ЛОАДЕРА ПРИ ЗАГРУЗКЕ =====
+
 window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('loader').classList.remove('active');
-  }, 1500); // 1.5 секунды
+  setTimeout(() => document.getElementById('loader').classList.remove('active'), 1500);
 });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
