@@ -1,314 +1,91 @@
 <!DOCTYPE html>
 <html lang="uk">
-<head> 
+<head>
 <meta charset="UTF-8">
 <title>Конструктор тортів | Кремуа</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <link rel="icon" href="https://github.com/cakeboxdeveloper/kremua/raw/refs/heads/main/AIcon.ico" type="image/x-icon">
 
 <style>
-body { 
-  margin: 0;
-  font-family: Arial, sans-serif; 
-  background: #17212b;
-  color: white;
-  overflow-x: hidden;
-  touch-action: pan-y pinch-zoom;
-  -webkit-overflow-scrolling: touch;
-}
-
-#formatsSlider {
-  display: flex;
-  justify-content: space-between;
-  overflow: hidden;
-  gap: 4px;
-}
-
-#formatsSlider .format-tag {
-  flex: 1;
-  text-align: center;
-  padding: 10px 4px;
-  font-size: 13px;
-  min-width: 0;
-}
-  
-html {
-  overflow-x: hidden;
-  width: 100%;
-  position: relative;
-}
-
-* {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-input, textarea {
-  -webkit-user-select: text;
-  user-select: text;
-}
-
-.app {
-  max-width: 390px;
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 16px;
-}
-
-.header {
-  text-align: center;
-  margin-top: -40px;
-  margin-bottom: -40px;
-}
-
-.header video {
-  width: 512px;
-  max-width: 100%;
-  display: block;
-  margin: 0 auto;
-  mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%),
-              linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%),
-                      linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-}
-
-.service-info {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-  margin-top: 12px;
-  padding: 0 16px;
-}
-
-.service-name {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 22px;
-  font-weight: 700;
-  color: #6ab2f2;
-  z-index: 1000;
-  position: relative;
-}
-
-.service-icon {
-  width: 19px;
-  height: 19px;
-  filter: brightness(0) saturate(100%) invert(64%) sepia(66%) saturate(1044%) hue-rotate(178deg) brightness(101%) contrast(93%);
-}
-
-.service-users {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #ffffff;
-  margin-bottom: 10px;
-}
-
-.users-count {
-  font-weight: 700;
-}
-
-.faq-block {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.faq-content1 {
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 15px;
-  line-height: 1.4;
-  color: #ffffff;
-}
-
-.slider-section {
-  margin-bottom: 16px;
-}
-
-.slider-label {
-  font-size: 15px;
-  font-weight: 400;
-  color: #6ab2f2;
-  margin-bottom: 8px;
-  display: block;
-  text-align: center;
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  border-radius: 4px;
-  padding: 8px;
-}
-
-.slider-container {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  padding: 4px 0;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  transition: mask-image 0.3s ease;
-}
-
+/* --- СТИЛІ ЗАЛИШАЮТЬСЯ БЕЗ ЗМІН (ЯК У ВАС) --- */
+body { margin: 0; font-family: Arial, sans-serif; background: #17212b; color: white; overflow-x: hidden; touch-action: pan-y pinch-zoom; -webkit-overflow-scrolling: touch; }
+#formatsSlider { display: flex; justify-content: space-between; overflow: hidden; gap: 4px; }
+#formatsSlider .format-tag { flex: 1; text-align: center; padding: 10px 4px; font-size: 13px; min-width: 0; }
+html { overflow-x: hidden; width: 100%; position: relative; }
+* { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+input, textarea { -webkit-user-select: text; user-select: text; }
+.app { max-width: 390px; min-height: 100vh; margin: 0 auto; padding: 16px; }
+.header { text-align: center; margin-top: -40px; margin-bottom: -40px; }
+.header video { width: 512px; max-width: 100%; display: block; margin: 0 auto; mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%); }
+.service-info { display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 12px; padding: 0 16px; }
+.service-name { display: flex; align-items: center; gap: 4px; font-size: 22px; font-weight: 700; color: #6ab2f2; z-index: 1000; position: relative; }
+.service-icon { width: 19px; height: 19px; filter: brightness(0) saturate(100%) invert(64%) sepia(66%) saturate(1044%) hue-rotate(178deg) brightness(101%) contrast(93%); }
+.service-users { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #ffffff; margin-bottom: 10px; }
+.users-count { font-weight: 700; }
+.faq-block { text-align: center; margin-bottom: 20px; }
+.faq-content1 { background: #1d2b3a; border: 1px solid #6ab2f2; border-radius: 4px; padding: 8px; font-size: 15px; line-height: 1.4; color: #ffffff; }
+.slider-section { margin-bottom: 16px; }
+.slider-label { font-size: 15px; font-weight: 400; color: #6ab2f2; margin-bottom: 8px; display: block; text-align: center; background: #1d2b3a; border: 1px solid #6ab2f2; border-radius: 4px; padding: 8px; }
+.slider-container { display: flex; gap: 8px; overflow-x: auto; overflow-y: hidden; padding: 4px 0; scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; transition: mask-image 0.3s ease; }
 .slider-container::-webkit-scrollbar { display: none; }
-
-.slider-container.blur-left {
-  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
-}
-
-.slider-container.blur-right {
-  mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
-}
-
-.slider-container.blur-both {
-  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
-}
-
-.slider-tag {
-  display: inline-block;
-  padding: 10px 18px;
-  color: #6ab2f2;
-  background: #1d2b3a;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
-  flex-shrink: 0;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: all 0.2s ease;
-}
-
-.slider-tag.selected {
-  background: #6ab2f2 !important;
-  color: #17212b !important;
-}
-
+.slider-container.blur-left { mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%); }
+.slider-container.blur-right { mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%); }
+.slider-container.blur-both { mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%); -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%); }
+.slider-tag { display: inline-block; padding: 10px 18px; color: #6ab2f2; background: #1d2b3a; border-radius: 4px; font-size: 14px; font-weight: 600; white-space: nowrap; flex-shrink: 0; cursor: pointer; border: 2px solid transparent; transition: all 0.2s ease; }
+.slider-tag.selected { background: #6ab2f2 !important; color: #17212b !important; }
 .type-tag { color: #f27db0; background: #3a1d2b; }
 .type-tag.selected { background: #f27db0 !important; }
 .additive-tag { color: #a3f26a; background: #1d3a22; }
 .additive-tag.selected { background: #a3f26a !important; color: #17212b !important; }
 .format-tag { color: #f7a632; background: #443621; }
 .format-tag.selected { background: #f7a632 !important; color: #17212b !important; }
-
 .comment-section { margin-bottom: 16px; }
-.comment-textarea {
-  width: 100%;
-  min-height: 100px;
-  padding: 12px;
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  border-radius: 4px;
-  color: #6ab2f2;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  resize: vertical;
-  box-sizing: border-box;
-  outline: none;
-}
+.comment-textarea { width: 100%; min-height: 100px; padding: 12px; background: #1d2b3a; border: 1px solid #6ab2f2; border-radius: 4px; color: #6ab2f2; font-size: 14px; font-family: Arial, sans-serif; resize: vertical; box-sizing: border-box; outline: none; }
 .comment-textarea::placeholder { color: #6ab2f2; opacity: 0.5; }
-
-.create-btn {
-  width: 100%; padding: 14px 0; margin-bottom: 10px;
-  text-align: center; font-size: 16px; font-weight: 700;
-  color: #6af27d; background: #1d3a22;
-  border: 1px solid #6af27d; border-radius: 6px;
-  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-}
-
-.back-btn-full {
-  width: 100%; display: flex; align-items: center; justify-content: center;
-  font-size: 16px; font-weight: 700; color: #6ab2f2;
-  background: #1d2b3a; border: 1px solid #6ab2f2;
-  border-radius: 6px; padding: 12px; cursor: pointer;
-  text-decoration: none; margin-bottom: 10px; box-sizing: border-box;
-}
-
-.loader {
-  position: fixed; inset: 0; background: #17212b;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
-}
+.create-btn { width: 100%; padding: 14px 0; margin-bottom: 10px; text-align: center; font-size: 16px; font-weight: 700; color: #6af27d; background: #1d3a22; border: 1px solid #6af27d; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.back-btn-full { width: 100%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #6ab2f2; background: #1d2b3a; border: 1px solid #6ab2f2; border-radius: 6px; padding: 12px; cursor: pointer; text-decoration: none; margin-bottom: 10px; box-sizing: border-box; }
+.loader { position: fixed; inset: 0; background: #17212b; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
 .loader.active { opacity: 1; pointer-events: all; }
 .loader img { width: 150px; height: 150px; }
 .loader-text { margin-top: 16px; font-size: 16px; color: #6ab2f2; font-weight: 600; display: none; }
-
-.pdf-modal {
-  position: fixed; inset: 0; z-index: 9998;
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: all 0.4s ease;
-  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
-}
+.pdf-modal { position: fixed; inset: 0; z-index: 9998; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: all 0.4s ease; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); }
 .pdf-modal.active { opacity: 1; pointer-events: all; }
-.pdf-modal-content {
-  background: #1d2b3a; border: 2px solid #6ab2f2;
-  border-radius: 12px; padding: 20px; max-width: 90%;
-  width: 350px; text-align: center; transform: scale(0.8); transition: 0.4s;
-}
+.pdf-modal-content { background: #1d2b3a; border: 2px solid #6ab2f2; border-radius: 12px; padding: 20px; max-width: 90%; width: 350px; text-align: center; transform: scale(0.8); transition: 0.4s; }
 .pdf-modal.active .pdf-modal-content { transform: scale(1); }
 
-/* ПРЕВ'Ю: ВИТРИМАНИЙ ФОРМАТ ТА BLUEPRINT */
-/* ПРЕВ'Ю: BLUEPRINT СТИЛЬ */
-/* ПРЕВ'Ю: ВИТРИМАНИЙ ФОРМАТ ТА BLUEPRINT ЕФЕКТ */
+/* ПРЕВ'Ю: BLUEPRINT СТИЛЬ ТА ШИММЕР */
 .pdf-preview {
   width: 100%;
-  aspect-ratio: 1 / 1.414; /* Формат А4 */
-  background-color: #003366; /* Глибокий синій колір (Blueprint background) */
+  aspect-ratio: 1 / 1.414;
+  background-color: #003366; 
   border-radius: 8px;
   margin-bottom: 16px;
   overflow: hidden;
   position: relative;
-   border: 1px solid #6ab2f255;
+  border: 1px solid #6ab2f255;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .pdf-preview img {
-  /* ВИПРАВЛЕННЯ МАСШТАБУ: розтягуємо на весь контейнер без зазоров */
-  width: 100.2%; 
+  width: 100.2%;
   height: 100.2%;
- 
-  object-fit: cover; 
+  object-fit: cover;
   display: block;
-
-  /* ЕФЕКТ БІЛОГО ТЕКСТУ НА СИНЬОМУ */
-  /* 1. Інвертуємо: стає білий текст на чорному фоні */
-  /* 2. mix-blend-mode: screen робить чорний фон прозорим, проявляючи синій фон контейнера */
   filter: invert(1) brightness(1.1) contrast(1.2);
-  mix-blend-mode: screen; 
+  mix-blend-mode: screen;
 }
-
-/* ШИММЕР: ПЛАВНА ДІАГОНАЛЬНА ЛІНІЯ */
-/* ОНОВЛЕНИЙ ШИММЕР: ДОВГИЙ ТА ПЛАВНИЙ */
 .pdf-preview::after {
   content: "";
   position: absolute;
-  top: -50%; /* Виходимо за межі, щоб не обрізався */
+  top: -50%;
   left: -150%;
-  width: 200%; /* Робимо ширшим за контейнер */
+  width: 200%;
   height: 200%;
-  background: linear-gradient(
-    110deg, /* Змінили кут для кращої діагоналі */
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 255, 255, 0.12) 50%,
-    rgba(255, 255, 255, 0) 60%
-  );
-  animation: shimmer-swipe 4s infinite linear; /* linear для стабільної швидкості */
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0) 60%);
+  animation: shimmer-swipe 4s infinite linear;
   pointer-events: none;
-  transform: rotate(0deg);
 }
-
 @keyframes shimmer-swipe {
   0% { transform: translateX(-50%) opacity(0); left: -150%; }
   10% { opacity: 0; }
@@ -317,14 +94,8 @@ input, textarea {
   100% { transform: translateX(50%) opacity(0); left: 150%; }
 }
 
- 
-
 .bottom-actions { display: flex; gap: 8px; margin-top: 12px; }
-.action-btn {
-  flex: 1; padding: 14px 0; font-size: 15px; font-weight: 600;
-  text-decoration: none; border-radius: 6px;
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-}
+.action-btn { flex: 1; padding: 14px 0; font-size: 15px; font-weight: 600; text-decoration: none; border-radius: 6px; display: flex; align-items: center; justify-content: center; gap: 6px; }
 .telegram-btn { background: #1d2b3a; border: 1px solid #6ab2f2; color: #6ab2f2; }
 .instagram-btn { background: #3a1d2b; border: 1px solid #f27db0; color: #f27db0; }
 </style>
@@ -344,46 +115,18 @@ input, textarea {
   </div>
 
   <div class="service-info">
-    <div class="service-name">
-      <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/73b661456b59a8bc190ef95c25d08af249023969/5258506.svg" alt="" class="service-icon">
-      <span>Кремуа́</span>
-    </div>
-    <div class="service-users">
-      <span class="users-count">1247</span>
-      <span>користувачів</span>
-    </div>
+    <div class="service-name"><img src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/73b661456b59a8bc190ef95c25d08af249023969/5258506.svg" alt="" class="service-icon"><span>Кремуа́</span></div>
+    <div class="service-users"><span class="users-count">1247</span><span>користувачів</span></div>
   </div>
 
-  <div class="faq-block">
-    <div class="faq-content1">
-      Створіть власний торт за допомогою конструктора. Оберіть тип, начинку, добавки та формат — ми підготуємо технічне завдання для кондитера.
-    </div>
-  </div>
+  <div class="faq-block"><div class="faq-content1">Створіть власний торт за допомогою конструктора. Ми підготуємо технічне креслення з розрахунком ціни.</div></div>
 
-  <div class="slider-section">
-    <div class="slider-label">Тип торта</div>
-    <div class="slider-container" id="typeSlider"></div>
-  </div>
+  <div class="slider-section"><div class="slider-label">Тип торта</div><div class="slider-container" id="typeSlider"></div></div>
+  <div class="slider-section"><div class="slider-label">Начинка</div><div class="slider-container" id="fillingsSlider"></div></div>
+  <div class="slider-section"><div class="slider-label">Добавки</div><div class="slider-container" id="additivesSlider"></div></div>
+  <div class="slider-section"><div class="slider-label">Формат</div><div class="slider-container" id="formatsSlider"></div></div>
 
-  <div class="slider-section">
-    <div class="slider-label">Начинка</div>
-    <div class="slider-container" id="fillingsSlider"></div>
-  </div>
-
-  <div class="slider-section">
-    <div class="slider-label">Добавки</div>
-    <div class="slider-container" id="additivesSlider"></div>
-  </div>
-
-  <div class="slider-section">
-    <div class="slider-label">Формат</div>
-    <div class="slider-container" id="formatsSlider"></div>
-  </div>
-
-  <div class="comment-section">
-    <div class="slider-label">Додатковий коментар</div>
-    <textarea id="commentField" class="comment-textarea" placeholder="Впишіть сюди що завгодно..."></textarea>
-  </div>
+  <div class="comment-section"><div class="slider-label">Додатковий коментар</div><textarea id="commentField" class="comment-textarea" placeholder="Впишіть сюди що завгодно..."></textarea></div>
 
   <button class="create-btn" id="createBtn">
     <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/drafting-compass.svg" style="width: 20px; height: 20px; filter: invert(81%) sepia(38%) saturate(464%) hue-rotate(72deg) brightness(98%) contrast(96%);">
@@ -403,7 +146,7 @@ input, textarea {
 
 <div id="pdfModal" class="pdf-modal">
   <div class="pdf-modal-content">
-    <p style="font-size: 13px; color: #6ab2f2; margin-bottom: 12px;">Це ваше ТЗ. Збережіть та відправте кондитеру.</p>
+    <p style="font-size: 13px; color: #6ab2f2; margin-bottom: 12px;">Ваше технічне завдання готове.</p>
     <div class="pdf-preview" id="pdfPreview"></div>
     <button class="create-btn" id="downloadBtn" style="color: #6af27d; border-color: #6af27d; margin-bottom: 8px;">Завантажити PNG</button>
     <button class="back-btn-full" id="closeModalBtn" style="padding: 10px;">Закрити</button>
@@ -413,14 +156,15 @@ input, textarea {
 <audio id="successSound" src="https://github.com/CakeBoxDeveloper/kremua/raw/main/HeavenGate.mp3"></audio>
 
 <script>
-const cakeTypes = ["#безе", "#бісквіт", "#слоєне тісто", "#горіховий", "#шоколадний", "#сирний"];
-const allFillings = ["#фісташка", "#брауні", "#карамель", "#латте", "#пломбір", "#ром", "#пінаколада", "#сінабон", "#мускат", "#банан", "#мохіто", "#матча", "#снікерс", "#орео", "#тірамісу", "#ваніль", "#вишня"];
-const additives = ["#горіхи", "#мигдаль", "#желе", "#рисові кульки", "#маршмелоу", "#шоколад", "#кокос", "#попкорн"];
-const formats = ["#спліт", "#бенто", "#максі", "#XXL"];
+// --- МАСИВИ ТА ЦІНИ ---
+const cakeTypes = { "#безе": 100, "#бісквіт": 150, "#слоєне тісто": 120, "#горіховий": 180, "#шоколадний": 160, "#сирний": 140 };
+const allFillings = { "#фісташка": 80, "#брауні": 60, "#карамель": 40, "#латте": 50, "#пломбір": 40, "#ром": 70, "#пінаколада": 70, "#сінабон": 60, "#мускат": 50, "#банан": 30, "#мохіто": 50, "#матча": 80, "#снікерс": 70, "#орео": 60, "#тірамісу": 70, "#ваніль": 30, "#вишня": 40 };
+const additives = { "#горіхи": 40, "#мигдаль": 50, "#желе": 30, "#рисові кульки": 20, "#маршмелоу": 25, "#шоколад": 45, "#кокос": 20, "#попкорн": 25 };
+const formats = { "#спліт": 450, "#бенто": 600, "#максі": 1200, "#XXL": 2500 };
 
-function createSlider(containerId, items, className, multiSelect = false) {
+function createSlider(containerId, dataObj, className, multiSelect = false) {
   const container = document.getElementById(containerId);
-  items.forEach(item => {
+  Object.keys(dataObj).forEach(item => {
     const tag = document.createElement('span');
     tag.className = `slider-tag ${className}`;
     tag.textContent = item;
@@ -449,22 +193,35 @@ function updateSliderBlur(container) {
   else if (maxScroll > 5) container.classList.add('blur-both');
 }
 
+// Ініціалізація слайдерів
 createSlider('typeSlider', cakeTypes, 'type-tag');
 createSlider('fillingsSlider', allFillings, 'slider-tag', true);
 createSlider('additivesSlider', additives, 'additive-tag', true);
 createSlider('formatsSlider', formats, 'format-tag');
 
 function getSelectedData() {
-  const type = document.querySelector('#typeSlider .selected')?.textContent || 'не обрано';
-  const filling = Array.from(document.querySelectorAll('#fillingsSlider .selected')).map(t => t.textContent).join(', ') || 'не обрано';
-  const additive = Array.from(document.querySelectorAll('#additivesSlider .selected')).map(t => t.textContent).join(', ') || 'не обрано';
-  const format = document.querySelector('#formatsSlider .selected')?.textContent || 'не обрано';
+  const typeTag = document.querySelector('#typeSlider .selected');
+  const type = typeTag ? typeTag.textContent : 'не обрано';
+  const typePrice = typeTag ? cakeTypes[type] : 0;
+
+  const selectedFillings = Array.from(document.querySelectorAll('#fillingsSlider .selected')).map(t => t.textContent);
+  const filling = selectedFillings.join(', ') || 'не обрано';
+  const fillingPrice = selectedFillings.reduce((sum, item) => sum + allFillings[item], 0);
+
+  const selectedAdditives = Array.from(document.querySelectorAll('#additivesSlider .selected')).map(t => t.textContent);
+  const additive = selectedAdditives.join(', ') || 'не обрано';
+  const additivePrice = selectedAdditives.reduce((sum, item) => sum + additives[item], 0);
+
+  const formatTag = document.querySelector('#formatsSlider .selected');
+  const format = formatTag ? formatTag.textContent : 'не обрано';
+  const basePrice = formatTag ? formats[format] : 0;
+
   const comment = document.getElementById('commentField').value.trim() || 'немає';
   
-  const prices = { "#спліт": 450, "#бенто": 600, "#максі": 1200, "#XXL": 2500 };
-  const price = (type === 'не обрано' && format === 'не обрано') ? 0 : (prices[format] || 800);
+  // Розрахунок підсумкової ціни: Базова ціна формату + складники
+  const totalPrice = basePrice + typePrice + fillingPrice + additivePrice;
   
-  return { type, filling, additive, format, comment, price };
+  return { type, filling, additive, format, comment, price: totalPrice };
 }
 
 document.getElementById('createBtn').onclick = async function() {
@@ -481,6 +238,7 @@ document.getElementById('createBtn').onclick = async function() {
   iframe.style.width = '794px'; iframe.style.height = '1123px';
   document.body.appendChild(iframe);
 
+  // Передаємо всі дані, включаючи ціну
   const params = new URLSearchParams({...data, preview: 'true'});
   iframe.src = `blueprint.html?${params.toString()}`;
 
@@ -508,18 +266,18 @@ document.getElementById('createBtn').onclick = async function() {
         document.getElementById('pdfModal').classList.add('active');
         
         sound.currentTime = 0;
-        sound.play().catch(e => console.log("Interaction required for audio"));
+        sound.play().catch(e => console.log("Sound play error"));
         
         document.getElementById('downloadBtn').onclick = () => {
           const link = document.createElement('a');
           link.href = imageUrl;
-          link.download = `kremua-order-${data.format.replace('#','')}.png`;
+          link.download = `kremua-blueprint-${data.format.replace('#','')}.png`;
           link.click();
         };
       } catch (e) {
         loader.classList.remove('active');
         loaderText.style.display = 'none';
-        alert('Помилка створення.');
+        alert('Помилка створення креслення.');
       }
     }, 2500);
   };
