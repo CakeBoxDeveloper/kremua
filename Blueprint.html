@@ -169,6 +169,8 @@ body {
 <script>
 // Получаем данные из URL
 const urlParams = new URLSearchParams(window.location.search);
+const isPreview = urlParams.get('preview') === 'true';
+
 const data = {
   type: urlParams.get('type') || 'не обрано',
   filling: urlParams.get('filling') || 'не обрано',
@@ -184,32 +186,34 @@ document.getElementById('additives').textContent = decodeURIComponent(data.addit
 document.getElementById('format').textContent = decodeURIComponent(data.format);
 document.getElementById('comment').textContent = decodeURIComponent(data.comment);
 
-// Автоматически создаём PNG после загрузки
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    const container = document.getElementById('blueprint-container');
-    
-    html2canvas(container, {
-      backgroundColor: '#0a1628',
-      scale: 2, // для лучшего качества
-      logging: false
-    }).then(canvas => {
-      // Создаём ссылку для скачивания
-      canvas.toBlob(blob => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'kremua-cake-blueprint.png';
-        link.click();
-        
-        // Возвращаемся на страницу конструктора
-        setTimeout(() => {
-          window.location.href = 'constructor.html';
-        }, 500);
+// Если НЕ preview-режим — автоматически скачиваем PNG
+if (!isPreview) {
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const container = document.getElementById('blueprint-container');
+      
+      html2canvas(container, {
+        backgroundColor: '#0a1628',
+        scale: 2,
+        logging: false
+      }).then(canvas => {
+        canvas.toBlob(blob => {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'kremua-cake-blueprint.png';
+          link.click();
+          URL.revokeObjectURL(url);
+          
+          // Возвращаемся на страницу конструктора
+          setTimeout(() => {
+            window.location.href = 'constructor.html';
+          }, 500);
+        });
       });
-    });
-  }, 500);
-});
+    }, 500);
+  });
+}
 </script>
 
 </body>
