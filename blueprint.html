@@ -54,14 +54,13 @@
     flex-direction: column;
   }
 
-  /* Заголовки блоков по центру и тоньше */
   .box-title {
     text-transform: uppercase;
     font-size: 14px;
-    font-weight: normal; /* Сделал тоньше */
+    font-weight: normal;
     margin-bottom: 8px;
     white-space: nowrap;
-    text-align: center; /* Выравнивание по центру */
+    text-align: center;
   }
 
   .info-box {
@@ -93,7 +92,6 @@
     margin-bottom: 2px;
   }
 
-  /* Футер: текст по всей ширине и тонкий шрифт */
   .footer-box {
     width: 100%; 
     height: 150px;
@@ -109,11 +107,18 @@
   .footer-text {
     font-size: 14px;
     text-transform: uppercase;
-    font-weight: normal; /* Сделал тоньше */
+    font-weight: normal;
     line-height: 1.6;
-    text-align: justify; /* Растягивание по ширине */
-    text-align-last: center; /* Центрирование последней строки */
+    text-align: justify;
+    text-align-last: center;
     width: 100%;
+  }
+
+  /* Стиль для пустого комментария */
+  .empty-comment {
+    font-style: italic;
+    color: #666;
+    font-size: 13px;
   }
 
 </style>
@@ -145,7 +150,7 @@
       <div class="box-container">
         <div class="box-title">КОМЕНТАР ДО ЗАМОВЛЕННЯ</div>
         <div class="info-box">
-          <div id="comment" style="font-size: 14px;">немає</div>
+          <div id="comment">...</div>
         </div>
       </div>
 
@@ -174,19 +179,21 @@ const isPreview = urlParams.get('preview') === 'true';
 const orderId = urlParams.get('id') || Math.floor(Math.random() * 9000) + 1000;
 document.getElementById('order-id').textContent = orderId;
 
-const data = {
-  type: urlParams.get('type') || 'не обрано',
-  filling: urlParams.get('filling') || 'не обрано',
-  additive: urlParams.get('additive') || 'не обрано',
-  format: urlParams.get('format') || 'не обрано',
-  comment: urlParams.get('comment') || 'немає'
-};
+// Обработка данных
+const rawComment = urlParams.get('comment');
+let finalComment = rawComment ? decodeURIComponent(rawComment).trim() : '';
 
-document.getElementById('cake-type').textContent = decodeURIComponent(data.type);
-document.getElementById('filling').textContent = decodeURIComponent(data.filling);
-document.getElementById('additives').textContent = decodeURIComponent(data.additive);
-document.getElementById('format').textContent = decodeURIComponent(data.format);
-document.getElementById('comment').textContent = decodeURIComponent(data.comment);
+// Проверка на пустоту или стандартное "немає"
+if (!finalComment || finalComment.toLowerCase() === 'немає') {
+  finalComment = 'Я залишив це поле порожнім, оскільки конструктор допоміг мені повністю визначитися. Я довіряю вашому професіоналізму та з нетерпінням чекаю на цей шедевр!';
+  document.getElementById('comment').classList.add('empty-comment');
+}
+
+document.getElementById('cake-type').textContent = decodeURIComponent(urlParams.get('type') || 'не обрано');
+document.getElementById('filling').textContent = decodeURIComponent(urlParams.get('filling') || 'не обрано');
+document.getElementById('additives').textContent = decodeURIComponent(urlParams.get('additive') || 'не обрано');
+document.getElementById('format').textContent = decodeURIComponent(urlParams.get('format') || 'не обрано');
+document.getElementById('comment').textContent = finalComment;
 
 if (!isPreview) {
   window.addEventListener('load', () => {
