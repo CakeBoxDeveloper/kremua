@@ -185,9 +185,8 @@
 
     <div class="info-banner price-box">
       <div class="banner-text">
-        ВАШЕ ЗАМОВЛЕННЯ ОБІЙДЕТЬСЯ ПРИБЛИЗНО В <div id="totalPriceDisplay">
-    Ціна: <span id="blueprintPrice">0</span> ГРИВЕНЬ
-</div>         ДЛЯ УТОЧНЕННЯ ФІНАЛЬНОЇ ВАРТОСТІ З УРАХУВАННЯМ ВСІХ ДЕТАЛЕЙ ТА ВАШОЇ ПЕРСОНАЛЬНОЇ ЗНИЖКИ — 
+        ВАШЕ ЗАМОВЛЕННЯ ОБІЙДЕТЬСЯ ПРИБЛИЗНО В <span id="total-price">0</span> ГРН. 
+        ДЛЯ УТОЧНЕННЯ ФІНАЛЬНОЇ ВАРТОСТІ З УРАХУВАННЯМ ВСІХ ДЕТАЛЕЙ ТА ВАШОЇ ПЕРСОНАЛЬНОЇ ЗНИЖКИ — 
         НАДІШЛІТЬ ЦЕЙ ФАЙЛ МАЙСТРУ-КОНДИТЕРУ.
       </div>
     </div>
@@ -200,10 +199,6 @@ const urlParams = new URLSearchParams(window.location.search);
 
 const orderId = urlParams.get('id') || Math.floor(Math.random() * 9000) + 1000;
 document.getElementById('order-id').textContent = orderId;
-
-  // Додай це всередину своєї функції, яка розбирає параметри (window.onload або подібна)
-const urlParams = new URLSearchParams(window.location.search);
-document.getElementById('blueprintPrice').textContent = urlParams.get('price') || '0';
 
 // Функція очищення тексту від #
 const clean = (str) => decodeURIComponent(str || 'не обрано').replace(/#/g, '');
@@ -218,7 +213,7 @@ const rawComment = urlParams.get('comment');
 document.getElementById('total-price').textContent = priceValue;
 
 // НОВИЙ ПОРЯДОК ТЕКСТУ
-const detailsText = `Мені потрібен торт на основi ${type} формату ${format} з начинкою ${filling}. Додайте в торт ${additive}.`;
+const detailsText = `Мені потрібен ${type} торт формату ${format} з начинкою(начинками) ${filling}. Додайте в торт ${additive}.`;
 document.getElementById('order-details-text').textContent = detailsText;
 
 let finalComment = rawComment ? decodeURIComponent(rawComment).trim() : '';
