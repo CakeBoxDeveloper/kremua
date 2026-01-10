@@ -54,12 +54,14 @@
     flex-direction: column;
   }
 
+  /* Заголовки блоков по центру и тоньше */
   .box-title {
     text-transform: uppercase;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: normal; /* Сделал тоньше */
     margin-bottom: 8px;
     white-space: nowrap;
+    text-align: center; /* Выравнивание по центру */
   }
 
   .info-box {
@@ -91,7 +93,7 @@
     margin-bottom: 2px;
   }
 
-  /* Исправленный футер: без звезды, текст на весь блок */
+  /* Футер: текст по всей ширине и тонкий шрифт */
   .footer-box {
     width: 100%; 
     height: 150px;
@@ -102,14 +104,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
   }
 
   .footer-text {
     font-size: 14px;
     text-transform: uppercase;
-    font-weight: bold;
+    font-weight: normal; /* Сделал тоньше */
     line-height: 1.6;
+    text-align: justify; /* Растягивание по ширине */
+    text-align-last: center; /* Центрирование последней строки */
+    width: 100%;
   }
 
 </style>
@@ -153,7 +157,7 @@
     <div class="footer-box">
       <div class="footer-text">
         ВАШЕ ТЗ СФОРМОВАНЕ. НАДІШЛІТЬ ЦЕЙ ДОКУМЕНТ КОНДИТЕРУ В ПЕРШОМУ ПОВІДОМЛЕННІ. 
-        ЦЕ ДОПОМОЖЕ ШВИДШЕ РОЗПОЧАТИ РОБОТУ І ВИ ШВИДШЕ ОТРИМАЄТЕ СВОЄ ЗАМОВЛЕННЯ!
+        ЦЕ ДОПОМОЖЕ ШВИДШЕ РОЗПОЧАТИ РОБОТУ І ВИ ШВИДШЕ ОТРИМАЄТЕ СВОЄ ЗАМОВЛЕННЯ! 
         А ЩЕ ВИ ДОДАТКОВО ОТРИМАЄТЕ ПЕРСОНАЛЬНУ ЗНИЖКУ НА ЦЕ ЗАМОВЛЕННЯ В 5%!
       </div>
     </div>
