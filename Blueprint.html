@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<title>Креслення торта | Кремуа</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  padding: 20px;
+  background: #0a1628;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#blueprint-container {
+  width: 600px;
+  height: 800px;
+  background: #0a1628;
+  position: relative;
+  box-shadow: 0 0 50px rgba(106, 178, 242, 0.3);
+}
+
+/* Сетка фона */
+.grid-pattern {
+  position: absolute;
+  inset: 40px 40px 90px 40px;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(106, 178, 242, 0.1) 19px, rgba(106, 178, 242, 0.1) 20px),
+    repeating-linear-gradient(90deg, transparent, transparent 19px, rgba(106, 178, 242, 0.1) 19px, rgba(106, 178, 242, 0.1) 20px);
+}
+
+/* Рамка */
+.border-frame {
+  position: absolute;
+  inset: 40px 40px 90px 40px;
+  border: 2px dashed #6ab2f2;
+  pointer-events: none;
+}
+
+/* Контент */
+.content {
+  position: relative;
+  z-index: 10;
+  padding: 50px 70px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #6ab2f2;
+  margin: 0 0 8px 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #6ab2f2;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.data-row {
+  margin-bottom: 20px;
+}
+
+.data-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.data-value {
+  font-size: 16px;
+  color: #ffffff;
+  line-height: 1.6;
+}
+
+.comment-section {
+  margin-top: 40px;
+}
+
+.comment-label {
+  font-size: 16px;
+  font-weight: bold;
+  color: #6ab2f2;
+  margin-bottom: 12px;
+}
+
+.comment-text {
+  font-size: 14px;
+  color: #ffffff;
+  line-height: 1.6;
+  max-height: 300px;
+  overflow-wrap: break-word;
+}
+
+.footer {
+  position: absolute;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 12px;
+  color: #6ab2f2;
+  opacity: 0.6;
+  padding: 0 40px;
+}
+
+/* Цвета для разных полей */
+.label-type { color: #f27db0; }
+.label-filling { color: #6ab2f2; }
+.label-additive { color: #a3f26a; }
+.label-format { color: #f7a632; }
+</style>
+</head>
+<body>
+
+<div id="blueprint-container">
+  <div class="grid-pattern"></div>
+  <div class="border-frame"></div>
+  
+  <div class="content">
+    <div class="header">
+      <h1 class="title">ТЕХНІЧНЕ ЗАВДАННЯ</h1>
+      <p class="subtitle">Кремуа | Конструктор тортів</p>
+    </div>
+    
+    <div class="data-row">
+      <div class="data-label label-type">Тип торта:</div>
+      <div class="data-value" id="cake-type">не обрано</div>
+    </div>
+    
+    <div class="data-row">
+      <div class="data-label label-filling">Начинка:</div>
+      <div class="data-value" id="filling">не обрано</div>
+    </div>
+    
+    <div class="data-row">
+      <div class="data-label label-additive">Добавки:</div>
+      <div class="data-value" id="additives">не обрано</div>
+    </div>
+    
+    <div class="data-row">
+      <div class="data-label label-format">Формат:</div>
+      <div class="data-value" id="format">не обрано</div>
+    </div>
+    
+    <div class="comment-section">
+      <div class="comment-label">Коментар:</div>
+      <div class="comment-text" id="comment">немає</div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    Відправте це ТЗ кондитеру разом із фото бажаного дизайну
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+// Получаем данные из URL
+const urlParams = new URLSearchParams(window.location.search);
+const data = {
+  type: urlParams.get('type') || 'не обрано',
+  filling: urlParams.get('filling') || 'не обрано',
+  additive: urlParams.get('additive') || 'не обрано',
+  format: urlParams.get('format') || 'не обрано',
+  comment: urlParams.get('comment') || 'немає'
+};
+
+// Декодируем и заполняем данные
+document.getElementById('cake-type').textContent = decodeURIComponent(data.type);
+document.getElementById('filling').textContent = decodeURIComponent(data.filling);
+document.getElementById('additives').textContent = decodeURIComponent(data.additive);
+document.getElementById('format').textContent = decodeURIComponent(data.format);
+document.getElementById('comment').textContent = decodeURIComponent(data.comment);
+
+// Автоматически создаём PNG после загрузки
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const container = document.getElementById('blueprint-container');
+    
+    html2canvas(container, {
+      backgroundColor: '#0a1628',
+      scale: 2, // для лучшего качества
+      logging: false
+    }).then(canvas => {
+      // Создаём ссылку для скачивания
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'kremua-cake-blueprint.png';
+        link.click();
+        
+        // Возвращаемся на страницу конструктора
+        setTimeout(() => {
+          window.location.href = 'constructor.html';
+        }, 500);
+      });
+    });
+  }, 500);
+});
+</script>
+
+</body>
+</html>
