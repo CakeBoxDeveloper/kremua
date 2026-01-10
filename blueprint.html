@@ -213,7 +213,7 @@ const rawComment = urlParams.get('comment');
 document.getElementById('total-price').textContent = priceValue;
 
 // НОВИЙ ПОРЯДОК ТЕКСТУ
-const detailsText = `Мені потрібен ${type} торт формату ${format} з начинкою(начинками) ${filling}. Додайте в торт ${additive}.`;
+const detailsText = `Мені потрібен торт на основi ${type} формату ${format} з начинкою ${filling}. Додайте в торт ${additive}.`;
 document.getElementById('order-details-text').textContent = detailsText;
 
 let finalComment = rawComment ? decodeURIComponent(rawComment).trim() : '';
