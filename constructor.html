@@ -257,56 +257,46 @@ input, textarea {
 }
 .pdf-modal.active .pdf-modal-content { transform: scale(1); }
 
-/* ПРЕВ'Ю: ВИТРИМАНИЙ ФОРМАТ ТА BLUEPRINT */
-/* ПРЕВ'Ю: BLUEPRINT СТИЛЬ */
-/* ПРЕВ'Ю: ВИТРИМАНИЙ ФОРМАТ ТА BLUEPRINT ЕФЕКТ */
+/* ПРЕВЬЮ: BLUEPRINT ЭФФЕКТ */
 .pdf-preview {
   width: 100%;
-  aspect-ratio: 1 / 1.414; /* Формат А4 */
-  background-color: #003366; /* Глибокий синій колір (Blueprint background) */
+  aspect-ratio: 1 / 1.414; 
+  background-color: #003366; 
   border-radius: 8px;
   margin-bottom: 16px;
   overflow: hidden;
   position: relative;
-   border: 1px solid #6ab2f255;
+  border: 1px solid #6ab2f255;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .pdf-preview img {
-  /* ВИПРАВЛЕННЯ МАСШТАБУ: розтягуємо на весь контейнер без зазоров */
   width: 100.2%; 
   height: 100.2%;
- 
   object-fit: cover; 
   display: block;
-
-  /* ЕФЕКТ БІЛОГО ТЕКСТУ НА СИНЬОМУ */
-  /* 1. Інвертуємо: стає білий текст на чорному фоні */
-  /* 2. mix-blend-mode: screen робить чорний фон прозорим, проявляючи синій фон контейнера */
   filter: invert(1) brightness(1.1) contrast(1.2);
   mix-blend-mode: screen; 
 }
 
-/* ШИММЕР: ПЛАВНА ДІАГОНАЛЬНА ЛІНІЯ */
-/* ОНОВЛЕНИЙ ШИММЕР: ДОВГИЙ ТА ПЛАВНИЙ */
+/* ШИММЕР */
 .pdf-preview::after {
   content: "";
   position: absolute;
-  top: -50%; /* Виходимо за межі, щоб не обрізався */
+  top: -50%; 
   left: -150%;
-  width: 200%; /* Робимо ширшим за контейнер */
+  width: 200%; 
   height: 200%;
   background: linear-gradient(
-    110deg, /* Змінили кут для кращої діагоналі */
+    110deg, 
     rgba(255, 255, 255, 0) 40%,
     rgba(255, 255, 255, 0.12) 50%,
     rgba(255, 255, 255, 0) 60%
   );
-  animation: shimmer-swipe 4s infinite linear; /* linear для стабільної швидкості */
+  animation: shimmer-swipe 4s infinite linear;
   pointer-events: none;
-  transform: rotate(0deg);
 }
 
 @keyframes shimmer-swipe {
@@ -316,8 +306,6 @@ input, textarea {
   90% { opacity: 0; }
   100% { transform: translateX(50%) opacity(0); left: 150%; }
 }
-
- 
 
 .bottom-actions { display: flex; gap: 8px; margin-top: 12px; }
 .action-btn {
@@ -403,7 +391,7 @@ input, textarea {
 
 <div id="pdfModal" class="pdf-modal">
   <div class="pdf-modal-content">
-    <p style="font-size: 13px; color: #6ab2f2; margin-bottom: 12px;">Це ваше ТЗ. Збережіть та відправте кондитеру.</p>
+    <p id="modalHint" style="font-size: 13px; color: #6ab2f2; margin-bottom: 12px;">Це ваше ТЗ. Збережіть та відправте кондитеру.</p>
     <div class="pdf-preview" id="pdfPreview"></div>
     <button class="create-btn" id="downloadBtn" style="color: #6af27d; border-color: #6af27d; margin-bottom: 8px;">Завантажити PNG</button>
     <button class="back-btn-full" id="closeModalBtn" style="padding: 10px;">Закрити</button>
@@ -413,14 +401,15 @@ input, textarea {
 <audio id="successSound" src="https://github.com/CakeBoxDeveloper/kremua/raw/main/HeavenGate.mp3"></audio>
 
 <script>
-const cakeTypes = ["#безе", "#бісквіт", "#слоєне тісто", "#горіховий", "#шоколадний", "#сирний"];
-const allFillings = ["#фісташка", "#брауні", "#карамель", "#латте", "#пломбір", "#ром", "#пінаколада", "#сінабон", "#мускат", "#банан", "#мохіто", "#матча", "#снікерс", "#орео", "#тірамісу", "#ваніль", "#вишня"];
-const additives = ["#горіхи", "#мигдаль", "#желе", "#рисові кульки", "#маршмелоу", "#шоколад", "#кокос", "#попкорн"];
-const formats = ["#спліт", "#бенто", "#максі", "#XXL"];
+// Цены для каждой позиции
+const cakeTypes = { "#безе": 150, "#бісквіт": 200, "#слоєне тісто": 180, "#горіховий": 250, "#шоколадний": 220, "#сирний": 230 };
+const allFillings = { "#фісташка": 100, "#брауні": 80, "#карамель": 50, "#латте": 60, "#пломбір": 50, "#ром": 90, "#пінаколада": 90, "#сінабон": 80, "#мускат": 70, "#банан": 40, "#мохіто": 60, "#матча": 110, "#снікерс": 90, "#орео": 80, "#тірамісу": 90, "#ваніль": 40, "#вишня": 60 };
+const additives = { "#горіхи": 50, "#мигдаль": 70, "#желе": 40, "#рисові кульки": 30, "#маршмелоу": 40, "#шоколад": 60, "#кокос": 40, "#попкорн": 40 };
+const formats = { "#спліт": 450, "#бенто": 600, "#максі": 1200, "#XXL": 2500 };
 
-function createSlider(containerId, items, className, multiSelect = false) {
+function createSlider(containerId, itemsObj, className, multiSelect = false) {
   const container = document.getElementById(containerId);
-  items.forEach(item => {
+  Object.keys(itemsObj).forEach(item => {
     const tag = document.createElement('span');
     tag.className = `slider-tag ${className}`;
     tag.textContent = item;
@@ -455,16 +444,28 @@ createSlider('additivesSlider', additives, 'additive-tag', true);
 createSlider('formatsSlider', formats, 'format-tag');
 
 function getSelectedData() {
-  const type = document.querySelector('#typeSlider .selected')?.textContent || 'не обрано';
-  const filling = Array.from(document.querySelectorAll('#fillingsSlider .selected')).map(t => t.textContent).join(', ') || 'не обрано';
-  const additive = Array.from(document.querySelectorAll('#additivesSlider .selected')).map(t => t.textContent).join(', ') || 'не обрано';
-  const format = document.querySelector('#formatsSlider .selected')?.textContent || 'не обрано';
+  const typeTag = document.querySelector('#typeSlider .selected');
+  const type = typeTag ? typeTag.textContent : 'не обрано';
+  const typePrice = typeTag ? cakeTypes[type] : 0;
+
+  const selectedFillings = Array.from(document.querySelectorAll('#fillingsSlider .selected')).map(t => t.textContent);
+  const filling = selectedFillings.join(', ') || 'не обрано';
+  const fillingPrice = selectedFillings.reduce((sum, item) => sum + allFillings[item], 0);
+
+  const selectedAdditives = Array.from(document.querySelectorAll('#additivesSlider .selected')).map(t => t.textContent);
+  const additive = selectedAdditives.join(', ') || 'не обрано';
+  const additivePrice = selectedAdditives.reduce((sum, item) => sum + additives[item], 0);
+
+  const formatTag = document.querySelector('#formatsSlider .selected');
+  const format = formatTag ? formatTag.textContent : 'не обрано';
+  const formatPrice = formatTag ? formats[format] : 0;
+
   const comment = document.getElementById('commentField').value.trim() || 'немає';
   
-  const prices = { "#спліт": 450, "#бенто": 600, "#максі": 1200, "#XXL": 2500 };
-  const price = (type === 'не обрано' && format === 'не обрано') ? 0 : (prices[format] || 800);
+  // Итоговая сумма
+  const totalPrice = typePrice + fillingPrice + additivePrice + formatPrice;
   
-  return { type, filling, additive, format, comment, price };
+  return { type, filling, additive, format, comment, price: totalPrice };
 }
 
 document.getElementById('createBtn').onclick = async function() {
@@ -504,6 +505,10 @@ document.getElementById('createBtn').onclick = async function() {
         img.src = imageUrl;
         img.setAttribute('crossorigin', 'anonymous');
         previewContainer.appendChild(img);
+        
+        // ОБНОВЛЕНИЕ ТЕКСТА С ЦЕНОЙ
+        const modalHint = document.getElementById('modalHint');
+        modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість: <span style="color: #6af27d; font-weight: bold;">${data.price} грн</span>.`;
         
         document.getElementById('pdfModal').classList.add('active');
         
