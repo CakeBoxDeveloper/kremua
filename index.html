@@ -1846,13 +1846,7 @@ textarea {
 </div>
   </div>
 </div>
-<!-- Аудио для открытия/закрытия описания -->
-<audio id="openSound" preload="auto">
-  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/spring-comic.mp3" type="audio/mpeg">
-</audio>
-<audio id="closeSound" preload="auto">
-  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/sharp-swing.mp3" type="audio/mpeg">
-</audio>
+ 
 
 <!-- Аудио для нажатия кнопки "Заказать" -->
 <audio id="orderClickSound" preload="auto">
@@ -2968,12 +2962,12 @@ document.addEventListener('keydown', function(e) {
 function toggleDescription() {
   const wrapper = document.querySelector('.description-wrapper');
   const text = document.getElementById('descToggleText');
-  const openSound = document.getElementById('openSound');
-  const closeSound = document.getElementById('closeSound');
 
   const isOpen = wrapper.classList.contains('open');
 
   if (isOpen) {
+    /* СВОРАЧИВАНИЕ */
+    wrapper.classList.remove('open');
     /* СВОРАЧИВАНИЕ — воспроизводим звук закрытия */
     if (closeSound) {
       closeSound.currentTime = 0;
@@ -2989,12 +2983,7 @@ function toggleDescription() {
       `;
     }, 350);
   } else {
-    /* РАЗВОРАЧИВАНИЕ — воспроизводим звук открытия */
-    if (openSound) {
-      openSound.currentTime = 0;
-      openSound.play().catch(e => console.log('Audio play failed:', e));
-    }
-    
+    /* РАЗВОРАЧИВАНИЕ */
     wrapper.classList.add('open');
     text.innerHTML = `
       <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/file-text.svg" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(18%) sepia(11%) saturate(1661%) hue-rotate(162deg) brightness(93%) contrast(92%);">
