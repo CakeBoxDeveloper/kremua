@@ -274,6 +274,7 @@ body {
 }
 
 /* Контейнер для лучей */
+/* Контейнер для лучей */
 .ticket-modal-icon::before {
   content: '';
   position: absolute;
@@ -323,6 +324,22 @@ body {
   z-index: -1;
   opacity: 0;
   transition: opacity 0.6s ease;
+  
+  /* 🎯 РАДИАЛЬНЫЙ FADE-OUT */
+  mask-image: radial-gradient(
+    circle at center,
+    transparent 0%,
+    transparent 30%,
+    black 60%,
+    black 100%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at center,
+    transparent 0%,
+    transparent 30%,
+    black 60%,
+    black 100%
+  );
 }
 
 /* Показываем лучи только для success */
