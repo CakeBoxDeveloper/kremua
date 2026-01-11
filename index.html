@@ -1854,11 +1854,15 @@ textarea {
   <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/sharp-swing.mp3" type="audio/mpeg">
 </audio>
 
-  <!-- Аудио для печати чека -->
-<audio id="receiptSound" preload="auto">
-  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/ReceiptPrint.wav" type="audio/wav">
+<!-- Аудио для нажатия кнопки "Заказать" -->
+<audio id="orderClickSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/CheckMP3.mp3" type="audio/mpeg">
 </audio>
 
+<!-- Аудио для появления чека -->
+<audio id="receiptSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Win.mp3" type="audio/mpeg">
+</audio>
 </div> <!-- Конец app -->
 
 <script>
@@ -3123,8 +3127,16 @@ function launchWelcomeConfetti() {
 
  
  
+ 
 // Открытие модального окна заказа
 function openOrderModal(cakeName, cakePrice, cakeFormat) {
+  // 🎯 ВОСПРОИЗВОДИМ ЗВУК НАЖАТИЯ КНОПКИ
+  const orderClickSound = document.getElementById('orderClickSound');
+  if (orderClickSound) {
+    orderClickSound.currentTime = 0;
+    orderClickSound.play().catch(e => console.log('Order click sound play failed:', e));
+  }
+  
   // 🎯 ШАГ 1: ПОКАЗЫВАЕМ ЛОАДЕР С РАЗМЫТИЕМ
   loader.classList.add('blur-mode'); // 👈 ДОБАВЛЯЕМ КЛАСС РАЗМЫТИЯ
   showLoader();
