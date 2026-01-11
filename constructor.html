@@ -215,6 +215,7 @@ input, textarea {
   resize: vertical;
   box-sizing: border-box;
   outline: none;
+  text-align: center; /* Добавь вот эту строку */
 }
 .comment-textarea::placeholder { color: #6ab2f2; opacity: 0.5; }
 
@@ -502,8 +503,9 @@ document.getElementById('createBtn').onclick = async function() {
         previewContainer.appendChild(img);
         
         // ОБНОВЛЕНИЕ ТЕКСТА С ЦЕНОЙ
-        const modalHint = document.getElementById('modalHint');
-        modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість: <span style="color: #6af27d; font-weight: bold;">${data.price} грн</span>.`;
+        // ОБНОВЛЕНИЕ ТЕКСТА С ЦЕНОЙ
+const modalHint = document.getElementById('modalHint');
+modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість: <span style="color: #6ab2f2; font-weight: bold;">${data.price} грн</span>. Це ціна без урахування знижки. Щоб дізнатися свою знижку, надішліть це ТЗ кондитеру.`;
         
         document.getElementById('pdfModal').classList.add('active');
         
