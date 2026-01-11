@@ -1854,6 +1854,11 @@ textarea {
   <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/sharp-swing.mp3" type="audio/mpeg">
 </audio>
 
+  <!-- Аудио для печати чека -->
+<audio id="receiptSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/ReceiptPrint.wav" type="audio/wav">
+</audio>
+
 </div> <!-- Конец app -->
 
 <script>
@@ -3127,10 +3132,16 @@ function openOrderModal(cakeName, cakePrice, cakeFormat) {
   // 🎯 ШАГ 2: ЧЕРЕЗ 500ms ПОКАЗЫВАЕМ ЧЕК
   setTimeout(() => {
     const modal = document.getElementById('orderModal');
+    const receiptSound = document.getElementById('receiptSound');
+
+    // 🎯 ВОСПРОИЗВОДИМ ЗВУК ПЕЧАТИ ЧЕКА
+    if (receiptSound) {
+      receiptSound.currentTime = 0;
+      receiptSound.play().catch(e => console.log('Receipt sound play failed:', e));
+    }
 
     // Формат уже передан как параметр
     const format = cakeFormat || '#стандарт';
-
     // Генерируем рандомный 5-значный номер
     const orderNumber = Math.floor(10000 + Math.random() * 90000);
     document.getElementById('orderNumber').textContent = `Замовлення #${orderNumber} успішно сформовано!`;
