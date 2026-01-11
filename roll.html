@@ -270,6 +270,80 @@ body {
   margin: 0 auto 20px;
   font-size: 64px;
   line-height: 80px;
+  position: relative;
+}
+
+/* Контейнер для лучей */
+.ticket-modal-icon::before {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(212, 175, 55, 0.3) 10deg,
+    transparent 20deg,
+    transparent 30deg,
+    rgba(212, 175, 55, 0.3) 40deg,
+    transparent 50deg,
+    transparent 60deg,
+    rgba(212, 175, 55, 0.3) 70deg,
+    transparent 80deg,
+    transparent 90deg,
+    rgba(212, 175, 55, 0.3) 100deg,
+    transparent 110deg,
+    transparent 120deg,
+    rgba(212, 175, 55, 0.3) 130deg,
+    transparent 140deg,
+    transparent 150deg,
+    rgba(212, 175, 55, 0.3) 160deg,
+    transparent 170deg,
+    transparent 180deg,
+    rgba(212, 175, 55, 0.3) 190deg,
+    transparent 200deg,
+    transparent 210deg,
+    rgba(212, 175, 55, 0.3) 220deg,
+    transparent 230deg,
+    transparent 240deg,
+    rgba(212, 175, 55, 0.3) 250deg,
+    transparent 260deg,
+    transparent 270deg,
+    rgba(212, 175, 55, 0.3) 280deg,
+    transparent 290deg,
+    transparent 300deg,
+    rgba(212, 175, 55, 0.3) 310deg,
+    transparent 320deg,
+    transparent 330deg,
+    rgba(212, 175, 55, 0.3) 340deg,
+    transparent 350deg,
+    transparent 360deg
+  );
+  border-radius: 50%;
+  animation: rotateSunRays 8s linear infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+/* Показываем лучи только для success */
+.ticket-modal.success .ticket-modal-icon::before {
+  opacity: 1;
+}
+
+/* Анимация вращения лучей */
+@keyframes rotateSunRays {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Картинка билета поверх лучей */
+.ticket-modal-icon img {
+  position: relative;
+  z-index: 1;
 }
 
 .ticket-modal-text {
