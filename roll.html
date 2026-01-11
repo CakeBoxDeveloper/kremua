@@ -1692,7 +1692,16 @@ window.addEventListener('load', async () => {
   
   // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (БЕЗ БИЛЕТА ИЛИ С ВАЛИДНЫМ) → РУЛЕТКА =====
   // Показываем рулетку
+// ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (БЕЗ БИЛЕТА ИЛИ С ВАЛИДНЫМ) → РУЛЕТКА =====
+  // Показываем рулетку
   loader.classList.remove('hidden');
+  
+  // 🎯 ВОСПРОИЗВОДИМ ЗВУК СПИННЕРА
+  const spinnerSound = document.getElementById('spinnerSound');
+  if (spinnerSound) {
+    spinnerSound.currentTime = 0;
+    spinnerSound.play().catch(e => console.log('Spinner sound play failed:', e));
+  }
   
   setTimeout(() => {
     loader.classList.add('hidden');
