@@ -275,10 +275,11 @@ body {
 
 /* Контейнер для лучей */
 /* Контейнер для лучей */
+/* Контейнер для лучей */
 .ticket-modal-icon::before {
   content: '';
   position: absolute;
-  inset: -20px;  /* 👈 ВЕРНУЛИ как было */
+  inset: -20px;
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
@@ -325,17 +326,17 @@ body {
   opacity: 0;
   transition: opacity 0.6s ease;
   
-  /* 🎯 FADE начинается с 50% длины луча */
+  /* 🎯 ПРОСТО ПЕРЕВЕРНУЛИ: центр видим, края прозрачны */
   mask-image: radial-gradient(
     circle at center,
-    black 0%,
-    black 50%,
+    black 30%,
+    black 60%,
     transparent 100%
   );
   -webkit-mask-image: radial-gradient(
     circle at center,
-    black 0%,
-    black 50%,
+    black 30%,
+    black 60%,
     transparent 100%
   );
 }
