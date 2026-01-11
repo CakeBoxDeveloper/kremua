@@ -688,7 +688,9 @@ mask-image: linear-gradient(
   </a>
 </div>
 
-
+<audio id="spinnerSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Spinner.mp3" type="audio/mpeg">
+</audio>
 
   
 
@@ -1652,8 +1654,15 @@ window.addEventListener('load', async () => {
   
   // ... остальной код без изменений
   
-  // Скрываем прелоадер
+ // Скрываем прелоадер
   preloader.classList.add('hidden');
+  
+  // 🎯 ВОСПРОИЗВОДИМ ЗВУК СПИННЕРА
+  const spinnerSound = document.getElementById('spinnerSound');
+  if (spinnerSound) {
+    spinnerSound.currentTime = 0;
+    spinnerSound.play().catch(e => console.log('Spinner sound play failed:', e));
+  }
   
   // 🎯 ШАГ 2: ПРОВЕРЯЕМ ПРОМО-БИЛЕТ
   const ticketActivated = await checkAndUsePromoTicket();
