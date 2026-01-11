@@ -273,50 +273,47 @@ body {
   position: relative;
 }
 
-/* Контейнер для лучей */
-/* Контейнер для лучей */
-/* Контейнер для лучей */
-.ticket-modal-icon::before {
+  .ticket-modal-icon::before {
   content: '';
   position: absolute;
   inset: -20px;
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
-    rgba(212, 175, 55, 0.3) 10deg,
+    rgba(212, 175, 55, 0.5) 10deg,
     transparent 20deg,
     transparent 30deg,
-    rgba(212, 175, 55, 0.3) 40deg,
+    rgba(212, 175, 55, 0.5) 40deg,
     transparent 50deg,
     transparent 60deg,
-    rgba(212, 175, 55, 0.3) 70deg,
+    rgba(212, 175, 55, 0.5) 70deg,
     transparent 80deg,
     transparent 90deg,
-    rgba(212, 175, 55, 0.3) 100deg,
+    rgba(212, 175, 55, 0.5) 100deg,
     transparent 110deg,
     transparent 120deg,
-    rgba(212, 175, 55, 0.3) 130deg,
+    rgba(212, 175, 55, 0.5) 130deg,
     transparent 140deg,
     transparent 150deg,
-    rgba(212, 175, 55, 0.3) 160deg,
+    rgba(212, 175, 55, 0.5) 160deg,
     transparent 170deg,
     transparent 180deg,
-    rgba(212, 175, 55, 0.3) 190deg,
+    rgba(212, 175, 55, 0.5) 190deg,
     transparent 200deg,
     transparent 210deg,
-    rgba(212, 175, 55, 0.3) 220deg,
+    rgba(212, 175, 55, 0.5) 220deg,
     transparent 230deg,
     transparent 240deg,
-    rgba(212, 175, 55, 0.3) 250deg,
+    rgba(212, 175, 55, 0.5) 250deg,
     transparent 260deg,
     transparent 270deg,
-    rgba(212, 175, 55, 0.3) 280deg,
+    rgba(212, 175, 55, 0.5) 280deg,
     transparent 290deg,
     transparent 300deg,
-    rgba(212, 175, 55, 0.3) 310deg,
+    rgba(212, 175, 55, 0.5) 310deg,
     transparent 320deg,
     transparent 330deg,
-    rgba(212, 175, 55, 0.3) 340deg,
+    rgba(212, 175, 55, 0.5) 340deg,
     transparent 350deg,
     transparent 360deg
   );
@@ -325,19 +322,11 @@ body {
   z-index: -1;
   opacity: 0;
   transition: opacity 0.6s ease;
-  
-  /* 🎯 ПРОСТО ПЕРЕВЕРНУЛИ: центр видим, края прозрачны */
-  mask-image: radial-gradient(
-    circle at center,
-    black 30%,
-    transparent 100%
-  );
-  -webkit-mask-image: radial-gradient(
-    circle at center,
-    black 30%,
-    transparent 100%
-  );
+  mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
 }
+
+  
 /* Показываем лучи только для success */
 .ticket-modal.success .ticket-modal-icon::before {
   opacity: 1;
