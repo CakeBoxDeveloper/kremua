@@ -276,10 +276,11 @@ body {
 /* Контейнер для лучей */
 /* Контейнер для лучей */
 /* Контейнер для лучей */
+/* Контейнер для лучей */
 .ticket-modal-icon::before {
   content: '';
   position: absolute;
-  inset: -20px;
+  inset: -60px;  /* 👈 УВЕЛИЧИЛИ область */
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
@@ -326,20 +327,22 @@ body {
   opacity: 0;
   transition: opacity 0.6s ease;
   
-  /* 🎯 РАДИАЛЬНЫЙ FADE-OUT (от центра к краям) */
+  /* 🎯 РАДИАЛЬНЫЙ FADE-OUT */
   mask-image: radial-gradient(
     circle at center,
-    black 0%,
-    black 40%,
-    transparent 80%,
-    transparent 100%
+    black 20%,
+    black 35%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.3) 70%,
+    transparent 90%
   );
   -webkit-mask-image: radial-gradient(
     circle at center,
-    black 0%,
-    black 40%,
-    transparent 80%,
-    transparent 100%
+    black 20%,
+    black 35%,
+    rgba(0, 0, 0, 0.7) 50%,
+    rgba(0, 0, 0, 0.3) 70%,
+    transparent 90%
   );
 }
 /* Показываем лучи только для success */
