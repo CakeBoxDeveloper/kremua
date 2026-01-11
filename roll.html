@@ -275,12 +275,10 @@ body {
 
 /* Контейнер для лучей */
 /* Контейнер для лучей */
-/* Контейнер для лучей */
-/* Контейнер для лучей */
 .ticket-modal-icon::before {
   content: '';
   position: absolute;
-  inset: -60px;  /* 👈 УВЕЛИЧИЛИ область */
+  inset: -20px;  /* 👈 ВЕРНУЛИ как было */
   background: conic-gradient(
     from 0deg,
     transparent 0deg,
@@ -327,22 +325,18 @@ body {
   opacity: 0;
   transition: opacity 0.6s ease;
   
-  /* 🎯 РАДИАЛЬНЫЙ FADE-OUT */
+  /* 🎯 FADE начинается с 50% длины луча */
   mask-image: radial-gradient(
     circle at center,
-    black 20%,
-    black 35%,
-    rgba(0, 0, 0, 0.7) 50%,
-    rgba(0, 0, 0, 0.3) 70%,
-    transparent 90%
+    black 0%,
+    black 50%,
+    transparent 100%
   );
   -webkit-mask-image: radial-gradient(
     circle at center,
-    black 20%,
-    black 35%,
-    rgba(0, 0, 0, 0.7) 50%,
-    rgba(0, 0, 0, 0.3) 70%,
-    transparent 90%
+    black 0%,
+    black 50%,
+    transparent 100%
   );
 }
 /* Показываем лучи только для success */
