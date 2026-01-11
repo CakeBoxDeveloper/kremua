@@ -370,7 +370,7 @@ input, textarea {
 
   <div class="comment-section">
     <div class="slider-label">Додатковий коментар</div>
-    <textarea id="commentField" class="comment-textarea" placeholder="Впишіть сюди що завгодно..."></textarea>
+    <textarea id="commentField" class="comment-textarea" placeholder="Можеш написати тут будь-яку інформацію, яка допоможе зробити ідеальний торт або залиши це поле порожнім."></textarea>
   </div>
 
   <button class="create-btn" id="createBtn">
@@ -383,11 +383,6 @@ input, textarea {
     Назад на головну
   </a>
 
-  <div class="bottom-actions">
-    <a href="https://t.me/Olga_Dind" class="action-btn telegram-btn">Telegram</a>
-    <a href="https://www.instagram.com/kremua_studio" class="action-btn instagram-btn">Instagram</a>
-  </div>
-</div>
 
 <div id="pdfModal" class="pdf-modal">
   <div class="pdf-modal-content">
@@ -516,11 +511,16 @@ document.getElementById('createBtn').onclick = async function() {
         sound.play().catch(e => console.log("Interaction required for audio"));
         
         document.getElementById('downloadBtn').onclick = () => {
-          const link = document.createElement('a');
-          link.href = imageUrl;
-          link.download = `kremua-order-${data.format.replace('#','')}.png`;
-          link.click();
-        };
+    const now = new Date();
+    // Форматируем дату в строку (день, месяц, часы, минуты)
+    const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
+    
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    // Формируем имя: kremua-blueprint-1101-1430.png
+    link.download = `kremua-blueprint-${timestamp}.png`;
+    link.click();
+};
       } catch (e) {
         loader.classList.remove('active');
         loaderText.style.display = 'none';
