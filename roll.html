@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru"> 
 <head>
-
-  <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
-
-  
 <meta charset="UTF-8">
 <title>Кремуа | Лотерея</title> 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -753,58 +748,6 @@ mask-image: linear-gradient(
   
 
 <script>
-
-  // 🎯 РАЗБЛОКИРОВКА АУДИО/ВИДЕО ПОСЛЕ ПЕРВОГО КЛИКА
-let audioUnlocked = false;
-
-function unlockAudio() {
-  if (audioUnlocked) return;
-  
-  console.log('🔓 Разблокируем аудио и видео...');
-  
-  const sounds = [
-    document.getElementById('ticketSound'),
-    document.getElementById('rouletteSound'),
-    document.getElementById('winSound')
-  ];
-  
-  sounds.forEach(sound => {
-    if (sound) {
-      const originalVolume = sound.volume; // 👈 СОХРАНЯЕМ ОРИГИНАЛЬНУЮ ГРОМКОСТЬ
-      sound.volume = 0.001; // 👈 ЕЩЁ ТИШЕ (практически беззвучно)
-      
-      sound.play().then(() => {
-        sound.pause();
-        sound.currentTime = 0;
-        sound.volume = originalVolume || 1; // 👈 ВОЗВРАЩАЕМ СРАЗУ
-        console.log('✅ Звук разблокирован:', sound.id);
-      }).catch(e => {
-        sound.volume = originalVolume || 1; // 👈 ВОЗВРАЩАЕМ ДАЖЕ ПРИ ОШИБКЕ
-        console.log('⚠️ Не удалось разблокировать:', sound.id);
-      });
-    }
-  });
-  
-  // Разблокируем видео промокода
-  const promoVideo = document.getElementById('promoVideo');
-  if (promoVideo) {
-    promoVideo.play().then(() => {
-      promoVideo.pause();
-      console.log('✅ Видео разблокировано');
-    }).catch(() => {});
-  }
-  
-  audioUnlocked = true;
-  
-  // Удаляем обработчики после первого клика
-  document.removeEventListener('touchstart', unlockAudio);
-  document.removeEventListener('click', unlockAudio);
-}
-
-// Слушаем первый клик/тап
-document.addEventListener('touchstart', unlockAudio, { once: true });
-document.addEventListener('click', unlockAudio, { once: true });
-  
 // ===== КУПОНЫ С РАЗНЫМИ ЦВЕТАМИ И ВИДЕО =====
 const coupons = [
   {
@@ -928,7 +871,7 @@ function preloadVideos() {
 }
 
 // Вызываем сразу при загрузке страницы
- 
+preloadVideos();
   
 let selectedCoupon = null;
 let promoDisintegrated = false;
@@ -1113,21 +1056,17 @@ function showTicketModal(type, message) {
   
   document.body.appendChild(modal);
   
-setTimeout(() => {
-  modal.classList.add('active');
-  
-  // 🎵 ВОСПРОИЗВОДИМ ЗВУК ПОСЛЕ ПОЯВЛЕНИЯ МОДАЛЬНОГО ОКНА
   setTimeout(() => {
+    modal.classList.add('active');
+    
+    // 🎵 ВОСПРОИЗВОДИМ ЗВУК ПОСЛЕ ПОЯВЛЕНИЯ МОДАЛЬНОГО ОКНА
     const ticketSound = document.getElementById('ticketSound');
     if (ticketSound) {
       ticketSound.currentTime = 0;
-      ticketSound.volume = 1; // 👈 ЯВНО УСТАНАВЛИВАЕМ ГРОМКОСТЬ
-      ticketSound.play().catch(e => {
-        console.log('⚠️ Ticket sound play failed:', e);
-      });
+      ticketSound.play().catch(e => console.log('Ticket sound play failed:', e));
     }
-  }, 300); // 👈 ЗАДЕРЖКА 300ms — даём время на разблокировку
-}, 10);
+  }, 10);
+}
 
 // Промис для ожидания закрытия модального окна
 function waitForModalClose() {
@@ -1621,52 +1560,25 @@ function selectRandomCoupon() {
 function applyCoupon(coupon) {
   selectedCoupon = coupon;
   
+  // 👈 ИЗМЕНИЛИ: цвет заголовка = цвет промокода
   const promoTitleEl = document.getElementById('promoTitle');
   promoTitleEl.textContent = coupon.title;
-  promoTitleEl.style.color = coupon.codeColor;
+  promoTitleEl.style.color = coupon.codeColor;  // 👈 ДОБАВЬ ЭТУ СТРОКУ
   
   const promoCodeBox = document.getElementById('promoCode');
   promoCodeBox.style.color = coupon.codeColor;
   
-const promoVideo = document.getElementById('promoVideo');
+  const promoVideo = document.getElementById('promoVideo');
   
-// 🎯 УБИРАЕМ СТАРЫЕ ОБРАБОТЧИКИ
-const oldErrorHandler = promoVideo.onerror;
-const oldLoadHandler = promoVideo.onloadeddata;
-promoVideo.onerror = null;
-promoVideo.onloadeddata = null;
-
-// 🎯 УСТАНАВЛИВАЕМ SRC И ЗАГРУЖАЕМ
-promoVideo.src = coupon.videoUrl;
-
-// 🎯 НОВЫЕ ОБРАБОТЧИКИ (ТОЛЬКО РАЗ)
-promoVideo.addEventListener('error', function handleError(e) {
-  console.error('❌ Ошибка загрузки видео купона!');
-  console.log('URL:', this.src);
-  console.log('NetworkState:', this.networkState);
-  console.log('ReadyState:', this.readyState);
-  console.log('Error:', this.error);
-  
-  // Пробуем перезагрузить
-  setTimeout(() => {
-    console.log('🔄 Пробуем перезагрузить видео...');
-    this.load();
-  }, 1000);
-  
-  // Удаляем обработчик после первого вызова
-  this.removeEventListener('error', handleError);
-}, { once: true });
-
-promoVideo.addEventListener('loadeddata', function handleLoad() {
-  console.log('✅ Видео купона загружено успешно');
-  console.log('Duration:', this.duration);
-  console.log('VideoWidth:', this.videoWidth);
-  console.log('VideoHeight:', this.videoHeight);
-}, { once: true });
-
-promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
-  
-  console.log('🎬 Загружаем видео:', coupon.title, coupon.videoUrl);
+  if (videoCache[coupon.videoUrl]) {
+    console.log('📦 Используем прелоад видео для:', coupon.title);
+    const cachedVideo = videoCache[coupon.videoUrl];
+    promoVideo.src = cachedVideo.src;
+    promoVideo.load();
+  } else {
+    console.log('⏳ Видео ещё не загружено, грузим обычным способом');
+    promoVideo.src = coupon.videoUrl;
+  }
   
   const style = document.createElement('style');
   style.textContent = `
@@ -1842,7 +1754,6 @@ loader.classList.remove('hidden');
 const rouletteSound = document.getElementById('rouletteSound');
 if (rouletteSound) {
   rouletteSound.currentTime = 0;
-  rouletteSound.volume = 1; // 👈 ДОБАВЬ ЭТУ СТРОКУ
   rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
 }
   
@@ -1855,12 +1766,11 @@ if (rouletteSound) {
   }
   
   // 🎯 ЗАПУСКАЕМ ЗВУК ВЫИГРЫША
-const winSound = document.getElementById('winSound');
-if (winSound) {
-  winSound.currentTime = 0;
-  winSound.volume = 1; // 👈 ДОБАВЬ ЭТУ СТРОКУ
-  winSound.play().catch(e => console.log('Win sound play failed:', e));
-}
+  const winSound = document.getElementById('winSound');
+  if (winSound) {
+    winSound.currentTime = 0;
+    winSound.play().catch(e => console.log('Win sound play failed:', e));
+  }
   
   loader.classList.add('hidden');
   
