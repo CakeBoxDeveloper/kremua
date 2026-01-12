@@ -1344,10 +1344,11 @@ textarea {
 }
 
 /* Пассивная кнопка - синий стиль как обычные блоки */
+/* Пассивная кнопка - синий стиль как обычные блоки */
 .lottery-btn.disabled {
   opacity: 1;
-  cursor: not-allowed;
-  pointer-events: none;
+  cursor: pointer;
+  pointer-events: all;  /* 👈 БЫЛО: none, СТАЛО: all */
   background: #1d2b3a;
   border: 1px solid #6ab2f2;
   color: #6ab2f2;
