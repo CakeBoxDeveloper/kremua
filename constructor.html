@@ -287,25 +287,34 @@ input, textarea {
   content: "";
   position: absolute;
   top: -50%; 
-  left: -150%;
+  left: -100%;
   width: 200%; 
   height: 200%;
   background: linear-gradient(
     110deg, 
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 255, 255, 0.12) 50%,
-    rgba(255, 255, 255, 0) 60%
+    rgba(255, 255, 255, 0) 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    rgba(255, 255, 255, 0) 70%
   );
-  animation: shimmer-swipe 4s infinite linear;
+  animation: shimmer-swipe 4s infinite ease-in-out;
   pointer-events: none;
 }
 
 @keyframes shimmer-swipe {
-  0% { transform: translateX(-50%) opacity(0); left: -150%; }
-  10% { opacity: 0; }
-  50% { opacity: 1; }
-  90% { opacity: 0; }
-  100% { transform: translateX(50%) opacity(0); left: 150%; }
+  0% { 
+    left: -100%;
+    opacity: 0;
+  }
+  20% { 
+    opacity: 1;
+  }
+  80% { 
+    opacity: 1;
+  }
+  100% { 
+    left: 100%;
+    opacity: 0;
+  }
 }
 
 .bottom-actions { display: flex; gap: 8px; margin-top: 12px; }
