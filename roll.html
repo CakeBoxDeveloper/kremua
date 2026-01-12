@@ -335,6 +335,23 @@ body {
   z-index: -1;
   opacity: 0;
   transition: opacity 0.6s ease;
+
+     /* 👇 ДОБАВЬ ЭТИ СТРОКИ */
+  mask-image: radial-gradient(
+    circle,
+    black 20%,
+    rgba(0, 0, 0, 0.8) 40%,
+    rgba(0, 0, 0, 0.4) 60%,
+    transparent 80%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle,
+    black 20%,
+    rgba(0, 0, 0, 0.8) 40%,
+    rgba(0, 0, 0, 0.4) 60%,
+    transparent 80%
+  );
+}
 }
 
   
