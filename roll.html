@@ -136,21 +136,22 @@ body {
 
 /* 👇 ДОБАВЬ СЮДА С ЭТОЙ СТРОКИ */
 /* ===== ПРЕВЬЮ КУПОНОВ НАД РУЛЕТКОЙ ===== */
+/* ===== ПРЕВЬЮ КУПОНОВ НАД РУЛЕТКОЙ (2x2) ===== */
 .coupons-preview {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
   margin-bottom: 30px;
   padding: 0 20px;
-  flex-wrap: nowrap;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .coupon-preview-item {
   position: relative;
-  width: 80px;
-  height: 40px;
-  flex-shrink: 0;
+  width: 100%;
+  aspect-ratio: 2 / 1;
   
   mask-image: url('https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/5793408ec6209b2e840db457f59ebd2e38c43c19/CPNSVG11.svg');
   -webkit-mask-image: url('https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/5793408ec6209b2e840db457f59ebd2e38c43c19/CPNSVG11.svg');
@@ -209,24 +210,44 @@ body {
   height: 100%;
   object-fit: cover;
   transform: scale(1.08);
+  z-index: 1;
+}
+
+.coupon-preview-code {
+  position: absolute;
+  top: 85%;
+  left: 15%;
+  width: 100%;
+  transform: translateY(-50%);
+  z-index: 2;
+  font-size: clamp(8px, 1.8vw, 11px);
+  font-weight: 900;
+  letter-spacing: 0.3px;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
 }
 
 @media (max-width: 480px) {
   .coupons-preview {
-    gap: 8px;
-    padding: 0 10px;
+    gap: 12px;
+    padding: 0 15px;
+    max-width: 350px;
   }
   
-  .coupon-preview-item {
-    width: 70px;
-    height: 35px;
+  .coupon-preview-code {
+    font-size: clamp(7px, 1.5vw, 10px);
   }
 }
 
 @media (max-width: 360px) {
-  .coupon-preview-item {
-    width: 60px;
-    height: 30px;
+  .coupons-preview {
+    gap: 10px;
+    max-width: 300px;
+  }
+  
+  .coupon-preview-code {
+    font-size: 7px;
   }
 }
 /* 👆 ЗАКОНЧИЛИ ДОБАВЛЯТЬ */
@@ -758,9 +779,8 @@ mask-image: linear-gradient(
 <!-- ЛОАДЕР (РУЛЕТКА) -->
 <div id="loader" class="loader hidden">
   
-    <!-- 👇 НОВЫЙ БЛОК С ПРЕВЬЮ КУПОНОВ -->
   <div class="coupons-preview">
-    <div class="coupon-preview-item">
+    <div class="coupon-preview-item" data-color="#af8246">
       <video 
         src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm"
         loop
@@ -768,8 +788,10 @@ mask-image: linear-gradient(
         playsinline
         autoplay
       ></video>
+      <div class="coupon-preview-code" style="color: #af8246;">XXXX-XXXX-XXXX</div>
     </div>
-    <div class="coupon-preview-item">
+    
+    <div class="coupon-preview-item" data-color="#6d2121">
       <video 
         src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm"
         loop
@@ -777,8 +799,10 @@ mask-image: linear-gradient(
         playsinline
         autoplay
       ></video>
+      <div class="coupon-preview-code" style="color: #6d2121;">XXXX-XXXX-XXXX</div>
     </div>
-    <div class="coupon-preview-item">
+    
+    <div class="coupon-preview-item" data-color="#5c94cc">
       <video 
         src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm"
         loop
@@ -786,8 +810,10 @@ mask-image: linear-gradient(
         playsinline
         autoplay
       ></video>
+      <div class="coupon-preview-code" style="color: #5c94cc;">XXXX-XXXX-XXXX</div>
     </div>
-    <div class="coupon-preview-item">
+    
+    <div class="coupon-preview-item" data-color="#005330">
       <video 
         src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm"
         loop
@@ -795,9 +821,9 @@ mask-image: linear-gradient(
         playsinline
         autoplay
       ></video>
+      <div class="coupon-preview-code" style="color: #005330;">XXXX-XXXX-XXXX</div>
     </div>
   </div>
-  <!-- 👆 КОНЕЦ НОВОГО БЛОКА -->
   
   <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
   <div class="loader-text">Генеруємо ваш промокод...</div>
@@ -941,7 +967,33 @@ const coupons = [
   "У людини й жирафа однакова кількість шийних хребців",
   "Золота рибка має пам'ять на три місяці"
 ];
+// Генерация короткого промокода для превью
+function generatePreviewPromoCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  
+  for (let i = 0; i < 12; i++) {
+    if (i > 0 && i % 4 === 0) {
+      code += '-';
+    }
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  
+  return code;
+}
 
+// Инициализация промокодов на превью купонах
+function initPreviewCoupons() {
+  const previewItems = document.querySelectorAll('.coupon-preview-item');
+  
+  previewItems.forEach(item => {
+    const codeElement = item.querySelector('.coupon-preview-code');
+    if (codeElement) {
+      const randomCode = generatePreviewPromoCode();
+      codeElement.textContent = randomCode;
+    }
+  });
+}
 function getRandomPrediction() {
   return predictions[Math.floor(Math.random() * predictions.length)];
 }
@@ -1889,19 +1941,21 @@ window.addEventListener('load', async () => {
  // Показываем рулетку
 loader.classList.remove('hidden');
 
-  // 👇 ДОБАВЬ С ЭТОЙ СТРОКИ
+// Инициализируем промокоды на превью
+initPreviewCoupons();
+
 // Автозапуск превью купонов для Android
 const previewVideos = document.querySelectorAll('.coupon-preview-item video');
 previewVideos.forEach((video, index) => {
   video.play().catch(e => {
     console.log(`Preview video ${index + 1} autoplay blocked:`, e.message);
-    // Пробуем запустить через 500ms
     setTimeout(() => {
       video.play().catch(() => {});
     }, 500);
   });
 });
-// 👆 ЗАКОНЧИЛИ ДОБАВЛЯТЬ
+
+ 
 
 // 🎯 ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
 const rouletteSound = document.getElementById('rouletteSound');
