@@ -753,6 +753,56 @@ mask-image: linear-gradient(
   
 
 <script>
+
+  // 🎯 РАЗБЛОКИРОВКА АУДИО/ВИДЕО ПОСЛЕ ПЕРВОГО КЛИКА
+let audioUnlocked = false;
+
+function unlockAudio() {
+  if (audioUnlocked) return;
+  
+  console.log('🔓 Разблокируем аудио и видео...');
+  
+  // Пытаемся запустить все аудио на 0.01 секунды
+  const sounds = [
+    document.getElementById('ticketSound'),
+    document.getElementById('rouletteSound'),
+    document.getElementById('winSound')
+  ];
+  
+  sounds.forEach(sound => {
+    if (sound) {
+      sound.volume = 0.01; // Почти беззвучно
+      sound.play().then(() => {
+        sound.pause();
+        sound.currentTime = 0;
+        sound.volume = 1; // Возвращаем громкость
+        console.log('✅ Звук разблокирован:', sound.id);
+      }).catch(e => {
+        console.log('⚠️ Не удалось разблокировать:', sound.id);
+      });
+    }
+  });
+  
+  // Разблокируем видео промокода
+  const promoVideo = document.getElementById('promoVideo');
+  if (promoVideo) {
+    promoVideo.play().then(() => {
+      promoVideo.pause();
+      console.log('✅ Видео разблокировано');
+    }).catch(() => {});
+  }
+  
+  audioUnlocked = true;
+  
+  // Удаляем обработчики после первого клика
+  document.removeEventListener('touchstart', unlockAudio);
+  document.removeEventListener('click', unlockAudio);
+}
+
+// Слушаем первый клик/тап
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('click', unlockAudio, { once: true });
+  
 // ===== КУПОНЫ С РАЗНЫМИ ЦВЕТАМИ И ВИДЕО =====
 const coupons = [
   {
