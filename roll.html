@@ -871,7 +871,7 @@ function preloadVideos() {
 }
 
 // Вызываем сразу при загрузке страницы
-preloadVideos();
+ 
   
 let selectedCoupon = null;
 let promoDisintegrated = false;
@@ -1560,25 +1560,20 @@ function selectRandomCoupon() {
 function applyCoupon(coupon) {
   selectedCoupon = coupon;
   
-  // 👈 ИЗМЕНИЛИ: цвет заголовка = цвет промокода
   const promoTitleEl = document.getElementById('promoTitle');
   promoTitleEl.textContent = coupon.title;
-  promoTitleEl.style.color = coupon.codeColor;  // 👈 ДОБАВЬ ЭТУ СТРОКУ
+  promoTitleEl.style.color = coupon.codeColor;
   
   const promoCodeBox = document.getElementById('promoCode');
   promoCodeBox.style.color = coupon.codeColor;
   
   const promoVideo = document.getElementById('promoVideo');
   
-  if (videoCache[coupon.videoUrl]) {
-    console.log('📦 Используем прелоад видео для:', coupon.title);
-    const cachedVideo = videoCache[coupon.videoUrl];
-    promoVideo.src = cachedVideo.src;
-    promoVideo.load();
-  } else {
-    console.log('⏳ Видео ещё не загружено, грузим обычным способом');
-    promoVideo.src = coupon.videoUrl;
-  }
+  // 🎯 ПРОСТО УСТАНАВЛИВАЕМ SRC БЕЗ КЕША
+  promoVideo.src = coupon.videoUrl;
+  promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
+  
+  console.log('🎬 Загружаем видео:', coupon.title, coupon.videoUrl);
   
   const style = document.createElement('style');
   style.textContent = `
