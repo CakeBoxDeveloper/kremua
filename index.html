@@ -141,6 +141,35 @@ textarea {
 }
 
  /* 🎯 SVG БАЗОВЫЙ СЛОЙ */
+
+
+  /* Кнопка конструктора */
+.constructor-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 0;
+  margin-bottom: 10px;
+  background: #443621;
+  border: 1px solid #f7a632;
+  color: #f7a632;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.3s ease;
+  font-size: 15px;
+}
+
+.constructor-btn:active {
+  transform: scale(0.96);
+}
+
+.constructor-btn:hover {
+  background: #554729;
+}
 .promo-base-svg {
   position: absolute;
   top: 0;
@@ -1559,6 +1588,10 @@ textarea {
       <div class="faq-content1">
        Натисніть на торт, щоб відкрити галерею. Якщо потрібний торт за особливим рецептом або з індивідуальним дизайном, <a href="https://cakeboxdeveloper.github.io/kremua/constructor">натисни сюди</a>. 
       </div> 
+      <a href="https://cakeboxdeveloper.github.io/kremua/constructor" class="constructor-btn">
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/wand-sparkles.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: brightness(0) saturate(100%) invert(68%) sepia(82%) saturate(433%) hue-rotate(359deg) brightness(101%) contrast(93%);">
+  Конструктор тортів
+</a>
     </div>
 
   
