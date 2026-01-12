@@ -273,68 +273,65 @@ body {
   position: relative;
 }
 
-  .ticket-modal-icon::before {
+ .ticket-modal-icon::before {
   content: '';
   position: absolute;
   inset: -20px;
- background: 
-  conic-gradient(
-    from 0deg,
-    #3a2d1d 0deg,
-    rgba(212, 175, 55, 0.4) 5deg,
-    rgba(212, 175, 55, 0.8) 10deg,
-    #3a2d1d 15deg,
-    #3a2d1d 30deg,
-    rgba(212, 175, 55, 0.4) 35deg,
-    rgba(212, 175, 55, 0.8) 40deg,
-    #3a2d1d 45deg,
-    #3a2d1d 60deg,
-    rgba(212, 175, 55, 0.4) 65deg,
-    rgba(212, 175, 55, 0.8) 70deg,
-    #3a2d1d 75deg,
-    #3a2d1d 90deg,
-    rgba(212, 175, 55, 0.4) 95deg,
-    rgba(212, 175, 55, 0.8) 100deg,
-    #3a2d1d 105deg,
-    #3a2d1d 120deg,
-    rgba(212, 175, 55, 0.4) 125deg,
-    rgba(212, 175, 55, 0.8) 130deg,
-    #3a2d1d 135deg,
-    #3a2d1d 150deg,
-    rgba(212, 175, 55, 0.4) 155deg,
-    rgba(212, 175, 55, 0.8) 160deg,
-    #3a2d1d 165deg,
-    #3a2d1d 180deg,
-    rgba(212, 175, 55, 0.4) 185deg,
-    rgba(212, 175, 55, 0.8) 190deg,
-    #3a2d1d 195deg,
-    #3a2d1d 210deg,
-    rgba(212, 175, 55, 0.4) 215deg,
-    rgba(212, 175, 55, 0.8) 220deg,
-    #3a2d1d 225deg,
-    #3a2d1d 240deg,
-    rgba(212, 175, 55, 0.4) 245deg,
-    rgba(212, 175, 55, 0.8) 250deg,
-    #3a2d1d 255deg,
-    #3a2d1d 270deg,
-    rgba(212, 175, 55, 0.4) 275deg,
-    rgba(212, 175, 55, 0.8) 280deg,
-    #3a2d1d 285deg,
-    #3a2d1d 300deg,
-    rgba(212, 175, 55, 0.4) 305deg,
-    rgba(212, 175, 55, 0.8) 310deg,
-    #3a2d1d 315deg,
-    #3a2d1d 330deg,
-    rgba(212, 175, 55, 0.4) 335deg,
-    rgba(212, 175, 55, 0.8) 340deg,
-    #3a2d1d 345deg,
-    #3a2d1d 360deg
-  );
+  background: 
+    radial-gradient(
+      circle,
+      rgba(212, 175, 55, 0.8) 0%,
+      rgba(212, 175, 55, 0.6) 30%,
+      rgba(212, 175, 55, 0.3) 50%,
+      transparent 70%
+    ),
+    conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(212, 175, 55, 0.6) 5deg,
+      transparent 15deg,
+      transparent 30deg,
+      rgba(212, 175, 55, 0.6) 35deg,
+      transparent 45deg,
+      transparent 60deg,
+      rgba(212, 175, 55, 0.6) 65deg,
+      transparent 75deg,
+      transparent 90deg,
+      rgba(212, 175, 55, 0.6) 95deg,
+      transparent 105deg,
+      transparent 120deg,
+      rgba(212, 175, 55, 0.6) 125deg,
+      transparent 135deg,
+      transparent 150deg,
+      rgba(212, 175, 55, 0.6) 155deg,
+      transparent 165deg,
+      transparent 180deg,
+      rgba(212, 175, 55, 0.6) 185deg,
+      transparent 195deg,
+      transparent 210deg,
+      rgba(212, 175, 55, 0.6) 215deg,
+      transparent 225deg,
+      transparent 240deg,
+      rgba(212, 175, 55, 0.6) 245deg,
+      transparent 255deg,
+      transparent 270deg,
+      rgba(212, 175, 55, 0.6) 275deg,
+      transparent 285deg,
+      transparent 300deg,
+      rgba(212, 175, 55, 0.6) 305deg,
+      transparent 315deg,
+      transparent 330deg,
+      rgba(212, 175, 55, 0.6) 335deg,
+      transparent 345deg,
+      transparent 360deg
+    );
   border-radius: 50%;
   animation: rotateSunRays 8s linear infinite;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.6s ease;
+  filter: blur(3px); /* 👈 ДОБАВЛЯЕТ МЯГКОСТЬ */
+}
 
      /* 👇 ДОБАВЬ ЭТИ СТРОКИ */
   mask-image: radial-gradient(
