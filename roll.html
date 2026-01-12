@@ -753,6 +753,13 @@ mask-image: linear-gradient(
 <audio id="ticketSound" preload="auto">
   <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/TicketKR.mp3" type="audio/mpeg">
 </audio>
+
+  <audio id="rouletteSound" preload="auto">
+  <source src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Roulette.mp3?raw=true" type="audio/mpeg">
+</audio>
+<audio id="winSound" preload="auto">
+  <source src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Win.mp3?raw=true" type="audio/mpeg">
+</audio>
   
 
 <script>
@@ -1755,20 +1762,35 @@ window.addEventListener('load', async () => {
   // Показываем рулетку
 // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (БЕЗ БИЛЕТА ИЛИ С ВАЛИДНЫМ) → РУЛЕТКА =====
   // Показываем рулетку
-  loader.classList.remove('hidden');
-  
-  // 🎯 ВОСПРОИЗВОДИМ ЗВУК СПИННЕРА
-  const spinnerSound = document.getElementById('spinnerSound');
-  if (spinnerSound) {
-    spinnerSound.currentTime = 0;
-    spinnerSound.play().catch(e => console.log('Spinner sound play failed:', e));
-  }
+ // Показываем рулетку
+loader.classList.remove('hidden');
+
+// 🎯 ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
+const rouletteSound = document.getElementById('rouletteSound');
+if (rouletteSound) {
+  rouletteSound.currentTime = 0;
+  rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
+}
   
   setTimeout(() => {
-    loader.classList.add('hidden');
-    
-    const randomCoupon = selectRandomCoupon();
-    applyCoupon(randomCoupon);
+  // 🎯 ОСТАНАВЛИВАЕМ ЗВУК РУЛЕТКИ
+  const rouletteSound = document.getElementById('rouletteSound');
+  if (rouletteSound) {
+    rouletteSound.pause();
+    rouletteSound.currentTime = 0;
+  }
+  
+  // 🎯 ЗАПУСКАЕМ ЗВУК ВЫИГРЫША
+  const winSound = document.getElementById('winSound');
+  if (winSound) {
+    winSound.currentTime = 0;
+    winSound.play().catch(e => console.log('Win sound play failed:', e));
+  }
+  
+  loader.classList.add('hidden');
+  
+  const randomCoupon = selectRandomCoupon();
+  applyCoupon(randomCoupon);
     
     setTimeout(() => {
       promoOverlay.classList.add('active');
