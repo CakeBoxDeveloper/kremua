@@ -1572,6 +1572,20 @@ function applyCoupon(coupon) {
   // 🎯 ПРОСТО УСТАНАВЛИВАЕМ SRC БЕЗ КЕША
   promoVideo.src = coupon.videoUrl;
   promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
+
+  promoVideo.addEventListener('error', function(e) {
+  console.error('❌ Ошибка загрузки видео купона!');
+  console.log('URL:', this.src);
+  console.log('NetworkState:', this.networkState);
+  console.log('Error:', this.error);
+  
+  // Показываем пользователю что что-то пошло не так
+  alert('Помилка завантаження відео купона. Спробуйте оновити сторінку.');
+});
+
+promoVideo.addEventListener('loadeddata', function() {
+  console.log('✅ Видео купона загружено успешно');
+});
   
   console.log('🎬 Загружаем видео:', coupon.title, coupon.videoUrl);
   
