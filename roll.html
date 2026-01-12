@@ -276,61 +276,39 @@ body {
  .ticket-modal-icon::before {
   content: '';
   position: absolute;
-  inset: -20px;
+  inset: -40px;
   background: 
     radial-gradient(
       circle,
-      rgba(212, 175, 55, 0.8) 0%,
-      rgba(212, 175, 55, 0.6) 30%,
-      rgba(212, 175, 55, 0.3) 50%,
-      transparent 70%
-    ),
-    conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      rgba(212, 175, 55, 0.6) 5deg,
-      transparent 15deg,
-      transparent 30deg,
-      rgba(212, 175, 55, 0.6) 35deg,
-      transparent 45deg,
-      transparent 60deg,
-      rgba(212, 175, 55, 0.6) 65deg,
-      transparent 75deg,
-      transparent 90deg,
-      rgba(212, 175, 55, 0.6) 95deg,
-      transparent 105deg,
-      transparent 120deg,
-      rgba(212, 175, 55, 0.6) 125deg,
-      transparent 135deg,
-      transparent 150deg,
-      rgba(212, 175, 55, 0.6) 155deg,
-      transparent 165deg,
-      transparent 180deg,
-      rgba(212, 175, 55, 0.6) 185deg,
-      transparent 195deg,
-      transparent 210deg,
-      rgba(212, 175, 55, 0.6) 215deg,
-      transparent 225deg,
-      transparent 240deg,
-      rgba(212, 175, 55, 0.6) 245deg,
-      transparent 255deg,
-      transparent 270deg,
-      rgba(212, 175, 55, 0.6) 275deg,
-      transparent 285deg,
-      transparent 300deg,
-      rgba(212, 175, 55, 0.6) 305deg,
-      transparent 315deg,
-      transparent 330deg,
-      rgba(212, 175, 55, 0.6) 335deg,
-      transparent 345deg,
-      transparent 360deg
+      rgba(212, 175, 55, 0.4) 0%,
+      rgba(212, 175, 55, 0.3) 20%,
+      rgba(212, 175, 55, 0.15) 40%,
+      rgba(212, 175, 55, 0.05) 60%,
+      transparent 80%
     );
   border-radius: 50%;
-  animation: rotateSunRays 8s linear infinite;
+  animation: pulseGlow 3s ease-in-out infinite;
   z-index: -1;
   opacity: 0;
   transition: opacity 0.6s ease;
-  filter: blur(3px); /* 👈 ДОБАВЛЯЕТ МЯГКОСТЬ */
+  filter: blur(15px);
+}
+
+/* Показываем сияние только для success */
+.ticket-modal.success .ticket-modal-icon::before {
+  opacity: 1;
+}
+
+/* Анимация пульсации */
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 }
 
      /* 👇 ДОБАВЬ ЭТИ СТРОКИ */
