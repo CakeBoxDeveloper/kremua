@@ -762,7 +762,6 @@ function unlockAudio() {
   
   console.log('🔓 Разблокируем аудио и видео...');
   
-  // Пытаемся запустить все аудио на 0.01 секунды
   const sounds = [
     document.getElementById('ticketSound'),
     document.getElementById('rouletteSound'),
@@ -771,13 +770,16 @@ function unlockAudio() {
   
   sounds.forEach(sound => {
     if (sound) {
-      sound.volume = 0.01; // Почти беззвучно
+      const originalVolume = sound.volume; // 👈 СОХРАНЯЕМ ОРИГИНАЛЬНУЮ ГРОМКОСТЬ
+      sound.volume = 0.001; // 👈 ЕЩЁ ТИШЕ (практически беззвучно)
+      
       sound.play().then(() => {
         sound.pause();
         sound.currentTime = 0;
-        sound.volume = 1; // Возвращаем громкость
+        sound.volume = originalVolume || 1; // 👈 ВОЗВРАЩАЕМ СРАЗУ
         console.log('✅ Звук разблокирован:', sound.id);
       }).catch(e => {
+        sound.volume = originalVolume || 1; // 👈 ВОЗВРАЩАЕМ ДАЖЕ ПРИ ОШИБКЕ
         console.log('⚠️ Не удалось разблокировать:', sound.id);
       });
     }
@@ -1111,17 +1113,21 @@ function showTicketModal(type, message) {
   
   document.body.appendChild(modal);
   
+setTimeout(() => {
+  modal.classList.add('active');
+  
+  // 🎵 ВОСПРОИЗВОДИМ ЗВУК ПОСЛЕ ПОЯВЛЕНИЯ МОДАЛЬНОГО ОКНА
   setTimeout(() => {
-    modal.classList.add('active');
-    
-    // 🎵 ВОСПРОИЗВОДИМ ЗВУК ПОСЛЕ ПОЯВЛЕНИЯ МОДАЛЬНОГО ОКНА
     const ticketSound = document.getElementById('ticketSound');
     if (ticketSound) {
       ticketSound.currentTime = 0;
-      ticketSound.play().catch(e => console.log('Ticket sound play failed:', e));
+      ticketSound.volume = 1; // 👈 ЯВНО УСТАНАВЛИВАЕМ ГРОМКОСТЬ
+      ticketSound.play().catch(e => {
+        console.log('⚠️ Ticket sound play failed:', e);
+      });
     }
-  }, 10);
-}
+  }, 300); // 👈 ЗАДЕРЖКА 300ms — даём время на разблокировку
+}, 10);
 
 // Промис для ожидания закрытия модального окна
 function waitForModalClose() {
@@ -1622,25 +1628,43 @@ function applyCoupon(coupon) {
   const promoCodeBox = document.getElementById('promoCode');
   promoCodeBox.style.color = coupon.codeColor;
   
-  const promoVideo = document.getElementById('promoVideo');
+const promoVideo = document.getElementById('promoVideo');
   
-  // 🎯 ПРОСТО УСТАНАВЛИВАЕМ SRC БЕЗ КЕША
-  promoVideo.src = coupon.videoUrl;
-  promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
+// 🎯 УБИРАЕМ СТАРЫЕ ОБРАБОТЧИКИ
+const oldErrorHandler = promoVideo.onerror;
+const oldLoadHandler = promoVideo.onloadeddata;
+promoVideo.onerror = null;
+promoVideo.onloadeddata = null;
 
-  promoVideo.addEventListener('error', function(e) {
+// 🎯 УСТАНАВЛИВАЕМ SRC И ЗАГРУЖАЕМ
+promoVideo.src = coupon.videoUrl;
+
+// 🎯 НОВЫЕ ОБРАБОТЧИКИ (ТОЛЬКО РАЗ)
+promoVideo.addEventListener('error', function handleError(e) {
   console.error('❌ Ошибка загрузки видео купона!');
   console.log('URL:', this.src);
   console.log('NetworkState:', this.networkState);
+  console.log('ReadyState:', this.readyState);
   console.log('Error:', this.error);
   
-  // Показываем пользователю что что-то пошло не так
-  alert('Помилка завантаження відео купона. Спробуйте оновити сторінку.');
-});
+  // Пробуем перезагрузить
+  setTimeout(() => {
+    console.log('🔄 Пробуем перезагрузить видео...');
+    this.load();
+  }, 1000);
+  
+  // Удаляем обработчик после первого вызова
+  this.removeEventListener('error', handleError);
+}, { once: true });
 
-promoVideo.addEventListener('loadeddata', function() {
+promoVideo.addEventListener('loadeddata', function handleLoad() {
   console.log('✅ Видео купона загружено успешно');
-});
+  console.log('Duration:', this.duration);
+  console.log('VideoWidth:', this.videoWidth);
+  console.log('VideoHeight:', this.videoHeight);
+}, { once: true });
+
+promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
   
   console.log('🎬 Загружаем видео:', coupon.title, coupon.videoUrl);
   
@@ -1818,6 +1842,7 @@ loader.classList.remove('hidden');
 const rouletteSound = document.getElementById('rouletteSound');
 if (rouletteSound) {
   rouletteSound.currentTime = 0;
+  rouletteSound.volume = 1; // 👈 ДОБАВЬ ЭТУ СТРОКУ
   rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
 }
   
@@ -1830,11 +1855,12 @@ if (rouletteSound) {
   }
   
   // 🎯 ЗАПУСКАЕМ ЗВУК ВЫИГРЫША
-  const winSound = document.getElementById('winSound');
-  if (winSound) {
-    winSound.currentTime = 0;
-    winSound.play().catch(e => console.log('Win sound play failed:', e));
-  }
+const winSound = document.getElementById('winSound');
+if (winSound) {
+  winSound.currentTime = 0;
+  winSound.volume = 1; // 👈 ДОБАВЬ ЭТУ СТРОКУ
+  winSound.play().catch(e => console.log('Win sound play failed:', e));
+}
   
   loader.classList.add('hidden');
   
