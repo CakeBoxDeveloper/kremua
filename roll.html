@@ -1959,114 +1959,136 @@ window.addEventListener('load', async () => {
   // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ → РУЛЕТКА =====
   
   // 🎯 ШАГ 1: ПОКАЗЫВАЕМ LOADER
-  loader.classList.remove('hidden');
-  console.log('✅ Loader показан');
+// ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ → РУЛЕТКА =====
   
-  // 🎯 ШАГ 2: ДАЁМ ВРЕМЯ БРАУЗЕРУ НА РЕНДЕРИНГ DOM
-  await new Promise(resolve => setTimeout(resolve, 100));
-  
-  // 🎯 ШАГ 3: ИНИЦИАЛИЗИРУЕМ ПРОМОКОДЫ
-  initPreviewCoupons();
-  console.log('✅ Промокоды инициализированы');
-  
-  // 🎯 ШАГ 4: ЗАПУСКАЕМ ВИДЕО
-  const previewVideos = document.querySelectorAll('.coupon-preview-item video');
-  console.log('🎬 Найдено видео:', previewVideos.length);
-  
-  previewVideos.forEach((video, index) => {
-    console.log(`🎬 Настраиваем видео ${index + 1}...`);
+// 🎯 ШАГ 1: ПОКАЗЫВАЕМ LOADER (БЕЗ ВИДЕО)
+loader.classList.remove('hidden');
+console.log('✅ Loader показан');
+
+// 🎯 ШАГ 2: ЖДЁМ РЕНДЕРИНГ DOM
+await new Promise(resolve => setTimeout(resolve, 150));
+
+// 🎯 ШАГ 3: ИНИЦИАЛИЗИРУЕМ ПРОМОКОДЫ
+initPreviewCoupons();
+
+// 🎯 ШАГ 4: ПРИНУДИТЕЛЬНО ЗАГРУЖАЕМ И ЗАПУСКАЕМ ВИДЕО
+const previewVideos = document.querySelectorAll('.coupon-preview-item video');
+console.log('🎬 Найдено видео:', previewVideos.length);
+
+// Создаём массив промисов для загрузки всех видео
+const videoPromises = Array.from(previewVideos).map((video, index) => {
+  return new Promise((resolve) => {
+    console.log(`🎬 Загружаем видео ${index + 1}...`);
     
-    // Принудительно устанавливаем атрибуты
+    // Устанавливаем атрибуты
     video.muted = true;
     video.playsInline = true;
-    video.autoplay = true;
     video.loop = true;
+    video.autoplay = false; // 👈 ВАЖНО: выключаем autoplay
     
-    // Обработчик загрузки
-    video.addEventListener('loadeddata', () => {
-      console.log(`✅ Видео ${index + 1} загружено, пытаемся запустить...`);
+    // Обработчик успешной загрузки
+    const onLoad = () => {
+      console.log(`✅ Видео ${index + 1} загружено`);
+      cleanup();
       
+      // Запускаем воспроизведение
       video.play()
         .then(() => {
-          console.log(`✅ Видео ${index + 1} воспроизводится!`);
+          console.log(`▶️ Видео ${index + 1} воспроизводится`);
+          resolve(true);
         })
         .catch(e => {
-          console.log(`⚠️ Видео ${index + 1} заблокировано:`, e.message);
-          
-          // Повторная попытка через 300ms
-          setTimeout(() => {
-            video.play()
-              .then(() => console.log(`✅ Видео ${index + 1} запустилось со второй попытки`))
-              .catch(() => console.log(`❌ Видео ${index + 1} не удалось запустить`));
-          }, 300);
+          console.log(`⚠️ Автозапуск видео ${index + 1} заблокирован:`, e.message);
+          resolve(false); // Продолжаем даже если не запустилось
         });
-    }, { once: true });
+    };
     
-    // Обработчик ошибок
-    video.addEventListener('error', (e) => {
-      console.error(`❌ Ошибка видео ${index + 1}:`, e);
-      console.log('NetworkState:', video.networkState);
-      console.log('ReadyState:', video.readyState);
-    }, { once: true });
+    // Обработчик ошибки
+    const onError = (e) => {
+      console.error(`❌ Ошибка загрузки видео ${index + 1}:`, e);
+      console.log('URL:', video.src);
+      cleanup();
+      resolve(false); // Продолжаем даже при ошибке
+    };
+    
+    // Очистка обработчиков
+    const cleanup = () => {
+      video.removeEventListener('loadeddata', onLoad);
+      video.removeEventListener('error', onError);
+    };
+    
+    video.addEventListener('loadeddata', onLoad, { once: true });
+    video.addEventListener('error', onError, { once: true });
     
     // Принудительная загрузка
     video.load();
+    
+    // Таймаут на случай зависания (5 секунд)
+    setTimeout(() => {
+      cleanup();
+      console.log(`⏱️ Таймаут загрузки видео ${index + 1}`);
+      resolve(false);
+    }, 5000);
   });
-  
-  // 🎯 ШАГ 5: ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
+});
+
+// Ждём загрузки ВСЕХ видео (или таймаута)
+await Promise.all(videoPromises);
+console.log('✅ Все видео обработаны');
+
+// 🎯 ШАГ 5: ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
+const rouletteSound = document.getElementById('rouletteSound');
+if (rouletteSound) {
+  rouletteSound.currentTime = 0;
+  rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
+}
+
+// 🎯 ШАГ 6: ЧЕРЕЗ 5 СЕКУНД ПОКАЗЫВАЕМ ПРОМОКОД
+setTimeout(() => {
+  // Останавливаем звук рулетки
   const rouletteSound = document.getElementById('rouletteSound');
   if (rouletteSound) {
+    rouletteSound.pause();
     rouletteSound.currentTime = 0;
-    rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
   }
   
-  // 🎯 ШАГ 6: ЧЕРЕЗ 5 СЕКУНД ПОКАЗЫВАЕМ ПРОМОКОД
+  // Запускаем звук выигрыша
+  const winSound = document.getElementById('winSound');
+  if (winSound) {
+    winSound.currentTime = 0;
+    winSound.play().catch(e => console.log('Win sound play failed:', e));
+  }
+  
+  loader.classList.add('hidden');
+  
+  const randomCoupon = selectRandomCoupon();
+  applyCoupon(randomCoupon);
+  
   setTimeout(() => {
-    // Останавливаем звук рулетки
-    const rouletteSound = document.getElementById('rouletteSound');
-    if (rouletteSound) {
-      rouletteSound.pause();
-      rouletteSound.currentTime = 0;
-    }
-    
-    // Запускаем звук выигрыша
-    const winSound = document.getElementById('winSound');
-    if (winSound) {
-      winSound.currentTime = 0;
-      winSound.play().catch(e => console.log('Win sound play failed:', e));
-    }
-    
-    loader.classList.add('hidden');
-    
-    const randomCoupon = selectRandomCoupon();
-    applyCoupon(randomCoupon);
+    promoOverlay.classList.add('active');
     
     setTimeout(() => {
-      promoOverlay.classList.add('active');
-      
-      setTimeout(() => {
-        animatePromoCode();
-      }, 600);
-      
-      const promoVideo = document.getElementById('promoVideo');
-      if (promoVideo) {
-        promoVideo.play().catch(err => {
-          console.log('Автозапуск видео заблокирован:', err);
-        });
-      }
-      
-      setTimeout(() => {
-        launchCanvasConfetti();
-      }, 200);
-      
-      if (promoTimer) {
-        clearTimeout(promoTimer);
-      }
-      startPromoTimer();
-      
-    }, 300);
-  }, 5000);
-});
+      animatePromoCode();
+    }, 600);
+    
+    const promoVideo = document.getElementById('promoVideo');
+    if (promoVideo) {
+      promoVideo.play().catch(err => {
+        console.log('Автозапуск видео заблокирован:', err);
+      });
+    }
+    
+    setTimeout(() => {
+      launchCanvasConfetti();
+    }, 200);
+    
+    if (promoTimer) {
+      clearTimeout(promoTimer);
+    }
+    startPromoTimer();
+    
+  }, 300);
+}, 5000);
 
 // ===== ТАЙМЕР ПРОМОКОДА (15 СЕКУНД) =====
 function startPromoTimer() {
