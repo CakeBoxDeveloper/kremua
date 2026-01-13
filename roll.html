@@ -868,7 +868,7 @@ mask-image: linear-gradient(
   <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm" type="video/webm">
 </video>
 <video class="promo-animation-webm promo-video-yellow" loop muted playsinline preload="none">
-  <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm" type="video/webm">
+  <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm" type="video/webm">
 </video>
       
       <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">
@@ -955,7 +955,7 @@ const coupons = [
   },
   {
     title: "Тобi випав зелений купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm",
     codeColor: "#005330",
     particleColor: "#007042",
     discount: "50%",
@@ -1001,7 +1001,7 @@ function preloadImages() {
       'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm',
       'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm',
       'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm',
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm'
+      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm'
     ];
     
     let loadedCount = 0;
@@ -1772,7 +1772,7 @@ let videoClass = '';
 if (coupon.videoUrl.includes('FinalY2')) videoClass = 'promo-video-yellow';
 else if (coupon.videoUrl.includes('FinalR2')) videoClass = 'promo-video-red';
 else if (coupon.videoUrl.includes('FinalB2')) videoClass = 'promo-video-blue';
-else if (coupon.videoUrl.includes('FinalG2')) videoClass = 'promo-video-green';
+else if (coupon.videoUrl.includes('FinalG22')) videoClass = 'promo-video-green';
 
 const activeVideo = document.querySelector(`.${videoClass}`);
 if (activeVideo) {
