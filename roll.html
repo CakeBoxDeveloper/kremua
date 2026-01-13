@@ -27,6 +27,9 @@ body {
   color: #d4af37;
   margin-top: 10px;
   animation: pulse 1.5s ease-in-out infinite;
+  text-align: center;
+  width: 90%;
+  max-width: 600px;
 }
 
 /* 👇 ДОБАВЬ ОТСЮДА */
@@ -516,6 +519,14 @@ body {
   transform: scale(1.08);
 }
 
+  .promo-animation-webm {
+  display: none; /* Скрываем все по умолчанию */
+}
+
+.promo-animation-webm.active {
+  display: block; /* Показываем только активное */
+}
+
 .promo-code-box {
   position: absolute;
   top: 85%;
@@ -846,14 +857,19 @@ mask-image: linear-gradient(
         alt="Base"
       >
       
-      <video 
-        src="" 
-        class="promo-animation-webm"
-        id="promoVideo"
-        loop
-        muted
-        playsinline
-      ></video>
+      <!-- Скрытые предзагруженные видео -->
+<video class="promo-animation-webm promo-video-yellow" loop muted playsinline preload="auto">
+  <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm" type="video/webm">
+</video>
+<video class="promo-animation-webm promo-video-red" loop muted playsinline preload="auto">
+  <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm" type="video/webm">
+</video>
+<video class="promo-animation-webm promo-video-blue" loop muted playsinline preload="auto">
+  <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm" type="video/webm">
+</video>
+<video class="promo-animation-webm promo-video-green" loop muted playsinline preload="auto">
+  <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm" type="video/webm">
+</video>
       
       <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">
         XXXX-XXXX-XXXX-XXXX
@@ -1744,16 +1760,23 @@ function applyCoupon(coupon) {
   const promoCodeBox = document.getElementById('promoCode');
   promoCodeBox.style.color = coupon.codeColor;
   
- const promoVideo = document.getElementById('promoVideo');
-  
-// Используем предзагруженное видео из кеша
-if (videoCache[coupon.videoUrl]) {
-  promoVideo.src = coupon.videoUrl;
-  console.log('✅ Видео из кеша:', coupon.title);
-} else {
-  promoVideo.src = coupon.videoUrl;
-  promoVideo.load();
-  console.log('⚠️ Видео загружается напрямую:', coupon.title);
+// Скрываем все видео
+document.querySelectorAll('.promo-animation-webm').forEach(v => {
+  v.classList.remove('active');
+  v.pause();
+});
+
+// Показываем нужное видео
+let videoClass = '';
+if (coupon.videoUrl.includes('FinalY2')) videoClass = 'promo-video-yellow';
+else if (coupon.videoUrl.includes('FinalR2')) videoClass = 'promo-video-red';
+else if (coupon.videoUrl.includes('FinalB2')) videoClass = 'promo-video-blue';
+else if (coupon.videoUrl.includes('FinalG2')) videoClass = 'promo-video-green';
+
+const activeVideo = document.querySelector(`.${videoClass}`);
+if (activeVideo) {
+  activeVideo.classList.add('active');
+  console.log('✅ Активировано видео:', coupon.title);
 }
   
   const style = document.createElement('style');
@@ -1945,12 +1968,12 @@ window.addEventListener('load', async () => {
         animatePromoCode();
       }, 600);
       
-      const promoVideo = document.getElementById('promoVideo');
-      if (promoVideo) {
-        promoVideo.play().catch(err => {
-          console.log('Автозапуск видео заблокирован:', err);
-        });
-      }
+    const activeVideo = document.querySelector('.promo-animation-webm.active');
+if (activeVideo) {
+  activeVideo.play().catch(err => {
+    console.log('Автозапуск видео заблокирован:', err);
+  });
+}
       
       setTimeout(() => {
         launchCanvasConfetti();
