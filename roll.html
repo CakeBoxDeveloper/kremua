@@ -755,6 +755,7 @@ mask-image: linear-gradient(
 </div>
 
 <!-- ЛОАДЕР (РУЛЕТКА) -->
+<div id="loader" class="loader">
   <div class="coupons-table">
     <table>
       <thead>
@@ -829,6 +830,7 @@ mask-image: linear-gradient(
   <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
   <div class="loader-text">Генеруємо ваш промокод...</div>
 </div>
+  </div>
 
 <!-- ПРОМОКОД ОВЕРЛЕЙ -->
 <canvas id="particleCanvas"></canvas>
@@ -886,7 +888,7 @@ mask-image: linear-gradient(
   </div>
   
   <div class="countdown-container">
-    <div class="countdown-text">
+    <div class="countdown-text" id="countdownText">
       Наступна спроба через:
     </div>
     <div class="countdown-timer" id="countdownTimer">
