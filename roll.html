@@ -1062,7 +1062,7 @@ function preloadVideos() {
 }
 
 // Вызываем сразу при загрузке страницы
-preloadVideos();
+ 
   
 let selectedCoupon = null;
 let promoDisintegrated = false;
@@ -1759,17 +1759,41 @@ function applyCoupon(coupon) {
   const promoCodeBox = document.getElementById('promoCode');
   promoCodeBox.style.color = coupon.codeColor;
   
-  const promoVideo = document.getElementById('promoVideo');
+const promoVideo = document.getElementById('promoVideo');
+
+// 🎯 УБИРАЕМ СТАРЫЕ ОБРАБОТЧИКИ
+promoVideo.onerror = null;
+promoVideo.onloadeddata = null;
+
+// 🎯 УСТАНАВЛИВАЕМ SRC
+promoVideo.src = coupon.videoUrl;
+
+// 🎯 ОБРАБОТЧИК ОШИБОК (только один раз)
+promoVideo.addEventListener('error', function handleError(e) {
+  console.error('❌ Ошибка загрузки видео купона!');
+  console.log('URL:', this.src);
+  console.log('NetworkState:', this.networkState);
+  console.log('ReadyState:', this.readyState);
+  console.log('Error:', this.error);
   
-  if (videoCache[coupon.videoUrl]) {
-    console.log('📦 Используем прелоад видео для:', coupon.title);
-    const cachedVideo = videoCache[coupon.videoUrl];
-    promoVideo.src = cachedVideo.src;
-    promoVideo.load();
-  } else {
-    console.log('⏳ Видео ещё не загружено, грузим обычным способом');
-    promoVideo.src = coupon.videoUrl;
-  }
+  // Пробуем перезагрузить
+  setTimeout(() => {
+    console.log('🔄 Пробуем перезагрузить видео...');
+    this.load();
+  }, 1000);
+  
+  this.removeEventListener('error', handleError);
+}, { once: true });
+
+// 🎯 ОБРАБОТЧИК УСПЕШНОЙ ЗАГРУЗКИ
+promoVideo.addEventListener('loadeddata', function handleLoad() {
+  console.log('✅ Видео купона загружено успешно');
+  console.log('Duration:', this.duration);
+  console.log('VideoWidth:', this.videoWidth);
+  console.log('VideoHeight:', this.videoHeight);
+}, { once: true });
+
+promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
   
   const style = document.createElement('style');
   style.textContent = `
@@ -1945,12 +1969,25 @@ loader.classList.remove('hidden');
 initPreviewCoupons();
 
 // Автозапуск превью купонов для Android
+// 🎯 АВТОЗАПУСК ПРЕВЬЮ ВИДЕО (с множественными попытками)
 const previewVideos = document.querySelectorAll('.coupon-preview-item video');
 previewVideos.forEach((video, index) => {
+  // Попытка 1: сразу
   video.play().catch(e => {
-    console.log(`Preview video ${index + 1} autoplay blocked:`, e.message);
+    console.log(`⚠️ Preview video ${index + 1} autoplay blocked:`, e.message);
+    
+    // Попытка 2: через 500ms
     setTimeout(() => {
-      video.play().catch(() => {});
+      video.play().catch(() => {
+        console.log(`⚠️ Preview video ${index + 1} 2nd attempt failed`);
+        
+        // Попытка 3: через 1500ms
+        setTimeout(() => {
+          video.play().catch(() => {
+            console.log(`⚠️ Preview video ${index + 1} 3rd attempt failed`);
+          });
+        }, 1000);
+      });
     }, 500);
   });
 });
