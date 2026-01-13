@@ -921,7 +921,7 @@ const coupons = [
     codeColor: "#af8246",
     particleColor: "#ffd282",
     discount: "15%",
-    displayName: "Жовтий купон"  // 👈 ДОБАВЬ ЭТО
+    displayName: "Жовтий купон"
   },
   {
     title: "Тобi випав червоний купон!",
@@ -929,7 +929,7 @@ const coupons = [
     codeColor: "#6d2121",
     particleColor: "#9c2d35",
     discount: "10%",
-    displayName: "Червоний купон"  // 👈 ДОБАВЬ ЭТО
+    displayName: "Червоний купон"
   },
   {
     title: "Тобi випав синій купон!",
@@ -937,7 +937,7 @@ const coupons = [
     codeColor: "#5c94cc",
     particleColor: "#5c94cc",
     discount: "20%",
-    displayName: "Синій купон"  // 👈 ДОБАВЬ ЭТО
+    displayName: "Синій купон"
   },
   {
     title: "Тобi випав зелений купон!",
@@ -945,11 +945,11 @@ const coupons = [
     codeColor: "#005330",
     particleColor: "#007042",
     discount: "50%",
-    displayName: "Зелений купон"  // 👈 ДОБАВЬ ЭТО
+    displayName: "Зелений купон"
   }
 ];
 
-  const predictions = [
+const predictions = [
   "Бджоли можуть розпізнавати людські обличчя",
   "Спрути мають три серця",
   "Банани — це ягоди, а полуниця — ні",
@@ -967,7 +967,17 @@ const coupons = [
   "У людини й жирафа однакова кількість шийних хребців",
   "Золота рибка має пам'ять на три місяці"
 ];
-// Генерация короткого промокода для превью
+
+let selectedCoupon = null;
+let promoDisintegrated = false;
+let promoTimer = null;
+let countdownInterval = null;
+let isDecoding = false;
+let finalPromoCode = '';
+
+const SECRET_KEY = "your-super-secret-key-change-this-12345";
+
+// ===== ГЕНЕРАЦИЯ ПРОМОКОДОВ =====
 function generatePreviewPromoCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   let code = '';
@@ -982,7 +992,6 @@ function generatePreviewPromoCode() {
   return code;
 }
 
-// Инициализация промокодов на превью купонах
 function initPreviewCoupons() {
   const previewItems = document.querySelectorAll('.coupon-preview-item');
   
@@ -994,12 +1003,12 @@ function initPreviewCoupons() {
     }
   });
 }
+
 function getRandomPrediction() {
   return predictions[Math.floor(Math.random() * predictions.length)];
 }
 
-
- // ===== ПРЕЛОАД ИЗОБРАЖЕНИЙ =====
+// ===== ПРЕЛОАД ИЗОБРАЖЕНИЙ =====
 function preloadImages() {
   return new Promise((resolve) => {
     const imagesToPreload = [
@@ -1011,21 +1020,16 @@ function preloadImages() {
     let loadedCount = 0;
     const totalImages = imagesToPreload.length;
     
-    console.log('🖼️ Начинаем прелоад изображений...');
-    
     imagesToPreload.forEach((src) => {
       const img = new Image();
       img.onload = () => {
         loadedCount++;
-        console.log(`✅ Изображение ${loadedCount}/${totalImages} загружено`);
         if (loadedCount === totalImages) {
-          console.log('✅ Все изображения загружены!');
           resolve();
         }
       };
       img.onerror = () => {
         loadedCount++;
-        console.log(`⚠️ Ошибка загрузки изображения, но продолжаем: ${loadedCount}/${totalImages}`);
         if (loadedCount === totalImages) {
           resolve();
         }
@@ -1035,43 +1039,7 @@ function preloadImages() {
   });
 }
 
-  // ===== ПРЕЛОАД ВИДЕО =====
-const videoCache = {};
-
-function preloadVideos() {
-  console.log('🎬 Начинаем прелоад видео...');
-  
-  coupons.forEach((coupon, index) => {
-    const video = document.createElement('video');
-    video.preload = 'auto';
-    video.muted = true;
-    video.playsInline = true;
-    
-    video.addEventListener('loadeddata', () => {
-      videoCache[coupon.videoUrl] = video;
-      console.log(`✅ Видео ${index + 1}/${coupons.length} загружено:`, coupon.title);
-    });
-    
-    video.addEventListener('error', (e) => {
-      console.error(`❌ Ошибка загрузки видео:`, coupon.title, e);
-    });
-    
-    video.src = coupon.videoUrl;
-    video.load();
-  });
-}
-
-// Вызываем сразу при загрузке страницы
- 
-  
-let selectedCoupon = null;
-let promoDisintegrated = false;
-let promoTimer = null; // 👈 Убедись что эта строка есть
-let countdownInterval = null;
-let isDecoding = true; // 👈 Добавь если нет
-let finalPromoCode = ''; // 👈 Добавь если нет
-
-  // ===== ВИДЖЕТ ВЫИГРЫШЕЙ =====
+// ===== ВИДЖЕТ ВЫИГРЫШЕЙ =====
 const winnersList = document.getElementById("winnersList");
 const ROW_HEIGHT = 36;
 const VISIBLE_ROWS = 5;
@@ -1119,9 +1087,7 @@ function initWinnersWidget() {
   setInterval(scrollUp, 6000);
 }
 
-// ⚠️ ТОТ ЖЕ СЕКРЕТНЫЙ КЛЮЧ (должен совпадать с admin.html)
-const SECRET_KEY = "your-super-secret-key-change-this-12345";
-
+// ===== ПРОВЕРКА И ИСПОЛЬЗОВАНИЕ ПРОМО-БИЛЕТА =====
 async function checkAndUsePromoTicket() {
   const urlParams = new URLSearchParams(window.location.search);
   const ticketCode = urlParams.get('ticket');
@@ -1136,7 +1102,7 @@ async function checkAndUsePromoTicket() {
     const parts = ticketCode.split('-');
     if (parts.length < 3) {
       console.log('❌ Неверный формат билета');
-      showTicketModal('error', 'Недійсний формат білета!');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Недійсний формат білета!');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1147,7 +1113,7 @@ async function checkAndUsePromoTicket() {
     
     if (signature !== expectedSignature) {
       console.log('❌ Неверная подпись билета');
-      showTicketModal('error', 'Недійсний білет! Підпис не збігається.');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Недійсний білет! Підпис не збігається.');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1158,7 +1124,7 @@ async function checkAndUsePromoTicket() {
     
     if (age > maxAge) {
       console.log('❌ Билет истёк');
-      showTicketModal('error', 'Білет прострочено! Термін дії минув.');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Білет прострочено! Термін дії минув.');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1166,7 +1132,7 @@ async function checkAndUsePromoTicket() {
     const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
     if (usedTickets.includes(ticketCode)) {
       console.log('❌ Этот билет уже использован');
-      showTicketModal('error', 'Цей білет вже використано!');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Цей білет вже використано!');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1176,7 +1142,7 @@ async function checkAndUsePromoTicket() {
     localStorage.removeItem('lottery_last_spin');
     
     console.log('✅ Білет активовано!');
-    showTicketModal('success', 'Ти отримуєш один лотерейний білет! Нумо, швидше, крути барабан!');  // 👈 ИЗМЕНЕНО
+    showTicketModal('success', 'Ти отримуєш один лотерейний білет! Нумо, швидше, крути барабан!');
     
     window.history.replaceState({}, document.title, window.location.pathname);
     
@@ -1184,12 +1150,11 @@ async function checkAndUsePromoTicket() {
     
   } catch (error) {
     console.error('Ошибка проверки билета:', error);
-    showTicketModal('error', 'Помилка перевірки білета!');  // 👈 ИЗМЕНЕНО
+    showTicketModal('error', 'Помилка перевірки білета!');
     return false;
   }
 }
 
-// Та же функция HMAC (копируем из admin.html)
 async function generateHMAC(secret, message) {
   const encoder = new TextEncoder();
   const keyData = encoder.encode(secret);
@@ -1211,7 +1176,6 @@ async function generateHMAC(secret, message) {
     .substring(0, 16);
 }
 
- 
 // ===== МОДАЛЬНОЕ ОКНО ДЛЯ БИЛЕТА =====
 function showTicketModal(type, message) {
   const oldModal = document.querySelector('.ticket-modal');
@@ -1250,7 +1214,6 @@ function showTicketModal(type, message) {
   setTimeout(() => {
     modal.classList.add('active');
     
-    // 🎵 ВОСПРОИЗВОДИМ ЗВУК ПОСЛЕ ПОЯВЛЕНИЯ МОДАЛЬНОГО ОКНА
     const ticketSound = document.getElementById('ticketSound');
     if (ticketSound) {
       ticketSound.currentTime = 0;
@@ -1259,7 +1222,6 @@ function showTicketModal(type, message) {
   }, 10);
 }
 
-// Промис для ожидания закрытия модального окна
 function waitForModalClose() {
   return new Promise((resolve) => {
     const checkModal = setInterval(() => {
@@ -1271,14 +1233,14 @@ function waitForModalClose() {
     }, 100);
   });
 }
-  function closeTicketModal() {
+
+function closeTicketModal() {
   const modal = document.querySelector('.ticket-modal');
   if (modal) {
     modal.classList.remove('active');
     setTimeout(() => {
       modal.remove();
       
-      // Если билет был невалидным - показываем финальный экран
       const wasInvalid = modal.dataset.invalid === 'true';
       if (wasInvalid) {
         document.getElementById('loader').classList.add('hidden');
@@ -1287,8 +1249,6 @@ function waitForModalClose() {
     }, 300);
   }
 }
-
-  
 
 // ===== РАБОТА С ЛОКАЛЬНЫМ ХРАНИЛИЩЕМ =====
 function getLastSpinTime() {
@@ -1321,7 +1281,7 @@ function getTimeUntilNextSpin() {
   return Math.max(0, timeRemaining);
 }
 
-// ===== ОБНОВЛЕНИЕ ТАЙМЕРА =====
+// ===== ОБНОВЛЕНИЕ И ЗАПУСК ТАЙМЕРА =====
 function updateCountdown() {
   const timeRemaining = getTimeUntilNextSpin();
   
@@ -1331,15 +1291,12 @@ function updateCountdown() {
     }
     document.getElementById('countdownTimer').textContent = '00:00:00';
     
-    // 🎯 МЕНЯЕМ ТЕКСТ И КНОПКУ
-    document.getElementById('countdownText').textContent = 'Ви можете спробувати ще раз! Оновіть сторінку.';
-    
- const shopBtn = document.getElementById('shopBtn');
-shopBtn.innerHTML = '🔄 Спробувати знову'; // 👈 ЗАМЕНИ textContent на innerHTML
-shopBtn.onclick = function(e) {
-  e.preventDefault();
-  location.reload();
-};
+    const shopBtn = document.getElementById('shopBtn');
+    shopBtn.innerHTML = '🔄 Спробувати знову';
+    shopBtn.onclick = function(e) {
+      e.preventDefault();
+      location.reload();
+    };
     
     return;
   }
@@ -1357,19 +1314,17 @@ shopBtn.onclick = function(e) {
   document.getElementById('countdownTimer').textContent = formattedTime;
 }
 
-// ===== ЗАПУСК ТАЙМЕРА =====
 function startCountdown() {
   updateCountdown();
   countdownInterval = setInterval(updateCountdown, 1000);
 }
 
-// ===== ПОКАЗ ФИНАЛЬНОГО ЭКРАНА =====
 function showFinalScreen() {
   setTimeout(() => {
     document.getElementById('finalScreen').classList.add('visible');
     startCountdown();
     initWinnersWidget();
-    animateLotteryCounter();  // 👈 ДОБАВЬ ЭТУ СТРОКУ
+    animateLotteryCounter();
   }, 500);
 }
 
@@ -1390,8 +1345,8 @@ function generatePromoCode() {
 
 // ===== АНИМАЦИЯ ДЕКОДИРОВАНИЯ ПРОМОКОДА =====
 function animatePromoCode() {
-  isDecoding = true; // 👈 Устанавливаем флаг
-  finalPromoCode = ''; // Сбрасываем старый код
+  isDecoding = true;
+  finalPromoCode = '';
   
   const promoCodeEl = document.getElementById("promoCode");
   const finalCode = generatePromoCode();
@@ -1412,8 +1367,8 @@ function animatePromoCode() {
     
     if (revealedIndex >= codeArray.length) {
       clearInterval(interval);
-      isDecoding = false; // 👈 Декодирование завершено
-      finalPromoCode = finalCode; // 👈 Сохраняем финальный код
+      isDecoding = false;
+      finalPromoCode = finalCode;
       console.log('✅ Декодирование завершено:', finalCode);
       return;
     }
@@ -1449,7 +1404,7 @@ function animatePromoCode() {
   }, 100);
 }
 
-
+// ===== КОПИРОВАНИЕ ПРОМОКОДА =====
 function copyPromoCode(event) {
   if (event) {
     event.stopPropagation();
@@ -1458,13 +1413,11 @@ function copyPromoCode(event) {
   const promoCodeEl = document.getElementById("promoCode");
   const code = promoCodeEl.textContent.trim();
   
-  // 🎯 Если уже скопировано - игнорируем
   if (code === 'промокод скопійовано ✓') {
     console.log('Промокод уже скопирован');
     return;
   }
   
-  // 🎯 Если ещё декодируется - ждём
   if (isDecoding || code.includes('X')) {
     if (finalPromoCode) {
       copyTextToClipboard(finalPromoCode);
@@ -1475,7 +1428,6 @@ function copyPromoCode(event) {
     return;
   }
   
-  // ✅ Код полностью декодирован
   finalPromoCode = code;
   copyTextToClipboard(code);
 }
@@ -1483,7 +1435,6 @@ function copyPromoCode(event) {
 function copyTextToClipboard(text) {
   clearTimeout(promoTimer);
   
-  // Создаём textarea
   const textArea = document.createElement("textarea");
   textArea.value = text;
   textArea.setAttribute('readonly', '');
@@ -1493,9 +1444,7 @@ function copyTextToClipboard(text) {
   
   document.body.appendChild(textArea);
   
-  // Выбираем текст
   if (navigator.userAgent.match(/ipad|iphone/i)) {
-    // Для iOS
     const range = document.createRange();
     range.selectNodeContents(textArea);
     const selection = window.getSelection();
@@ -1514,7 +1463,6 @@ function copyTextToClipboard(text) {
       console.log('✅ Промокод скопійовано:', text);
       showCopyFeedback();
     } else {
-      // Пробуем Clipboard API
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
           console.log('✅ Промокод скопійовано (Clipboard API):', text);
@@ -1534,7 +1482,6 @@ function copyTextToClipboard(text) {
 }
 
 function promptManualCopy(text) {
-  // Создаём красивое модальное окно для копирования
   const modal = document.createElement('div');
   modal.style.cssText = `
     position: fixed;
@@ -1592,7 +1539,8 @@ function promptManualCopy(text) {
   document.body.appendChild(modal);
   modal.querySelector('input').select();
 }
-  function showCopyFeedback() {
+
+function showCopyFeedback() {
   const promoCodeEl = document.getElementById("promoCode");
   promoCodeEl.textContent = "промокод скопійовано ✓";
   setTimeout(() => disintegratePromo(), 1200);
@@ -1709,9 +1657,6 @@ function disintegratePromo() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       document.getElementById('promoOverlay').classList.remove('active');
       
-  
-      
-      // Показываем финальный экран с таймером
       showFinalScreen();
       
       setTimeout(() => {
@@ -1751,49 +1696,32 @@ function selectRandomCoupon() {
 function applyCoupon(coupon) {
   selectedCoupon = coupon;
   
-  // 👈 ИЗМЕНИЛИ: цвет заголовка = цвет промокода
   const promoTitleEl = document.getElementById('promoTitle');
   promoTitleEl.textContent = coupon.title;
-  promoTitleEl.style.color = coupon.codeColor;  // 👈 ДОБАВЬ ЭТУ СТРОКУ
+  promoTitleEl.style.color = coupon.codeColor;
   
   const promoCodeBox = document.getElementById('promoCode');
   promoCodeBox.style.color = coupon.codeColor;
   
-const promoVideo = document.getElementById('promoVideo');
-
-// 🎯 УБИРАЕМ СТАРЫЕ ОБРАБОТЧИКИ
-promoVideo.onerror = null;
-promoVideo.onloadeddata = null;
-
-// 🎯 УСТАНАВЛИВАЕМ SRC
-promoVideo.src = coupon.videoUrl;
-
-// 🎯 ОБРАБОТЧИК ОШИБОК (только один раз)
-promoVideo.addEventListener('error', function handleError(e) {
-  console.error('❌ Ошибка загрузки видео купона!');
-  console.log('URL:', this.src);
-  console.log('NetworkState:', this.networkState);
-  console.log('ReadyState:', this.readyState);
-  console.log('Error:', this.error);
+  const promoVideo = document.getElementById('promoVideo');
+  promoVideo.onerror = null;
+  promoVideo.onloadeddata = null;
+  promoVideo.src = coupon.videoUrl;
   
-  // Пробуем перезагрузить
-  setTimeout(() => {
-    console.log('🔄 Пробуем перезагрузить видео...');
-    this.load();
-  }, 1000);
+  promoVideo.addEventListener('error', function handleError(e) {
+    console.error('❌ Ошибка загрузки видео купона!');
+    setTimeout(() => {
+      console.log('🔄 Пробуем перезагрузить видео...');
+      this.load();
+    }, 1000);
+    this.removeEventListener('error', handleError);
+  }, { once: true });
   
-  this.removeEventListener('error', handleError);
-}, { once: true });
-
-// 🎯 ОБРАБОТЧИК УСПЕШНОЙ ЗАГРУЗКИ
-promoVideo.addEventListener('loadeddata', function handleLoad() {
-  console.log('✅ Видео купона загружено успешно');
-  console.log('Duration:', this.duration);
-  console.log('VideoWidth:', this.videoWidth);
-  console.log('VideoHeight:', this.videoHeight);
-}, { once: true });
-
-promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
+  promoVideo.addEventListener('loadeddata', function handleLoad() {
+    console.log('✅ Видео купона загружено успешно');
+  }, { once: true });
+  
+  promoVideo.load();
   
   const style = document.createElement('style');
   style.textContent = `
@@ -1806,7 +1734,6 @@ promoVideo.load(); // 👈 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА
   `;
   document.head.appendChild(style);
   
-  // 🎯 СОХРАНЯЕМ ВРЕМЯ СРАЗУ ПРИ ПОКАЗЕ ПРОМОКОДА
   setLastSpinTime();
   console.log('✅ Время лотереи зафиксировано');
 }
@@ -1821,339 +1748,231 @@ function launchCanvasConfetti() {
   canvas.height = window.innerHeight;
   
   const confettiColors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#ff6b81', '#5f27cd', '#00d2d3', '#f368e0'];
-  const confettiPieces = [];
-  const confettiCount = 300;
-  const gravity = 0.5;
-  const terminalVelocity = 5;
-  const drag = 0.075;
+const confettiPieces = [];
+const confettiCount = 300;
+const gravity = 0.5;
+const terminalVelocity = 5;
+const drag = 0.075;
+class ConfettiPiece {
+constructor() {
+this.randomModifier = Math.random() * 10;
+this.color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+this.dimensions = {
+x: (Math.random() * 10 + 5) / 2,
+y: (Math.random() * 15 + 10) / 2
+};
+  this.position = {
+    x: Math.random() * canvas.width,
+    y: canvas.height + 75
+  };
   
-  class ConfettiPiece {
-    constructor() {
-      this.randomModifier = Math.random() * 10;
-      this.color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-      this.dimensions = {
-        x: (Math.random() * 10 + 5) / 2,
-        y: (Math.random() * 15 + 10) / 2
-      };
-      
-      this.position = {
-        x: Math.random() * canvas.width,
-        y: canvas.height + 75
-      };
-      
-      this.rotation = Math.random() * 360;
-      this.scale = {
-        x: 1,
-        y: 1
-      };
-      
-      this.velocity = {
-        x: (Math.random() - 0.5) * 25,
-        y: -(Math.random() * 15 + 15)
-      };
-    }
-    
-    update() {
-      this.velocity.y += gravity;
-      this.velocity.x -= this.velocity.x * drag;
-      this.velocity.y = Math.min(this.velocity.y, terminalVelocity);
-      
-      this.position.x += this.velocity.x;
-      this.position.y += this.velocity.y;
-      
-      this.rotation += (this.velocity.y / 10) * this.randomModifier;
-      
-      this.scale.y = Math.cos((this.position.y + this.randomModifier) * 0.09);
-    }
-    
-    draw() {
-      ctx.save();
-      ctx.translate(this.position.x, this.position.y);
-      ctx.rotate(this.rotation * Math.PI / 180);
-      ctx.scale(this.scale.x, this.scale.y);
-      
-      ctx.fillStyle = this.color;
-      ctx.fillRect(-this.dimensions.x / 2, -this.dimensions.y / 2, this.dimensions.x, this.dimensions.y);
-      
-      ctx.restore();
-    }
-  }
+  this.rotation = Math.random() * 360;
+  this.scale = {
+    x: 1,
+    y: 1
+  };
   
-  for (let i = 0; i < confettiCount; i++) {
-    confettiPieces.push(new ConfettiPiece());
-  }
-  
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    let activeCount = 0;
-    confettiPieces.forEach(piece => {
-      piece.update();
-      piece.draw();
-      
-      if (piece.position.y < canvas.height + 50) {
-        activeCount++;
-      }
-    });
-    
-    if (activeCount > 0) {
-      requestAnimationFrame(animate);
-    } else {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  }
-  
-  animate();
+  this.velocity = {
+    x: (Math.random() - 0.5) * 25,
+    y: -(Math.random() * 15 + 15)
+  };
 }
 
- 
+update() {
+  this.velocity.y += gravity;
+  this.velocity.x -= this.velocity.x * drag;
+  this.velocity.y = Math.min(this.velocity.y, terminalVelocity);
+  
+  this.position.x += this.velocity.x;
+  this.position.y += this.velocity.y;
+  
+  this.rotation += (this.velocity.y / 10) * this.randomModifier;
+  
+  this.scale.y = Math.cos((this.position.y + this.randomModifier) * 0.09);
+}
 
-window.addEventListener('load', async () => {
-  const preloader = document.getElementById('preloader');
-  const preloaderText = preloader.querySelector('.preloader-text');
-  const loader = document.getElementById('loader');
-  const loaderText = loader.querySelector('.loader-text');
-  const promoOverlay = document.getElementById('promoOverlay');
+draw() {
+  ctx.save();
+  ctx.translate(this.position.x, this.position.y);
+  ctx.rotate(this.rotation * Math.PI / 180);
+  ctx.scale(this.scale.x, this.scale.y);
   
-  // 🎯 РАНДОМНОЕ ПРЕДСКАЗАНИЕ
-  preloaderText.textContent = getRandomPrediction();
-  loaderText.textContent = getRandomPrediction();
+  ctx.fillStyle = this.color;
+  ctx.fillRect(-this.dimensions.x / 2, -this.dimensions.y / 2, this.dimensions.x, this.dimensions.y);
   
-  // 🎯 ШАГ 1: ПРЕЛОАД (минимум 2 секунды)
-  const startTime = Date.now();
-  await preloadImages();
-  const elapsed = Date.now() - startTime;
-  const minDuration = 2000;
+  ctx.restore();
+}
+}
+for (let i = 0; i < confettiCount; i++) {
+confettiPieces.push(new ConfettiPiece());
+}
+function animate() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+let activeCount = 0;
+confettiPieces.forEach(piece => {
+  piece.update();
+  piece.draw();
   
-  if (elapsed < minDuration) {
-    await new Promise(resolve => setTimeout(resolve, minDuration - elapsed));
+  if (piece.position.y < canvas.height + 50) {
+    activeCount++;
   }
-  
-  // Скрываем прелоадер
-  preloader.classList.add('hidden');
-  
-  // 🎯 ШАГ 2: ПРОВЕРЯЕМ ПРОМО-БИЛЕТ
-  const ticketActivated = await checkAndUsePromoTicket();
-  
-  // 🎯 ШАГ 3: ПРОВЕРЯЕМ, МОЖНО ЛИ КРУТИТЬ РУЛЕТКУ
-  const canUserSpin = canSpin();
-  
-  // ===== СЦЕНАРИЙ 1: НЕВАЛИДНЫЙ БИЛЕТ → СРАЗУ ФИНАЛЬНЫЙ ЭКРАН =====
-  if (ticketActivated === false && new URLSearchParams(window.location.search).get('ticket')) {
-    await waitForModalClose();
-    showFinalScreen();
-    return;
-  }
-  
-  // ===== СЦЕНАРИЙ 2: НЕ МОЖЕТ КРУТИТЬ (ТАЙМЕР) → СРАЗУ ФИНАЛЬНЫЙ ЭКРАН =====
-  if (!canUserSpin && !ticketActivated) {
-    showFinalScreen();
-    return;
-  }
-  
-  // ===== СЦЕНАРИЙ 3: ВАЛИДНЫЙ БИЛЕТ → ПОКАЗЫВАЕМ ОКНО → КРУТИМ =====
-  if (ticketActivated === true) {
-    await waitForModalClose();
-  }
-  
-  // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ → РУЛЕТКА =====
-  
-  // 🎯 ШАГ 1: ПОКАЗЫВАЕМ LOADER
-// ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ → РУЛЕТКА =====
-  
-// 🎯 ШАГ 1: ПОКАЗЫВАЕМ LOADER (БЕЗ ВИДЕО)
-loader.classList.remove('hidden');
-console.log('✅ Loader показан');
-
-// 🎯 ШАГ 2: ЖДЁМ РЕНДЕРИНГ DOM
-await new Promise(resolve => setTimeout(resolve, 150));
-
-// 🎯 ШАГ 3: ИНИЦИАЛИЗИРУЕМ ПРОМОКОДЫ
-initPreviewCoupons();
-
-// 🎯 ШАГ 4: ПРИНУДИТЕЛЬНО ЗАГРУЖАЕМ И ЗАПУСКАЕМ ВИДЕО
-const previewVideos = document.querySelectorAll('.coupon-preview-item video');
-console.log('🎬 Найдено видео:', previewVideos.length);
-
-// Создаём массив промисов для загрузки всех видео
-const videoPromises = Array.from(previewVideos).map((video, index) => {
-  return new Promise((resolve) => {
-    console.log(`🎬 Загружаем видео ${index + 1}...`);
-    
-    // Устанавливаем атрибуты
-    video.muted = true;
-    video.playsInline = true;
-    video.loop = true;
-    video.autoplay = false; // 👈 ВАЖНО: выключаем autoplay
-    
-    // Обработчик успешной загрузки
-    const onLoad = () => {
-      console.log(`✅ Видео ${index + 1} загружено`);
-      cleanup();
-      
-      // Запускаем воспроизведение
-      video.play()
-        .then(() => {
-          console.log(`▶️ Видео ${index + 1} воспроизводится`);
-          resolve(true);
-        })
-        .catch(e => {
-          console.log(`⚠️ Автозапуск видео ${index + 1} заблокирован:`, e.message);
-          resolve(false); // Продолжаем даже если не запустилось
-        });
-    };
-    
-    // Обработчик ошибки
-    const onError = (e) => {
-      console.error(`❌ Ошибка загрузки видео ${index + 1}:`, e);
-      console.log('URL:', video.src);
-      cleanup();
-      resolve(false); // Продолжаем даже при ошибке
-    };
-    
-    // Очистка обработчиков
-    const cleanup = () => {
-      video.removeEventListener('loadeddata', onLoad);
-      video.removeEventListener('error', onError);
-    };
-    
-    video.addEventListener('loadeddata', onLoad, { once: true });
-    video.addEventListener('error', onError, { once: true });
-    
-    // Принудительная загрузка
-    video.load();
-    
-    // Таймаут на случай зависания (5 секунд)
-    setTimeout(() => {
-      cleanup();
-      console.log(`⏱️ Таймаут загрузки видео ${index + 1}`);
-      resolve(false);
-    }, 5000);
-  });
 });
 
-// Ждём загрузки ВСЕХ видео (или таймаута)
-await Promise.all(videoPromises);
-console.log('✅ Все видео обработаны');
+if (activeCount > 0) {
+  requestAnimationFrame(animate);
+} else {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+}
+animate();
+}
+// ===== ГЕНЕРАЦИЯ КОЛИЧЕСТВА УЧАСТНИКОВ =====
+function getDailyParticipantsCount() {
+const today = new Date().toDateString();
+const savedData = localStorage.getItem('daily_participants');
+if (savedData) {
+const data = JSON.parse(savedData);
+if (data.date === today) {
+return data.count;
+}
+}
+const newCount = Math.floor(Math.random() * (52 - 12 + 1)) + 12;
+localStorage.setItem('daily_participants', JSON.stringify({
+date: today,
+count: newCount
+}));
+return newCount;
+}
+function animateLotteryCounter() {
+const element = document.querySelector('.lottery-participants-count');
+if (!element) return;
+const target = getDailyParticipantsCount();
+const startValue = 0;
+const duration = 2000;
+const frameDuration = 1000 / 60;
+const totalFrames = Math.round(duration / frameDuration);
+let frame = 0;
+const counter = setInterval(() => {
+frame++;
+const progress = frame / totalFrames;
+const currentCount = Math.round(startValue + (target - startValue) * progress);
+element.textContent = currentCount;
 
-// 🎯 ШАГ 5: ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
+if (frame === totalFrames) {
+  clearInterval(counter);
+  element.textContent = target;
+}
+}, frameDuration);
+}
+// ===== ЗАПУСК РУЛЕТКИ =====
+async function runLottery() {
+const loader = document.getElementById('loader');
+const promoOverlay = document.getElementById('promoOverlay');
+console.log('🎰 Запуск рулетки');
+loader.classList.remove('hidden');
+await new Promise(resolve => setTimeout(resolve, 100));
+initPreviewCoupons();
+const previewVideos = document.querySelectorAll('.coupon-preview-item video');
+previewVideos.forEach(video => {
+video.muted = true;
+video.playsInline = true;
+video.loop = true;
+video.play().catch(e => console.log('Video autoplay blocked'));
+});
 const rouletteSound = document.getElementById('rouletteSound');
 if (rouletteSound) {
-  rouletteSound.currentTime = 0;
-  rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
+rouletteSound.currentTime = 0;
+rouletteSound.play().catch(e => console.log('Sound blocked'));
 }
-
-// 🎯 ШАГ 6: ЧЕРЕЗ 5 СЕКУНД ПОКАЗЫВАЕМ ПРОМОКОД
 setTimeout(() => {
-  // Останавливаем звук рулетки
-  const rouletteSound = document.getElementById('rouletteSound');
-  if (rouletteSound) {
-    rouletteSound.pause();
-    rouletteSound.currentTime = 0;
+if (rouletteSound) {
+rouletteSound.pause();
+rouletteSound.currentTime = 0;
+}
+const winSound = document.getElementById('winSound');
+if (winSound) {
+  winSound.currentTime = 0;
+  winSound.play().catch(e => console.log('Win sound blocked'));
+}
+
+loader.classList.add('hidden');
+
+const randomCoupon = selectRandomCoupon();
+applyCoupon(randomCoupon);
+
+setTimeout(() => {
+  promoOverlay.classList.add('active');
+  
+  setTimeout(() => animatePromoCode(), 600);
+  
+  const promoVideo = document.getElementById('promoVideo');
+  if (promoVideo) {
+    promoVideo.play().catch(e => console.log('Promo video blocked'));
   }
   
-  // Запускаем звук выигрыша
-  const winSound = document.getElementById('winSound');
-  if (winSound) {
-    winSound.currentTime = 0;
-    winSound.play().catch(e => console.log('Win sound play failed:', e));
-  }
+  setTimeout(() => launchCanvasConfetti(), 200);
   
-  loader.classList.add('hidden');
+  if (promoTimer) clearTimeout(promoTimer);
+  startPromoTimer();
   
-  const randomCoupon = selectRandomCoupon();
-  applyCoupon(randomCoupon);
-  
-  setTimeout(() => {
-    promoOverlay.classList.add('active');
-    
-    setTimeout(() => {
-      animatePromoCode();
-    }, 600);
-    
-    const promoVideo = document.getElementById('promoVideo');
-    if (promoVideo) {
-      promoVideo.play().catch(err => {
-        console.log('Автозапуск видео заблокирован:', err);
-      });
-    }
-    
-    setTimeout(() => {
-      launchCanvasConfetti();
-    }, 200);
-    
-    if (promoTimer) {
-      clearTimeout(promoTimer);
-    }
-    startPromoTimer();
-    
-  }, 300);
+}, 300);
 }, 5000);
-
-// ===== ТАЙМЕР ПРОМОКОДА (15 СЕКУНД) =====
+}
 function startPromoTimer() {
-  promoTimer = setTimeout(() => {
-    if (!promoDisintegrated) {
-      console.log('⏰ Время вышло, рассыпаем промокод');
-      disintegratePromo();
-    }
-  }, 15000);
+promoTimer = setTimeout(() => {
+if (!promoDisintegrated) {
+console.log('⏰ Время вышло');
+disintegratePromo();
 }
-
-// Закрытие по клику вне карточки
+}, 15000);
+}
 document.getElementById('promoOverlay').addEventListener('click', () => {
-  if (!promoDisintegrated) {
-    clearTimeout(promoTimer);
-    disintegratePromo();
-  }
+if (!promoDisintegrated) {
+clearTimeout(promoTimer);
+disintegratePromo();
+}
 });
-
-// ===== ГЕНЕРАЦИЯ КОЛИЧЕСТВА УЧАСТНИКОВ (ОБНОВЛЯЕТСЯ КАЖДЫЙ ДЕНЬ) =====
-function getDailyParticipantsCount() {
-  const today = new Date().toDateString();
-  const savedData = localStorage.getItem('daily_participants');
-  
-  if (savedData) {
-    const data = JSON.parse(savedData);
-    if (data.date === today) {
-      return data.count;
-    }
-  }
-  
-  const newCount = Math.floor(Math.random() * (52 - 12 + 1)) + 12;
-  localStorage.setItem('daily_participants', JSON.stringify({
-    date: today,
-    count: newCount
-  }));
-  
-  return newCount;
+// ===== ОСНОВНАЯ ЗАГРУЗКА СТРАНИЦЫ =====
+window.addEventListener('load', async () => {
+const preloader = document.getElementById('preloader');
+const preloaderText = preloader.querySelector('.preloader-text');
+const loader = document.getElementById('loader');
+const loaderText = loader.querySelector('.loader-text');
+console.log('🚀 Страница загружена');
+preloaderText.textContent = getRandomPrediction();
+loaderText.textContent = getRandomPrediction();
+const startTime = Date.now();
+await preloadImages();
+const elapsed = Date.now() - startTime;
+if (elapsed < 2000) {
+await new Promise(resolve => setTimeout(resolve, 2000 - elapsed));
 }
-
-// ===== АНИМАЦИЯ СЧЁТЧИКА УЧАСТНИКОВ =====
-function animateLotteryCounter() {
-  const element = document.querySelector('.lottery-participants-count');
-  if (!element) return;
-  
-  const target = getDailyParticipantsCount();
-  const startValue = 0;
-  const duration = 2000;
-  const frameDuration = 1000 / 60;
-  const totalFrames = Math.round(duration / frameDuration);
-  let frame = 0;
-  
-  const counter = setInterval(() => {
-    frame++;
-    const progress = frame / totalFrames;
-    const currentCount = Math.round(startValue + (target - startValue) * progress);
-    
-    element.textContent = currentCount;
-    
-    if (frame === totalFrames) {
-      clearInterval(counter);
-      element.textContent = target;
-    }
-  }, frameDuration);
+preloader.classList.add('hidden');
+const urlParams = new URLSearchParams(window.location.search);
+const hasTicket = urlParams.has('ticket');
+const ticketActivated = hasTicket ? await checkAndUsePromoTicket() : null;
+const canUserSpin = canSpin();
+if (ticketActivated === false) {
+await waitForModalClose();
+showFinalScreen();
+return;
 }
+if (!canUserSpin && ticketActivated !== true) {
+showFinalScreen();
+return;
+}
+if (ticketActivated === true) {
+await waitForModalClose();
+}
+runLottery();
+});
+</script> 
+
+
+
+
+
+  
 </script>
 
 </body>
