@@ -850,16 +850,52 @@ mask-image: linear-gradient(
   <div class="promo-card" id="promoCard" onclick="event.stopPropagation()">
     <div class="promo-title" id="promoTitle">Вітаємо! Ось ваш промокод!</div>
     <div class="promo-hint">швидше тисни на промокод, щоб скопіювати його</div>
-   <div class="promo-image-wrapper">
-  <img src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/78ef867be64454e2ba264502e940f68f684cc588/CPNSVG15StaticCurvesClean.svg" class="promo-base-svg" alt="Base">
-  
-  <video class="promo-animation-webm promo-video-yellow" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm" loop muted playsinline autoplay style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:2; transform:scale(1.08);"></video>
-  <video class="promo-animation-webm promo-video-red" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm" loop muted playsinline autoplay style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:2; transform:scale(1.08);"></video>
-  <video class="promo-animation-webm promo-video-blue" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm" loop muted playsinline autoplay style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:2; transform:scale(1.08);"></video>
-  <video class="promo-animation-webm promo-video-green" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm" loop muted playsinline autoplay style="display:none; position:absolute; inset:0; width:100%; height:100%; object-fit:contain; z-index:2; transform:scale(1.08);"></video>
+    <div class="promo-image-wrapper">
+      <img 
+        src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/78ef867be64454e2ba264502e940f68f684cc588/CPNSVG15StaticCurvesClean.svg" 
+        class="promo-base-svg"
+        alt="Base"
+      >
+      
+  <video 
+  class="promo-animation-webm promo-video-yellow" 
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm"
+  loop 
+  muted 
+  playsinline 
+  preload="metadata">
+</video>
 
-  <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">XXXX-XXXX-XXXX</div>
-</div>
+<video 
+  class="promo-animation-webm promo-video-red" 
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm"
+  loop 
+  muted 
+  playsinline 
+  preload="metadata">
+</video>
+
+<video 
+  class="promo-animation-webm promo-video-blue" 
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm"
+  loop 
+  muted 
+  playsinline 
+  preload="metadata">
+</video>
+
+<video 
+  class="promo-animation-webm promo-video-green" 
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm"
+  loop 
+  muted 
+  playsinline 
+  preload="metadata">
+</video>
+      
+      <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">
+        XXXX-XXXX-XXXX-XXXX
+      </div>
       
       <div class="promo-shimmer"></div>
     </div>
@@ -917,7 +953,6 @@ mask-image: linear-gradient(
 const coupons = [
   {
     title: "Тобi випав жовтий купон!",
-    videoClass: "promo-video-yellow",
     videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm",
     codeColor: "#af8246",
     particleColor: "#ffd282",
@@ -928,7 +963,6 @@ const coupons = [
     title: "Тобi випав червоний купон!",
     videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm",
     codeColor: "#6d2121",
-    videoClass: "promo-video-red",
     particleColor: "#9c2d35",
     discount: "10%",
     displayName: "Червоний купон"  // 👈 ДОБАВЬ ЭТО
@@ -937,17 +971,15 @@ const coupons = [
     title: "Тобi випав синій купон!",
     videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm",
     codeColor: "#5c94cc",
-    videoClass: "promo-video-blue",
     particleColor: "#5c94cc",
     discount: "20%",
     displayName: "Синій купон"  // 👈 ДОБАВЬ ЭТО
   },
   {
     title: "Тобi випав зелений купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm",
     codeColor: "#005330",
     particleColor: "#007042",
-    videoClass: "promo-video-green",
     discount: "50%",
     displayName: "Зелений купон"  // 👈 ДОБАВЬ ЭТО
   }
@@ -1751,29 +1783,36 @@ function applyCoupon(coupon) {
   promoCodeBox.style.color = coupon.codeColor;
   
 // Скрываем все видео
-setTimeout(() => {
-      loader.style.display = 'none';
-      const selected = coupons[Math.floor(Math.random() * coupons.length)];
-      
-      // Скрываем все видео
-      document.querySelectorAll('.promo-animation-webm').forEach(v => {
-        v.style.display = 'none';
-        v.pause();
-      });
+// Скрываем все видео
+document.querySelectorAll('.promo-animation-webm').forEach(v => {
+  v.classList.remove('active');
+  v.pause();
+});
 
-      // Показываем и запускаем нужное
-      const activeVideo = document.querySelector('.' + selected.videoClass);
-      if (activeVideo) {
-        activeVideo.style.display = 'block';
-        activeVideo.play().catch(e => console.log("Android blocked autoplay"));
-      }
+// Показываем нужное видео
+let videoClass = '';
+if (coupon.videoUrl.includes('FinalY2')) videoClass = 'promo-video-yellow';
+else if (coupon.videoUrl.includes('FinalR2')) videoClass = 'promo-video-red';
+else if (coupon.videoUrl.includes('FinalB2')) videoClass = 'promo-video-blue';
+else if (coupon.videoUrl.includes('FinalG22')) videoClass = 'promo-video-green';
 
-      promoTitle.innerText = "Тобi випав " + selected.title;
-      promoCode.style.color = selected.codeColor;
-      promoCode.innerText = generatePromoCode();
-      
-      promoOverlay.classList.add('active');
-    }, 4000);
+const activeVideo = document.querySelector(`.${videoClass}`);
+if (activeVideo) {
+  activeVideo.classList.add('active');
+  
+  // 🎯 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ВИДЕО
+  if (activeVideo.readyState < 3) {
+    console.log('⏳ Загружаем видео:', coupon.title);
+    activeVideo.load();
+    
+    activeVideo.addEventListener('loadeddata', function onLoaded() {
+      console.log('✅ Видео загружено:', coupon.title);
+      activeVideo.removeEventListener('loadeddata', onLoaded);
+    });
+  } else {
+    console.log('✅ Видео уже загружено:', coupon.title);
+  }
+}
   
   const style = document.createElement('style');
   style.textContent = `
