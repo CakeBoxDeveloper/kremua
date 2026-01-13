@@ -7,104 +7,2064 @@
 <link rel="icon" href="https://github.com/cakeboxdeveloper/kremua/raw/refs/heads/main/AIcon.ico" type="image/x-icon">
 
 <style>
-/* Сокращенные стили для краткости, сохрани свои оригинальные из Bug.txt */
-body { margin: 0; font-family: Arial, sans-serif; background: #17212b; color: white; overflow-x: hidden; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-.preloader, .loader { position: fixed; inset: 0; background: #17212b; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; transition: opacity 0.5s ease; }
-.hidden { opacity: 0; pointer-events: none; }
-.promo-overlay { position: fixed; inset: 0; background: transparent; backdrop-filter: blur(50px); -webkit-backdrop-filter: blur(50px); z-index: 8888; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-.promo-overlay.active { opacity: 1; pointer-events: all; }
-.promo-image-wrapper { position: relative; width: 100%; aspect-ratio: 2 / 1; max-width: 600px; margin: 0 auto; animation: gentle-sway 4s ease-in-out infinite; -webkit-mask-image: url('https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/5793408ec6209b2e840db457f59ebd2e38c43c19/CPNSVG11.svg'); -webkit-mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; }
-.promo-animation-webm { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; z-index: 2; display: none; transform: scale(1.08); }
-.promo-animation-webm.active { display: block; }
-/* Добавь остальные свои стили из оригинального файла здесь */
+body {  
+  margin: 0; 
+  font-family: Arial, sans-serif; 
+  background: #17212b;
+  color: white;
+  overflow-x: hidden;
+  overflow-y: auto;
+  touch-action: pan-y pinch-zoom;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.loader-text {
+  font-size: 18px;
+  color: #d4af37;
+  margin-top: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+  text-align: center;
+  width: 90%;
+  max-width: 600px;
+}
+
+/* 👇 ДОБАВЬ ОТСЮДА */
+/* ===== ТАБЛИЦА КУПОНОВ НАД РУЛЕТКОЙ ===== */
+.coupons-table {
+  margin-bottom: 30px;
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 400px;
+  width: 90%;
+}
+
+.coupons-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.coupons-table thead {
+  background: #22364a;
+}
+
+.coupons-table th {
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #6ab2f2;
+  border-bottom: 2px solid #6ab2f2;
+}
+
+.coupons-table td {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.coupons-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.coupons-table tbody tr {
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.coupons-table tbody tr:hover {
+  transform: scale(1.02);
+}
+
+.coupon-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coupon-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.coupon-discount {
+  font-weight: 700;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Стили для строк разных купонов */
+.coupons-table tbody tr.green-coupon {
+  background: #1d3a22;
+  color: #6af27d;
+}
+
+.coupons-table tbody tr.green-coupon:hover {
+  background: #24502f;
+}
+
+.coupons-table tbody tr.yellow-coupon {
+  background: #443621;
+  color: #f7a632;
+}
+
+.coupons-table tbody tr.yellow-coupon:hover {
+  background: #554729;
+}
+
+.coupons-table tbody tr.blue-coupon {
+  background: #1d2b3a;
+  color: #6ab2f2;
+}
+
+.coupons-table tbody tr.blue-coupon:hover {
+  background: #22364a;
+}
+
+.coupons-table tbody tr.red-coupon {
+  background: #3a1d2b;
+  color: #f27db0;
+}
+
+.coupons-table tbody tr.red-coupon:hover {
+  background: #4a2236;
+}
+  
+
+/* ✅ АДАПТИВНОЕ МАСШТАБИРОВАНИЕ ДЛЯ ДЕСКТОПА */
+@media (min-width: 769px) {
+  body {
+    zoom: 0.85; /* Уменьшаем до 85% */
+    -moz-transform: scale(0.85);
+    -moz-transform-origin: 0 0;
+  }
+}
+
+@media (min-width: 1200px) {
+  body {
+    zoom: 0.9; /* Для больших экранов 90% */
+    -moz-transform: scale(0.9);
+  }
+}
+
+@media (min-width: 1600px) {
+  body {
+    zoom: 1; /* На очень больших экранах 100% */
+    -moz-transform: scale(1);
+  }
+}
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ===== ПРЕЛОАДЕР (ПЕСОЧНЫЕ ЧАСЫ) ===== */
+.preloader {
+  position: fixed;
+  inset: 0;
+  background: #17212b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 0.5s ease;
+}
+
+.preloader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.preloader img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.preloader-text {
+  font-size: 16px;
+  color: #d4af37;  /* 👈 золотой цвет */
+  margin-top: 15px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ===== ЛОАДЕР (РУЛЕТКА) ===== */
+.loader {
+  position: fixed;
+  inset: 0;
+  background: #17212b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 1;
+  pointer-events: all;
+  transition: opacity 0.5s ease;
+}
+
+.loader.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader img { 
+  width: 1000px; 
+  height: 150px;
+  margin-bottom: 20px;
+  object-fit: cover;
+  object-position: center;
+  max-width: 90vw;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 25%,
+    black 75%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 25%,
+    black 75%,
+    transparent 100%
+  );
+}
+
+.loader-text {
+  font-size: 18px;
+  color: #d4af37;  /* 👈 изменили на золотой */
+  margin-top: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== ПРОМОКОД ОВЕРЛЕЙ ===== */
+.promo-overlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  backdrop-filter: blur(50px);
+  -webkit-backdrop-filter: blur(50px);
+  z-index: 8888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.promo-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#particleCanvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 8889;
+}
+
+#confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 8890;
+}
+
+.promo-card {
+  background: transparent;
+  border: none;
+  max-width: 512px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  padding: 0 16px;
+}
+
+@keyframes gentle-sway {
+  0%, 100% {
+    transform: scale(1) rotate(-1deg);
+  }
+  50% {
+    transform: scale(1) rotate(1deg);
+  }
+}
+
+.promo-overlay.active .promo-card {
+  transform: scale(1);
+}
+
+.promo-title {
+  font-size: clamp(16px, 5vw, 22px);
+  font-weight: 700;
+  color: #ffffff;      /* 👈 ИЗМЕНИЛИ на белый */
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.promo-hint {
+  font-size: 18px;
+  color: #ffffff;      /* 👈 ИЗМЕНИЛИ на белый */
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+  /* ===== МОДАЛЬНОЕ ОКНО БИЛЕТА ===== */
+.ticket-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.ticket-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ticket-modal-content {
+  background: #3a2d1d;
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  width: 80%;
+  text-align: center;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ticket-modal.active .ticket-modal-content {
+  transform: scale(1);
+}
+  .ticket-modal.error .ticket-modal-content {
+  border: 2px solid #e74c3c;
+}
+.ticket-modal.error .ticket-modal-content {
+  background: #3a1d1d;
+  border: 2px solid #e74c3c;
+}
+
+.ticket-modal.error .ticket-modal-text {
+  color: #e74c3c;
+}
+.ticket-modal-icon {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 20px;
+  font-size: 64px;
+  line-height: 80px;
+  position: relative;
+}
+
+ .ticket-modal-icon::before {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  background: 
+    radial-gradient(
+      circle,
+      rgba(212, 175, 55, 0.4) 0%,
+      rgba(212, 175, 55, 0.3) 20%,
+      rgba(212, 175, 55, 0.15) 40%,
+      rgba(212, 175, 55, 0.05) 60%,
+      transparent 80%
+    );
+  border-radius: 50%;
+  animation: pulseGlow 3s ease-in-out infinite;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  filter: blur(15px);
+}
+
+/* Показываем сияние только для success */
+.ticket-modal.success .ticket-modal-icon::before {
+  opacity: 1;
+}
+
+/* Анимация пульсации */
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+    
+  
+/* Показываем лучи только для success */
+.ticket-modal.success .ticket-modal-icon::before {
+  opacity: 1;
+}
+
+ 
+
+/* Картинка билета поверх лучей */
+.ticket-modal-icon img {
+  position: relative;
+  z-index: 1;
+}
+
+.ticket-modal-text {
+  font-size: 18px;
+  color: #ffffff;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+  
+
+.ticket-modal.success .ticket-modal-text {
+  color: #d4af37;
+}
+
+.ticket-modal-btn {
+  padding: 12px 40px;
+  background: #3a2d1d;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.ticket-modal-btn:active {
+  transform: scale(0.96);
+}
+
+.ticket-modal-btn.error {
+  background: #3a1d1d;
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+}
+
+.promo-image-wrapper {
+  position: relative;
+  width: 100%;
+  background: transparent;
+  aspect-ratio: 2 / 1;
+  max-width: 600px;
+  margin: 0 auto;
+  animation: gentle-sway 4s ease-in-out infinite;
+  mask-image: url('https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/5793408ec6209b2e840db457f59ebd2e38c43c19/CPNSVG11.svg');
+  -webkit-mask-image: url('https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/5793408ec6209b2e840db457f59ebd2e38c43c19/CPNSVG11.svg');
+  mask-size: 100% 100%;
+  -webkit-mask-size: 100% 100%;
+ 
+  mask-position: calc(50% - 1.5px) center;
+  -webkit-mask-position: calc(50% - 1.5px) center;
+   
+
+  
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+}
+
+.promo-base-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.promo-animation-webm {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 2;
+  mix-blend-mode: normal;
+  transform: scale(1.08);
+}
+
+  .promo-animation-webm {
+  display: none; /* Скрываем все по умолчанию */
+}
+
+.promo-animation-webm.active {
+  display: block; /* Показываем только активное */
+}
+
+.promo-code-box {
+  position: absolute;
+  top: 85%;
+  left: 15%;
+  width: 100%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  padding: 0;
+  z-index: 3;
+  font-size: clamp(14px, 3.5vw, 20px);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+
+.promo-code-box:hover {
+  transform: translateY(-50%) scale(1.05);
+}
+
+.promo-code-box:active {
+  transform: translateY(-50%) scale(0.98);
+}
+
+.promo-shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.promo-shimmer::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.03) 45%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.03) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer-sweep 3s ease-in-out infinite;
+  transform: skewX(-20deg);
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    transform: translateX(-100%) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(100%) skewX(-20deg);
+  }
+}
+
+ 
+
+
+/* ===== ФИНАЛЬНЫЙ ЭКРАН ===== */
+.final-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 8887;
+}
+
+.final-screen.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.final-avatar {
+  width: 75%;
+  max-width: 384px;
+  margin-bottom: -20px;  /* 👈 УМЕНЬШИЛИ отступ снизу (было 20px) */
+  margin-top: -60px;     /* 👈 УВЕЛИЧИЛИ отступ сверху (было -80px) */
+}
+.countdown-container {
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 4px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.countdown-text {
+  font-size: 15px;
+  color: #ffffff;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  margin-top: 5px;
+}
+
+.countdown-timer {
+  font-size: 32px;
+  font-weight: 700;
+  color: #6ab2f2;
+  font-family: Arial, sans-serif; /* 👈 ЗАМЕНИ ЭТУ СТРОКУ */
+  letter-spacing: 2px;
+  margin: 10px 0;
+}
+
+.shop-btn {
+  display: inline-flex;  /* 👈 БЫЛО inline-block */
+  align-items: center;   /* 👈 ДОБАВЛЕНО */
+  justify-content: center;  /* 👈 ДОБАВЛЕНО */
+  margin-top: 20px;
+  padding: 14px 32px;
+  background: #1d3a22;
+  border: 1px solid #6af27d;
+  color: #6af27d;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.3s ease;
+  max-width: 400px;  /* 👈 ДОБАВЛЕНО - такая же ширина как у таймера */
+  width: 90%;        /* 👈 ДОБАВЛЕНО */
+  box-sizing: border-box;  /* 👈 ДОБАВЛЕНО */
+}
+
+.shop-btn img {
+  vertical-align: middle;  /* 👈 ДОБАВЛЕНО */
+}
+  
+
+ 
+
+@media (max-width: 480px) {
+  .promo-title {
+    font-size: 16px;
+  }
+  
+  .promo-hint {
+    font-size: 12px;
+  }
+  
+  .promo-code-box {
+    font-size: clamp(14px, 2.8vw, 20px);
+  }
+}
+
+
+  /* ===== ВИДЖЕТ ВЫИГРЫШЕЙ ===== */
+/* ===== ВИДЖЕТ ВЫИГРЫШЕЙ ===== */
+/* ===== ВИДЖЕТ ВЫИГРЫШЕЙ ===== */
+.winners-widget {
+  width: 90%;
+  max-width: 400px;
+  height: 180px;
+  background: #1d2b3a;
+  color: #6ab2f2;
+  font-family: Arial, sans-serif;
+  border-radius: 6px;
+  padding: 0;
+  overflow: hidden;
+  margin: 0 auto 20px;  /* 👈 ИЗМЕНИЛИ: убрали отступ сверху */
+  position: relative;
+  z-index: 10;  /* 👈 ДОБАВЛЕНО - виджет поверх остальных */
+   flex-shrink: 0;  /* 👈 ДОБАВЬ ЭТУ СТРОКУ */
+  
+/* ГРАДИЕНТ СВЕРХУ И СНИЗУ */
+mask-image: linear-gradient(
+  to bottom,
+  transparent 0%,
+  black 20%,
+  black 80%,
+  transparent 100%
+);
+-webkit-mask-image: linear-gradient(
+  to bottom,
+  transparent 0%,
+  black 20%,
+  black 80%,
+  transparent 100%
+);
+}
+
+.winners-widget ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  will-change: transform;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.winners-widget li {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  box-sizing: border-box;
+  background: #1d2b3a;  /* 👈 ДОБАВЛЕНО - фон для строк */
+}
+
+.winner-id {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.winner-coupon {
+  color: #6ab2f2;
+  font-weight: 500;
+}
 </style>
 </head>
 <body>
 
+<!-- ПРЕЛОАДЕР (ПЕСОЧНЫЕ ЧАСЫ) -->
 <div id="preloader" class="preloader">
-  <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/Spin.webp?raw=true" width="120" alt="Завантаження">
+  <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/Spin.webp?raw=true" alt="Завантаження">
   <div class="preloader-text">Завантаження...</div>
 </div>
 
-<div id="loader" class="loader hidden">
-  <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" style="width: 90vw; height: 150px; object-fit: cover;" alt="Рулетка">
+<!-- ЛОАДЕР (РУЛЕТКА) -->
+<div id="loader" class="loader">
+  <div class="coupons-table">
+    <table>
+      <thead>
+        <tr>
+          <th colspan="2">Що можна виграти?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Зелёный купон -->
+        <tr class="green-coupon">
+          <td>
+            <div class="coupon-name">
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#005330" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#1d3a22"/>
+                <circle cx="100" cy="25" r="8" fill="#1d3a22"/>
+              </svg>
+              <span>Зелений купон</span>
+            </div>
+          </td>
+          <td class="coupon-discount">150 грн</td>
+        </tr>
+        
+        <!-- Жёлтый купон -->
+        <tr class="yellow-coupon">
+          <td>
+            <div class="coupon-name">
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#af8246" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#443621"/>
+                <circle cx="100" cy="25" r="8" fill="#443621"/>
+              </svg>
+              <span>Жовтий купон</span>
+            </div>
+          </td>
+          <td class="coupon-discount">25%</td>
+        </tr>
+        
+        <!-- Синий купон -->
+        <tr class="blue-coupon">
+          <td>
+            <div class="coupon-name">
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#5c94cc" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#1d2b3a"/>
+                <circle cx="100" cy="25" r="8" fill="#1d2b3a"/>
+              </svg>
+              <span>Синій купон</span>
+            </div>
+          </td>
+          <td class="coupon-discount">50%</td>
+        </tr>
+        
+        <!-- Красный купон -->
+        <tr class="red-coupon">
+          <td>
+            <div class="coupon-name">
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#6d2121" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#3a1d1d"/>
+                <circle cx="100" cy="25" r="8" fill="#3a1d1d"/>
+              </svg>
+              <span>Червоний купон</span>
+            </div>
+          </td>
+          <td class="coupon-discount">🎂 Торт</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
   <div class="loader-text">Генеруємо ваш промокод...</div>
 </div>
+  
 
+<!-- ПРОМОКОД ОВЕРЛЕЙ -->
+<canvas id="particleCanvas"></canvas>
+<canvas id="confetti-container"></canvas>
 <div id="promoOverlay" class="promo-overlay">
-  <div class="promo-card">
+  <div class="promo-card" id="promoCard" onclick="event.stopPropagation()">
     <div class="promo-title" id="promoTitle">Вітаємо! Ось ваш промокод!</div>
     <div class="promo-hint">швидше тисни на промокод, щоб скопіювати його</div>
     <div class="promo-image-wrapper">
-      <img src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/78ef867be64454e2ba264502e940f68f684cc588/CPNSVG15StaticCurvesClean.svg" class="promo-base-svg" alt="Base">
+      <img 
+        src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/78ef867be64454e2ba264502e940f68f684cc588/CPNSVG15StaticCurvesClean.svg" 
+        class="promo-base-svg"
+        alt="Base"
+      >
       
-      <video class="promo-animation-webm promo-video-yellow" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm" loop muted playsinline autoplay preload="auto"></video>
-      <video class="promo-animation-webm promo-video-red" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm" loop muted playsinline autoplay preload="auto"></video>
-      <video class="promo-animation-webm promo-video-blue" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm" loop muted playsinline autoplay preload="auto"></video>
-      <video class="promo-animation-webm promo-video-green" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm" loop muted playsinline autoplay preload="auto"></video>
+      <!-- Скрытые предзагруженные видео -->
+<video class="promo-animation-webm promo-video-yellow" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm" loop muted playsinline autoplay preload="auto"></video>
+<video class="promo-animation-webm promo-video-red" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm" loop muted playsinline autoplay preload="auto"></video>
+<video class="promo-animation-webm promo-video-blue" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm" loop muted playsinline autoplay preload="auto"></video>
+<video class="promo-animation-webm promo-video-green" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm" loop muted playsinline autoplay preload="auto"></video>
       
-      <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">XXXX-XXXX-XXXX</div>
+      <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">
+        XXXX-XXXX-XXXX-XXXX
+      </div>
+      
+      <div class="promo-shimmer"></div>
     </div>
   </div>
 </div>
 
+<!-- ФИНАЛЬНЫЙ ЭКРАН С ТАЙМЕРОМ -->
+<div id="finalScreen" class="final-screen">
+  <video autoplay loop muted playsinline class="final-avatar">
+    <source src="https://cdn.jsdelivr.net/gh/cakeboxdeveloper/kremua@main/ModAvatarModRender.webm" type="video/webm">
+  </video>
+
+  <!-- 🎯 HEADER ПОД АВАТАРОМ -->
+ <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 12px; margin-bottom: 5px;">
+    <div style="display: flex; align-items: center; gap: 4px; font-size: 22px; font-weight: 700; color: #6ab2f2;">
+      <img src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/73b661456b59a8bc190ef95c25d08af249023969/5258506.svg" alt="" style="width: 19px; height: 19px; filter: brightness(0) saturate(100%) invert(64%) sepia(66%) saturate(1044%) hue-rotate(178deg) brightness(101%) contrast(93%);">
+      <span>Кремуа́</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #ffffff; margin-bottom: 10px;">
+      <span class="lottery-participants-count" data-target="843" style="font-weight: 700;">0</span>
+<span>учасників лотереї сьогоднi</span>  <!-- 👈 УЖЕ ПРАВИЛЬНО -->
+    </div>
+  </div>
+
+  <!-- ВИДЖЕТ ВЫИГРЫШЕЙ -->
+  <div class="winners-widget">
+    <ul id="winnersList"></ul>
+  </div>
+  
+  <div class="countdown-container">
+    <div class="countdown-text" id="countdownText">
+      Наступна спроба через:
+    </div>
+    <div class="countdown-timer" id="countdownTimer">
+      23:59:59
+    </div>
+  </div>
+  
+  <a href="index.html" class="shop-btn" id="shopBtn">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/grid-2x2.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">
+    В магазин
+  </a>
+</div>
+
+<audio id="spinnerSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Spinner.mp3" type="audio/mpeg">
+</audio>
+<audio id="ticketSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/TicketKR.mp3" type="audio/mpeg">
+</audio>
+  
+
 <script>
+// ===== КУПОНЫ С РАЗНЫМИ ЦВЕТАМИ И ВИДЕО =====
 const coupons = [
-  { title: "Жовтий купон!", videoClass: "promo-video-yellow", codeColor: "#af8246", discount: "15%" },
-  { title: "Червоний купон!", videoClass: "promo-video-red", codeColor: "#6d2121", discount: "10%" },
-  { title: "Синій купон!", videoClass: "promo-video-blue", codeColor: "#5c94cc", discount: "20%" },
-  { title: "Зелений купон!", videoClass: "promo-video-green", codeColor: "#005330", discount: "50%" }
+  {
+    title: "Тобi випав жовтий купон!",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm",
+    codeColor: "#af8246",
+    particleColor: "#ffd282",
+    discount: "15%",
+    displayName: "Жовтий купон"  // 👈 ДОБАВЬ ЭТО
+  },
+  {
+    title: "Тобi випав червоний купон!",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm",
+    codeColor: "#6d2121",
+    particleColor: "#9c2d35",
+    discount: "10%",
+    displayName: "Червоний купон"  // 👈 ДОБАВЬ ЭТО
+  },
+  {
+    title: "Тобi випав синій купон!",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm",
+    codeColor: "#5c94cc",
+    particleColor: "#5c94cc",
+    discount: "20%",
+    displayName: "Синій купон"  // 👈 ДОБАВЬ ЭТО
+  },
+  {
+    title: "Тобi випав зелений купон!",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm",
+    codeColor: "#005330",
+    particleColor: "#007042",
+    discount: "50%",
+    displayName: "Зелений купон"  // 👈 ДОБАВЬ ЭТО
+  }
 ];
 
-// Имитация загрузки и запуск
-window.addEventListener('load', () => {
+  const predictions = [
+  "Бджоли можуть розпізнавати людські обличчя",
+  "Спрути мають три серця",
+  "Банани — це ягоди, а полуниця — ні",
+  "У Венеції немає жодної дороги",
+  "Кішки не відчувають солодкий смак",
+  "Ейфелева вежа влітку вища на 15 см",
+  "Медуза — це 95% води",
+  "Папуги називають своїх дітей по іменах",
+  "Акула старіша за всi дерева на планеті",
+  "Світлофор був винайдений до автомобіля",
+  "Сльози крокодила — це не фейк",
+  "У собак може бути непарна кількість грудей",
+  "На Марсі захід сонця синього кольору",
+  "Равлики можуть спати три роки поспіль",
+  "У людини й жирафа однакова кількість шийних хребців",
+  "Золота рибка має пам'ять на три місяці"
+];
+
+function getRandomPrediction() {
+  return predictions[Math.floor(Math.random() * predictions.length)];
+}
+
+
+ // ===== ПРЕЛОАД ИЗОБРАЖЕНИЙ =====
+// ===== ПРЕЛОАД ИЗОБРАЖЕНИЙ И ВИДЕО =====
+function preloadImages() {
+  return new Promise((resolve) => {
+    const imagesToPreload = [
+      'https://github.com/cakeboxdeveloper/kremua/blob/main/Ticket.webp?raw=true',
+      'https://github.com/cakeboxdeveloper/kremua/blob/main/NoTicket.webp?raw=true',
+      'https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true'
+    ];
+    
+    const videosToPreload = [
+      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm',
+      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm',
+      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm',
+      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm'
+    ];
+    
+    let loadedCount = 0;
+    const totalAssets = imagesToPreload.length + videosToPreload.length;
+    
+    console.log('🖼️ Начинаем прелоад ресурсов...');
+    
+    // Загружаем изображения
+    imagesToPreload.forEach((src) => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        console.log(`✅ Изображение ${loadedCount}/${totalAssets} загружено`);
+        if (loadedCount === totalAssets) {
+          console.log('✅ Все ресурсы загружены!');
+          resolve();
+        }
+      };
+      img.onerror = () => {
+        loadedCount++;
+        console.log(`⚠️ Ошибка загрузки изображения: ${loadedCount}/${totalAssets}`);
+        if (loadedCount === totalAssets) {
+          resolve();
+        }
+      };
+      img.src = src;
+    });
+    
+    // Загружаем видео
+    videosToPreload.forEach((src) => {
+      const video = document.createElement('video');
+      video.preload = 'auto';
+      video.muted = true;
+      video.playsInline = true;
+      
+      video.onloadeddata = () => {
+        loadedCount++;
+        videoCache[src] = video;
+        console.log(`✅ Видео ${loadedCount}/${totalAssets} загружено`);
+        if (loadedCount === totalAssets) {
+          console.log('✅ Все ресурсы загружены!');
+          resolve();
+        }
+      };
+      
+      video.onerror = () => {
+        loadedCount++;
+        console.log(`⚠️ Ошибка загрузки видео: ${loadedCount}/${totalAssets}`);
+        if (loadedCount === totalAssets) {
+          resolve();
+        }
+      };
+      
+      video.src = src;
+    });
+  });
+}
+
+  // ===== ПРЕЛОАД ВИДЕО =====
+const videoCache = {};
+
+ 
+  
+let selectedCoupon = null;
+let promoDisintegrated = false;
+let promoTimer = null; // 👈 Убедись что эта строка есть
+let countdownInterval = null;
+let isDecoding = true; // 👈 Добавь если нет
+let finalPromoCode = ''; // 👈 Добавь если нет
+
+  // ===== ВИДЖЕТ ВЫИГРЫШЕЙ =====
+const winnersList = document.getElementById("winnersList");
+const ROW_HEIGHT = 36;
+const VISIBLE_ROWS = 5;
+
+let winnersOffset = 0;
+
+function randomId() {
+  return Math.floor(100000 + Math.random() * 900000);
+}
+
+function randomCouponName() {
+  return coupons[Math.floor(Math.random() * coupons.length)].displayName;
+}
+
+function createWinnerRow() {
+  const li = document.createElement("li");
+  li.innerHTML = `
+    <span class="winner-id">ID${randomId()}</span>
+    <span class="winner-coupon">${randomCouponName()}</span>
+  `;
+  return li;
+}
+
+function initWinnersWidget() {
+  if (!winnersList) return;
+  
+  for (let i = 0; i < VISIBLE_ROWS + 2; i++) {
+    winnersList.appendChild(createWinnerRow());
+  }
+  
+  function scrollUp() {
+    winnersOffset += ROW_HEIGHT;
+    winnersList.style.transition = "transform 2.5s cubic-bezier(.22,.61,.36,1)";
+    winnersList.style.transform = `translateY(-${winnersOffset}px)`;
+    
+    setTimeout(() => {
+      winnersList.style.transition = "none";
+      winnersList.removeChild(winnersList.firstElementChild);
+      winnersList.appendChild(createWinnerRow());
+      winnersOffset -= ROW_HEIGHT;
+      winnersList.style.transform = `translateY(-${winnersOffset}px)`;
+    }, 2500);
+  }
+  
+  setInterval(scrollUp, 6000);
+}
+
+// ⚠️ ТОТ ЖЕ СЕКРЕТНЫЙ КЛЮЧ (должен совпадать с admin.html)
+const SECRET_KEY = "your-super-secret-key-change-this-12345";
+
+async function checkAndUsePromoTicket() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const ticketCode = urlParams.get('ticket');
+  
+  if (!ticketCode) {
+    return false;
+  }
+  
+  try {
+    console.log('🎫 Проверяем билет:', ticketCode);
+    
+    const parts = ticketCode.split('-');
+    if (parts.length < 3) {
+      console.log('❌ Неверный формат билета');
+      showTicketModal('error', 'Недійсний формат білета!');  // 👈 ИЗМЕНЕНО
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return false;
+    }
+    
+    const signature = parts[parts.length - 1];
+    const ticketData = parts.slice(0, -1).join('-');
+    const expectedSignature = await generateHMAC(SECRET_KEY, ticketData);
+    
+    if (signature !== expectedSignature) {
+      console.log('❌ Неверная подпись билета');
+      showTicketModal('error', 'Недійсний білет! Підпис не збігається.');  // 👈 ИЗМЕНЕНО
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return false;
+    }
+    
+    const timestamp = parseInt(parts[0]);
+    const age = Date.now() - timestamp;
+    const maxAge = 30 * 24 * 60 * 60 * 1000;
+    
+    if (age > maxAge) {
+      console.log('❌ Билет истёк');
+      showTicketModal('error', 'Білет прострочено! Термін дії минув.');  // 👈 ИЗМЕНЕНО
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return false;
+    }
+    
+    const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
+    if (usedTickets.includes(ticketCode)) {
+      console.log('❌ Этот билет уже использован');
+      showTicketModal('error', 'Цей білет вже використано!');  // 👈 ИЗМЕНЕНО
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return false;
+    }
+    
+    usedTickets.push(ticketCode);
+    localStorage.setItem('used_tickets', JSON.stringify(usedTickets));
+    localStorage.removeItem('lottery_last_spin');
+    
+    console.log('✅ Білет активовано!');
+    showTicketModal('success', 'Ти отримуєш один лотерейний білет! Нумо, швидше, крути барабан!');  // 👈 ИЗМЕНЕНО
+    
+    window.history.replaceState({}, document.title, window.location.pathname);
+    
+    return true;
+    
+  } catch (error) {
+    console.error('Ошибка проверки билета:', error);
+    showTicketModal('error', 'Помилка перевірки білета!');  // 👈 ИЗМЕНЕНО
+    return false;
+  }
+}
+
+// Та же функция HMAC (копируем из admin.html)
+async function generateHMAC(secret, message) {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const messageData = encoder.encode(message);
+  
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+  
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .substring(0, 16);
+}
+
+ 
+// ===== МОДАЛЬНОЕ ОКНО ДЛЯ БИЛЕТА =====
+function showTicketModal(type, message) {
+  const oldModal = document.querySelector('.ticket-modal');
+  if (oldModal) oldModal.remove();
+  
+  const modal = document.createElement('div');
+  modal.className = 'ticket-modal';
+  
+  if (type === 'error') {
+    modal.dataset.invalid = 'true';
+    modal.classList.add('error');
+  } else {
+    modal.classList.add('success');
+  }
+  
+  const iconUrl = type === 'success' 
+    ? 'https://github.com/cakeboxdeveloper/kremua/blob/main/Ticket.webp?raw=true'
+    : 'https://github.com/cakeboxdeveloper/kremua/blob/main/NoTicket.webp?raw=true';
+  
+  const btnClass = type === 'success' ? '' : 'error';
+  
+  modal.innerHTML = `
+    <div class="ticket-modal-content">
+      <div class="ticket-modal-icon">
+        <img src="${iconUrl}" style="width: 100%; height: 100%; object-fit: contain;">
+      </div>
+      <div class="ticket-modal-text">${message}</div>
+      <button class="ticket-modal-btn ${btnClass}" onclick="closeTicketModal()">
+        ${type === 'success' ? 'Крутити барабан!' : 'Ок'}
+      </button>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
   setTimeout(() => {
-    document.getElementById('preloader').classList.add('hidden');
-    startLottery(); 
-  }, 2000);
+    modal.classList.add('active');
+    
+    // 🎵 ВОСПРОИЗВОДИМ ЗВУК ПОСЛЕ ПОЯВЛЕНИЯ МОДАЛЬНОГО ОКНА
+    const ticketSound = document.getElementById('ticketSound');
+    if (ticketSound) {
+      ticketSound.currentTime = 0;
+      ticketSound.play().catch(e => console.log('Ticket sound play failed:', e));
+    }
+  }, 10);
+}
+
+// Промис для ожидания закрытия модального окна
+function waitForModalClose() {
+  return new Promise((resolve) => {
+    const checkModal = setInterval(() => {
+      const modal = document.querySelector('.ticket-modal');
+      if (!modal) {
+        clearInterval(checkModal);
+        resolve();
+      }
+    }, 100);
+  });
+}
+  function closeTicketModal() {
+  const modal = document.querySelector('.ticket-modal');
+  if (modal) {
+    modal.classList.remove('active');
+    setTimeout(() => {
+      modal.remove();
+      
+      // Если билет был невалидным - показываем финальный экран
+      const wasInvalid = modal.dataset.invalid === 'true';
+      if (wasInvalid) {
+        document.getElementById('loader').classList.add('hidden');
+        showFinalScreen();
+      }
+    }, 300);
+  }
+}
+
+  
+
+// ===== РАБОТА С ЛОКАЛЬНЫМ ХРАНИЛИЩЕМ =====
+function getLastSpinTime() {
+  const lastSpin = localStorage.getItem('lottery_last_spin');
+  return lastSpin ? parseInt(lastSpin) : null;
+}
+
+function setLastSpinTime() {
+  localStorage.setItem('lottery_last_spin', Date.now().toString());
+}
+
+function canSpin() {
+  const lastSpin = getLastSpinTime();
+  if (!lastSpin) return true;
+  
+  const timePassed = Date.now() - lastSpin;
+  const oneDay = 24 * 60 * 60 * 1000;
+  
+  return timePassed >= oneDay;
+}
+
+function getTimeUntilNextSpin() {
+  const lastSpin = getLastSpinTime();
+  if (!lastSpin) return 0;
+  
+  const oneDay = 24 * 60 * 60 * 1000;
+  const timePassed = Date.now() - lastSpin;
+  const timeRemaining = oneDay - timePassed;
+  
+  return Math.max(0, timeRemaining);
+}
+
+// ===== ОБНОВЛЕНИЕ ТАЙМЕРА =====
+function updateCountdown() {
+  const timeRemaining = getTimeUntilNextSpin();
+  
+  if (timeRemaining === 0) {
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+    }
+    document.getElementById('countdownTimer').textContent = '00:00:00';
+    
+    // 🎯 МЕНЯЕМ ТЕКСТ И КНОПКУ
+    document.getElementById('countdownText').textContent = 'Ви можете спробувати ще раз! Оновіть сторінку.';
+    
+ const shopBtn = document.getElementById('shopBtn');
+shopBtn.innerHTML = '🔄 Спробувати знову'; // 👈 ЗАМЕНИ textContent на innerHTML
+shopBtn.onclick = function(e) {
+  e.preventDefault();
+  location.reload();
+};
+    
+    return;
+  }
+  
+  const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+  const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+  
+  const formattedTime = [
+    hours.toString().padStart(2, '0'),
+    minutes.toString().padStart(2, '0'),
+    seconds.toString().padStart(2, '0')
+  ].join(':');
+  
+  document.getElementById('countdownTimer').textContent = formattedTime;
+}
+
+// ===== ЗАПУСК ТАЙМЕРА =====
+function startCountdown() {
+  updateCountdown();
+  countdownInterval = setInterval(updateCountdown, 1000);
+}
+
+// ===== ПОКАЗ ФИНАЛЬНОГО ЭКРАНА =====
+function showFinalScreen() {
+  setTimeout(() => {
+    document.getElementById('finalScreen').classList.add('visible');
+    startCountdown();
+    initWinnersWidget();
+    animateLotteryCounter();  // 👈 ДОБАВЬ ЭТУ СТРОКУ
+  }, 500);
+}
+
+// ===== ГЕНЕРАЦИЯ ПРОМОКОДА =====
+function generatePromoCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  
+  for (let i = 0; i < 16; i++) {
+    if (i > 0 && i % 4 === 0) {
+      code += '-';
+    }
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  
+  return code;
+}
+
+// ===== АНИМАЦИЯ ДЕКОДИРОВАНИЯ ПРОМОКОДА =====
+function animatePromoCode() {
+  isDecoding = true; // 👈 Устанавливаем флаг
+  finalPromoCode = ''; // Сбрасываем старый код
+  
+  const promoCodeEl = document.getElementById("promoCode");
+  const finalCode = generatePromoCode();
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  
+  let revealedIndex = 0;
+  const codeArray = finalCode.split('');
+  
+  promoCodeEl.textContent = finalCode
+    .split('')
+    .map(char => char === '-' ? '-' : 'X')
+    .join('');
+  
+  const interval = setInterval(() => {
+    while (revealedIndex < codeArray.length && codeArray[revealedIndex] === '-') {
+      revealedIndex++;
+    }
+    
+    if (revealedIndex >= codeArray.length) {
+      clearInterval(interval);
+      isDecoding = false; // 👈 Декодирование завершено
+      finalPromoCode = finalCode; // 👈 Сохраняем финальный код
+      console.log('✅ Декодирование завершено:', finalCode);
+      return;
+    }
+    
+    let flickerCount = 0;
+    const maxFlicker = Math.floor(Math.random() * 3) + 3;
+    
+    const flickerInterval = setInterval(() => {
+      const displayCode = codeArray.map((char, index) => {
+        if (char === '-') return '-';
+        if (index < revealedIndex) return char;
+        if (index === revealedIndex) {
+          return chars[Math.floor(Math.random() * chars.length)];
+        }
+        return 'X';
+      }).join('');
+      
+      promoCodeEl.textContent = displayCode;
+      flickerCount++;
+      
+      if (flickerCount >= maxFlicker) {
+        clearInterval(flickerInterval);
+        const finalDisplay = codeArray.map((char, index) => {
+          if (char === '-') return '-';
+          if (index <= revealedIndex) return char;
+          return 'X';
+        }).join('');
+        promoCodeEl.textContent = finalDisplay;
+        revealedIndex++;
+      }
+    }, 40);
+    
+  }, 100);
+}
+
+
+function copyPromoCode(event) {
+  if (event) {
+    event.stopPropagation();
+  }
+  
+  const promoCodeEl = document.getElementById("promoCode");
+  const code = promoCodeEl.textContent.trim();
+  
+  // 🎯 Если уже скопировано - игнорируем
+  if (code === 'промокод скопійовано ✓') {
+    console.log('Промокод уже скопирован');
+    return;
+  }
+  
+  // 🎯 Если ещё декодируется - ждём
+  if (isDecoding || code.includes('X')) {
+    if (finalPromoCode) {
+      copyTextToClipboard(finalPromoCode);
+    } else {
+      promoCodeEl.style.opacity = '0.5';
+      setTimeout(() => promoCodeEl.style.opacity = '1', 200);
+    }
+    return;
+  }
+  
+  // ✅ Код полностью декодирован
+  finalPromoCode = code;
+  copyTextToClipboard(code);
+}
+
+function copyTextToClipboard(text) {
+  clearTimeout(promoTimer);
+  
+  // Создаём textarea
+  const textArea = document.createElement("textarea");
+  textArea.value = text;
+  textArea.setAttribute('readonly', '');
+  textArea.style.position = 'absolute';
+  textArea.style.left = '-9999px';
+  textArea.style.top = (window.pageYOffset || document.documentElement.scrollTop) + 'px';
+  
+  document.body.appendChild(textArea);
+  
+  // Выбираем текст
+  if (navigator.userAgent.match(/ipad|iphone/i)) {
+    // Для iOS
+    const range = document.createRange();
+    range.selectNodeContents(textArea);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+    textArea.setSelectionRange(0, 999999);
+  } else {
+    textArea.select();
+  }
+  
+  try {
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+    
+    if (successful) {
+      console.log('✅ Промокод скопійовано:', text);
+      showCopyFeedback();
+    } else {
+      // Пробуем Clipboard API
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          console.log('✅ Промокод скопійовано (Clipboard API):', text);
+          showCopyFeedback();
+        }).catch(() => {
+          promptManualCopy(text);
+        });
+      } else {
+        promptManualCopy(text);
+      }
+    }
+  } catch (err) {
+    document.body.removeChild(textArea);
+    console.error('Ошибка копирования:', err);
+    promptManualCopy(text);
+  }
+}
+
+function promptManualCopy(text) {
+  // Создаём красивое модальное окно для копирования
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #1d2b3a;
+    border: 2px solid #6ab2f2;
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 99999;
+    max-width: 90%;
+    text-align: center;
+  `;
+  
+  modal.innerHTML = `
+    <div style="color: #6ab2f2; font-size: 16px; margin-bottom: 15px;">
+      Скопіюйте промокод:
+    </div>
+    <input 
+      type="text" 
+      value="${text}" 
+      readonly
+      onclick="this.select()"
+      style="
+        width: 100%;
+        padding: 12px;
+        background: #0f1419;
+        border: 1px solid #6af27d;
+        color: #6af27d;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 15px;
+        box-sizing: border-box;
+      "
+    >
+    <button 
+      onclick="var el = this.parentElement; el.remove(); disintegratePromo();"
+      style="
+        padding: 10px 20px;
+        background: #1d3a22;
+        border: 1px solid #6af27d;
+        color: #6af27d;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+      "
+    >
+      Готово
+    </button>
+  `;
+  
+  document.body.appendChild(modal);
+  modal.querySelector('input').select();
+}
+  function showCopyFeedback() {
+  const promoCodeEl = document.getElementById("promoCode");
+  promoCodeEl.textContent = "промокод скопійовано ✓";
+  setTimeout(() => disintegratePromo(), 1200);
+}
+
+// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+function disintegratePromo() {
+  promoDisintegrated = true;
+  
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  const rect = document.getElementById('promoCard').getBoundingClientRect();
+  
+  const particles = [];
+  const particleSize = 2;
+  const totalDuration = 2000;
+  const burnDuration = 1300;
+  const eraserDuration = 2500;
+  
+  const particleColor = selectedCoupon.particleColor;
+  
+  const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height);
+  const speedScale = rect.width / 512;
+  
+  for (let y = 0; y < rect.height; y += particleSize) {
+    for (let x = 0; x < rect.width; x += particleSize) {
+      if (Math.random() > 0.5) continue;
+      
+      const distanceFromBottomRight = Math.sqrt(
+        Math.pow(rect.width - x, 2) + Math.pow(rect.height - y, 2)
+      );
+      
+      const normalizedDistance = distanceFromBottomRight / maxDistance;
+      
+      particles.push({
+        x: rect.left + x,
+        y: rect.top + y,
+        size: Math.random() < 0.5 ? 1 : 2,
+        color: particleColor,
+        speedX: -(Math.random() * 2.5 + 1.5) * speedScale,
+        speedY: -(Math.random() * 2.5 + 0.5) * speedScale,
+        opacity: 0,
+        burnDelay: normalizedDistance * burnDuration,
+        active: false
+      });
+    }
+  }
+  
+  let startTime = Date.now();
+  
+  function generateSoftEraser(progress) {
+    const radius = progress * maxDistance * 1.4;
+    return `linear-gradient(
+      -45deg,
+      transparent 0%,
+      transparent ${radius}px,
+      rgba(0,0,0,0.3) ${radius + 10}px,
+      rgba(0,0,0,0.7) ${radius + 20}px,
+      black ${radius + 30}px
+    )`;
+  }
+  
+  function animate() {
+    const elapsed = Date.now() - startTime;
+    const burnProgress = Math.min(elapsed / eraserDuration, 1);
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const promoCard = document.getElementById('promoCard');
+    if (burnProgress < 1) {
+      promoCard.style.maskImage = generateSoftEraser(burnProgress);
+      promoCard.style.webkitMaskImage = generateSoftEraser(burnProgress);
+    } else {
+      promoCard.style.opacity = '0';
+    }
+    
+    let allGone = true;
+    
+    particles.forEach(p => {
+      if (!p.active && elapsed >= p.burnDelay) {
+        p.active = true;
+        p.opacity = 1;
+      }
+      
+      if (p.active) {
+        const particleAge = elapsed - p.burnDelay;
+        
+        if (particleAge < 800 && p.opacity > 0) {
+          allGone = false;
+          
+          ctx.globalAlpha = p.opacity;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+          
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.speedX -= 0.001 * speedScale;
+          p.speedY -= 0.001 * speedScale;
+          
+          p.opacity -= 0.015;
+        }
+      } else {
+        allGone = false;
+      }
+    });
+    
+    if (!allGone || elapsed < totalDuration) {
+      requestAnimationFrame(animate);
+    } else {
+      canvas.style.display = 'none';
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      document.getElementById('promoOverlay').classList.remove('active');
+      
+  
+      
+      // Показываем финальный экран с таймером
+      showFinalScreen();
+      
+      setTimeout(() => {
+        promoCard.style.maskImage = 'none';
+        promoCard.style.webkitMaskImage = 'none';
+        promoCard.style.opacity = '1';
+      }, 500);
+    }
+  }
+  
+  canvas.style.display = 'block';
+  animate();
+}
+
+// ===== ВЫБОР СЛУЧАЙНОГО КУПОНА =====
+function selectRandomCoupon() {
+  const probabilities = [
+    { coupon: coupons[0], weight: 70 },
+    { coupon: coupons[1], weight: 1 },
+    { coupon: coupons[2], weight: 9 },
+    { coupon: coupons[3], weight: 20 }
+  ];
+  
+  const random = Math.random() * 100;
+  let cumulative = 0;
+  
+  for (let i = 0; i < probabilities.length; i++) {
+    cumulative += probabilities[i].weight;
+    if (random <= cumulative) {
+      return probabilities[i].coupon;
+    }
+  }
+  
+  return coupons[0];
+}
+
+function applyCoupon(coupon) {
+  selectedCoupon = coupon;
+  
+  // 👈 ИЗМЕНИЛИ: цвет заголовка = цвет промокода
+  const promoTitleEl = document.getElementById('promoTitle');
+  promoTitleEl.textContent = coupon.title;
+  promoTitleEl.style.color = coupon.codeColor;  // 👈 ДОБАВЬ ЭТУ СТРОКУ
+  
+  const promoCodeBox = document.getElementById('promoCode');
+  promoCodeBox.style.color = coupon.codeColor;
+  
+// Скрываем все видео
+// Скрываем все видео
+document.querySelectorAll('.promo-animation-webm').forEach(v => {
+  v.classList.remove('active');
+  v.pause();
 });
 
-function startLottery() {
+// Показываем нужное видео
+let videoClass = '';
+if (coupon.videoUrl.includes('FinalY2')) videoClass = 'promo-video-yellow';
+else if (coupon.videoUrl.includes('FinalR2')) videoClass = 'promo-video-red';
+else if (coupon.videoUrl.includes('FinalB2')) videoClass = 'promo-video-blue';
+else if (coupon.videoUrl.includes('FinalG22')) videoClass = 'promo-video-green';
+
+const activeVideo = document.querySelector(`.${videoClass}`);
+if (activeVideo) {
+  activeVideo.classList.add('active');
+  
+  // 🎯 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ВИДЕО
+  if (activeVideo.readyState < 3) {
+    console.log('⏳ Загружаем видео:', coupon.title);
+    activeVideo.load();
+    
+    activeVideo.addEventListener('loadeddata', function onLoaded() {
+      console.log('✅ Видео загружено:', coupon.title);
+      activeVideo.removeEventListener('loadeddata', onLoaded);
+    });
+  } else {
+    console.log('✅ Видео уже загружено:', coupon.title);
+  }
+}
+  
+  const style = document.createElement('style');
+  style.textContent = `
+    .promo-code-box:hover {
+      color: ${coupon.codeColor} !important;
+    }
+    .promo-code-box.copied {
+      color: ${coupon.codeColor} !important;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // 🎯 СОХРАНЯЕМ ВРЕМЯ СРАЗУ ПРИ ПОКАЗЕ ПРОМОКОДА
+  setLastSpinTime();
+  console.log('✅ Время лотереи зафиксировано');
+}
+
+// ===== КОНФЕТТІ =====
+function launchCanvasConfetti() {
+  const canvas = document.getElementById('confetti-container');
+  if (!canvas) return;
+  
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  const confettiColors = ['#ff4757', '#ffa502', '#2ed573', '#1e90ff', '#ff6b81', '#5f27cd', '#00d2d3', '#f368e0'];
+  const confettiPieces = [];
+  const confettiCount = 300;
+  const gravity = 0.5;
+  const terminalVelocity = 5;
+  const drag = 0.075;
+  
+  class ConfettiPiece {
+    constructor() {
+      this.randomModifier = Math.random() * 10;
+      this.color = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+      this.dimensions = {
+        x: (Math.random() * 10 + 5) / 2,
+        y: (Math.random() * 15 + 10) / 2
+      };
+      
+      this.position = {
+        x: Math.random() * canvas.width,
+        y: canvas.height + 75
+      };
+      
+      this.rotation = Math.random() * 360;
+      this.scale = {
+        x: 1,
+        y: 1
+      };
+      
+      this.velocity = {
+        x: (Math.random() - 0.5) * 25,
+        y: -(Math.random() * 15 + 15)
+      };
+    }
+    
+    update() {
+      this.velocity.y += gravity;
+      this.velocity.x -= this.velocity.x * drag;
+      this.velocity.y = Math.min(this.velocity.y, terminalVelocity);
+      
+      this.position.x += this.velocity.x;
+      this.position.y += this.velocity.y;
+      
+      this.rotation += (this.velocity.y / 10) * this.randomModifier;
+      
+      this.scale.y = Math.cos((this.position.y + this.randomModifier) * 0.09);
+    }
+    
+    draw() {
+      ctx.save();
+      ctx.translate(this.position.x, this.position.y);
+      ctx.rotate(this.rotation * Math.PI / 180);
+      ctx.scale(this.scale.x, this.scale.y);
+      
+      ctx.fillStyle = this.color;
+      ctx.fillRect(-this.dimensions.x / 2, -this.dimensions.y / 2, this.dimensions.x, this.dimensions.y);
+      
+      ctx.restore();
+    }
+  }
+  
+  for (let i = 0; i < confettiCount; i++) {
+    confettiPieces.push(new ConfettiPiece());
+  }
+  
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    let activeCount = 0;
+    confettiPieces.forEach(piece => {
+      piece.update();
+      piece.draw();
+      
+      if (piece.position.y < canvas.height + 50) {
+        activeCount++;
+      }
+    });
+    
+    if (activeCount > 0) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  
+  animate();
+}
+
+ 
+
+window.addEventListener('load', async () => {
+  const preloader = document.getElementById('preloader');
+  const preloaderText = preloader.querySelector('.preloader-text');
   const loader = document.getElementById('loader');
+  const loaderText = loader.querySelector('.loader-text');
+  const promoOverlay = document.getElementById('promoOverlay');
+  
+  // 🎯 РАНДОМНОЕ ПРЕДСКАЗАНИЕ
+  preloaderText.textContent = getRandomPrediction();
+  loaderText.textContent = getRandomPrediction();
+  
+  // 🎯 ШАГ 1: ПРЕЛОАД (минимум 2 секунды)
+  const startTime = Date.now();
+  await preloadImages();
+  const elapsed = Date.now() - startTime;
+  const minDuration = 2000;
+  
+  if (elapsed < minDuration) {
+    await new Promise(resolve => setTimeout(resolve, minDuration - elapsed));
+  }
+  
+ // Скрываем прелоадер
+  preloader.classList.add('hidden');
+  
+  // 🎯 ШАГ 2: ПРОВЕРЯЕМ ПРОМО-БИЛЕТ
+  const ticketActivated = await checkAndUsePromoTicket();
+  
+  // 🎯 ШАГ 3: ПРОВЕРЯЕМ, МОЖНО ЛИ КРУТИТЬ РУЛЕТКУ
+  const canUserSpin = canSpin();
+  
+  // ===== СЦЕНАРИЙ 1: НЕВАЛИДНЫЙ БИЛЕТ → СРАЗУ ФИНАЛЬНЫЙ ЭКРАН =====
+  if (ticketActivated === false && new URLSearchParams(window.location.search).get('ticket')) {
+    // Если билет был в URL, но он невалидный - ждём закрытия ошибки
+    await waitForModalClose();
+    showFinalScreen();
+    return;
+  }
+  
+  // ===== СЦЕНАРИЙ 2: НЕ МОЖЕТ КРУТИТЬ (ТАЙМЕР) → СРАЗУ ФИНАЛЬНЫЙ ЭКРАН =====
+  if (!canUserSpin && !ticketActivated) {
+    showFinalScreen();
+    return;
+  }
+  
+  // ===== СЦЕНАРИЙ 3: ВАЛИДНЫЙ БИЛЕТ → ПОКАЗЫВАЕМ ОКНО → КРУТИМ =====
+  if (ticketActivated === true) {
+    // Ждём пока пользователь закроет модальное окно успеха
+    await waitForModalClose();
+  }
+  
+  // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (БЕЗ БИЛЕТА ИЛИ С ВАЛИДНЫМ) → РУЛЕТКА =====
+  // Показываем рулетку
+// ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (БЕЗ БИЛЕТА ИЛИ С ВАЛИДНЫМ) → РУЛЕТКА =====
+  // Показываем рулетку
   loader.classList.remove('hidden');
   
-  // Выбираем случайный купон
-  const selected = coupons[Math.floor(Math.random() * coupons.length)];
+  // 🎯 ВОСПРОИЗВОДИМ ЗВУК СПИННЕРА
+  const spinnerSound = document.getElementById('spinnerSound');
+  if (spinnerSound) {
+    spinnerSound.currentTime = 0;
+    spinnerSound.play().catch(e => console.log('Spinner sound play failed:', e));
+  }
   
   setTimeout(() => {
     loader.classList.add('hidden');
-    showPromo(selected);
-  }, 4000);
-}
-
-function showPromo(coupon) {
-  const overlay = document.getElementById('promoOverlay');
-  const title = document.getElementById('promoTitle');
-  const codeBox = document.getElementById('promoCode');
-  
-  // Активируем нужное видео
-  document.querySelectorAll('.promo-animation-webm').forEach(v => {
-      v.classList.remove('active');
-      v.pause(); // Останавливаем неактивные для экономии ресурсов
-  });
-  
-  const activeVideo = document.querySelector('.' + coupon.videoClass);
-  activeVideo.classList.add('active');
-  activeVideo.play().catch(e => console.log("Autoplay blocked:", e)); // Обработка блокировки автоплея
-
-  title.innerText = "Тобi випав " + coupon.title;
-  codeBox.style.color = coupon.codeColor;
-  codeBox.innerText = "KREM-" + Math.random().toString(36).substr(2, 9).toUpperCase();
-  
-  overlay.classList.add('active');
-}
-
-function copyPromoCode(event) {
-  const text = event.target.innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    alert("Скопійовано: " + text);
+    
+    const randomCoupon = selectRandomCoupon();
+    applyCoupon(randomCoupon);
+    
+    setTimeout(() => {
+      promoOverlay.classList.add('active');
+      
+      setTimeout(() => {
+        animatePromoCode();
+      }, 600);
+      
+    const activeVideo = document.querySelector('.promo-animation-webm.active');
+if (activeVideo) {
+  activeVideo.play().catch(err => {
+    console.log('Автозапуск видео заблокирован:', err);
   });
 }
+      
+      setTimeout(() => {
+        launchCanvasConfetti();
+      }, 200);
+      
+      if (promoTimer) {
+        clearTimeout(promoTimer);
+      }
+      startPromoTimer();
+      
+    }, 300);
+  }, 5000);
+});
+
+// ===== ТАЙМЕР ПРОМОКОДА (15 СЕКУНД) =====
+function startPromoTimer() {
+  promoTimer = setTimeout(() => {
+    if (!promoDisintegrated) {
+      console.log('⏰ Время вышло, рассыпаем промокод');
+      disintegratePromo();
+    }
+  }, 15000);
+}
+
+// Закрытие по клику вне карточки
+document.getElementById('promoOverlay').addEventListener('click', () => {
+  if (!promoDisintegrated) {
+    clearTimeout(promoTimer);
+    disintegratePromo();
+  }
+});
+
+
+// ===== ГЕНЕРАЦИЯ КОЛИЧЕСТВА УЧАСТНИКОВ (ОБНОВЛЯЕТСЯ КАЖДЫЙ ДЕНЬ) =====
+function getDailyParticipantsCount() {
+  const today = new Date().toDateString(); // "Mon Jan 06 2026"
+  const savedData = localStorage.getItem('daily_participants');
+  
+  if (savedData) {
+    const data = JSON.parse(savedData);
+    if (data.date === today) {
+      return data.count;
+    }
+  }
+  
+  // Новый день - генерируем новое число
+  const newCount = Math.floor(Math.random() * (52 - 12 + 1)) + 12;
+  localStorage.setItem('daily_participants', JSON.stringify({
+    date: today,
+    count: newCount
+  }));
+  
+  return newCount;
+}
+
+// ===== АНИМАЦИЯ СЧЁТЧИКА УЧАСТНИКОВ =====
+function animateLotteryCounter() {
+  const element = document.querySelector('.lottery-participants-count');
+  if (!element) return;
+  
+  const target = getDailyParticipantsCount(); // 👈 ИЗМЕНИЛИ
+  const startValue = 0;
+  const duration = 2000;
+  const frameDuration = 1000 / 60;
+  const totalFrames = Math.round(duration / frameDuration);
+  let frame = 0;
+  
+  const counter = setInterval(() => {
+    frame++;
+    const progress = frame / totalFrames;
+    const currentCount = Math.round(startValue + (target - startValue) * progress);
+    
+    element.textContent = currentCount;
+    
+    if (frame === totalFrames) {
+      clearInterval(counter);
+      element.textContent = target;
+    }
+  }, frameDuration);
+}
+
+// Запускаем анимацию при показе финального экрана
+// Найди функцию showFinalScreen() и добавь в неё вызов:
+
+  
 </script>
+
 </body>
 </html>
