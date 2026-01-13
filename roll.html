@@ -858,16 +858,16 @@ mask-image: linear-gradient(
       >
       
       <!-- Скрытые предзагруженные видео -->
-<video class="promo-animation-webm promo-video-yellow" loop muted playsinline preload="auto">
+<video class="promo-animation-webm promo-video-yellow" loop muted playsinline preload="none">
   <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm" type="video/webm">
 </video>
-<video class="promo-animation-webm promo-video-red" loop muted playsinline preload="auto">
+<video class="promo-animation-webm promo-video-yellow" loop muted playsinline preload="none">
   <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm" type="video/webm">
 </video>
-<video class="promo-animation-webm promo-video-blue" loop muted playsinline preload="auto">
+<video class="promo-animation-webm promo-video-yellow" loop muted playsinline preload="none">
   <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm" type="video/webm">
 </video>
-<video class="promo-animation-webm promo-video-green" loop muted playsinline preload="auto">
+<video class="promo-animation-webm promo-video-yellow" loop muted playsinline preload="none">
   <source src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm" type="video/webm">
 </video>
       
@@ -1761,6 +1761,7 @@ function applyCoupon(coupon) {
   promoCodeBox.style.color = coupon.codeColor;
   
 // Скрываем все видео
+// Скрываем все видео
 document.querySelectorAll('.promo-animation-webm').forEach(v => {
   v.classList.remove('active');
   v.pause();
@@ -1776,7 +1777,19 @@ else if (coupon.videoUrl.includes('FinalG2')) videoClass = 'promo-video-green';
 const activeVideo = document.querySelector(`.${videoClass}`);
 if (activeVideo) {
   activeVideo.classList.add('active');
-  console.log('✅ Активировано видео:', coupon.title);
+  
+  // 🎯 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ВИДЕО
+  if (activeVideo.readyState < 3) {
+    console.log('⏳ Загружаем видео:', coupon.title);
+    activeVideo.load();
+    
+    activeVideo.addEventListener('loadeddata', function onLoaded() {
+      console.log('✅ Видео загружено:', coupon.title);
+      activeVideo.removeEventListener('loadeddata', onLoaded);
+    });
+  } else {
+    console.log('✅ Видео уже загружено:', coupon.title);
+  }
 }
   
   const style = document.createElement('style');
