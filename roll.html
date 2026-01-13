@@ -22,6 +22,102 @@ body {
   min-height: 100vh;
 }
 
+.loader-text {
+  font-size: 18px;
+  color: #d4af37;
+  margin-top: 10px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* 👇 ДОБАВЬ ОТСЮДА */
+/* ===== ТАБЛИЦА КУПОНОВ НАД РУЛЕТКОЙ ===== */
+.coupons-table {
+  margin-bottom: 30px;
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 400px;
+  width: 90%;
+}
+
+.coupons-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.coupons-table thead {
+  background: #22364a;
+}
+
+.coupons-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 700;
+  color: #6ab2f2;
+  border-bottom: 2px solid #6ab2f2;
+}
+
+.coupons-table td {
+  padding: 12px 16px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(106, 178, 242, 0.2);
+}
+
+.coupons-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.coupons-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.coupons-table tbody tr:hover {
+  background: #22364a;
+}
+
+.coupon-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coupon-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.coupon-discount {
+  font-weight: 700;
+  text-align: right;
+}
+
+/* Цвета для точек */
+.coupon-color-dot.yellow {
+  background: #af8246;
+  box-shadow: 0 0 8px rgba(175, 130, 70, 0.6);
+}
+
+.coupon-color-dot.red {
+  background: #6d2121;
+  box-shadow: 0 0 8px rgba(109, 33, 33, 0.6);
+}
+
+.coupon-color-dot.blue {
+  background: #5c94cc;
+  box-shadow: 0 0 8px rgba(92, 148, 204, 0.6);
+}
+
+.coupon-color-dot.green {
+  background: #005330;
+  box-shadow: 0 0 8px rgba(0, 83, 48, 0.6);
+}
+/* 👆 ЗАКОНЧИЛИ ДОБАВЛЯТЬ */
+  
+
 /* ✅ АДАПТИВНОЕ МАСШТАБИРОВАНИЕ ДЛЯ ДЕСКТОПА */
 @media (min-width: 769px) {
   body {
@@ -644,6 +740,58 @@ mask-image: linear-gradient(
 
 <!-- ЛОАДЕР (РУЛЕТКА) -->
 <div id="loader" class="loader hidden">
+
+<!-- 👇 ДОБАВЬ ТАБЛИЦУ ЗДЕСЬ -->
+  <div class="coupons-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Купон</th>
+          <th style="text-align: right;">Знижка</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <div class="coupon-name">
+              <span class="coupon-color-dot yellow"></span>
+              <span>Жовтий</span>
+            </div>
+          </td>
+          <td class="coupon-discount" style="color: #af8246;">15%</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="coupon-name">
+              <span class="coupon-color-dot red"></span>
+              <span>Червоний</span>
+            </div>
+          </td>
+          <td class="coupon-discount" style="color: #6d2121;">10%</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="coupon-name">
+              <span class="coupon-color-dot blue"></span>
+              <span>Синій</span>
+            </div>
+          </td>
+          <td class="coupon-discount" style="color: #5c94cc;">20%</td>
+        </tr>
+        <tr>
+          <td>
+            <div class="coupon-name">
+              <span class="coupon-color-dot green"></span>
+              <span>Зелений</span>
+            </div>
+          </td>
+          <td class="coupon-discount" style="color: #005330;">50%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- 👆 ЗАКОНЧИЛИ ДОБАВЛЯТЬ ТАБЛИЦУ -->
+  
   <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
   <div class="loader-text">Генеруємо ваш промокод...</div>
 </div>
