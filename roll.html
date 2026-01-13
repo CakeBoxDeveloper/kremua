@@ -311,39 +311,14 @@ body {
   }
 }
 
-     /* 👇 ДОБАВЬ ЭТИ СТРОКИ */
-  mask-image: radial-gradient(
-    circle,
-    black 20%,
-    rgba(0, 0, 0, 0.8) 40%,
-    rgba(0, 0, 0, 0.4) 60%,
-    transparent 80%
-  );
-  -webkit-mask-image: radial-gradient(
-    circle,
-    black 20%,
-    rgba(0, 0, 0, 0.8) 40%,
-    rgba(0, 0, 0, 0.4) 60%,
-    transparent 80%
-  );
-}
-}
-
+    
   
 /* Показываем лучи только для success */
 .ticket-modal.success .ticket-modal-icon::before {
   opacity: 1;
 }
 
-/* Анимация вращения лучей */
-@keyframes rotateSunRays {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
+ 
 
 /* Картинка билета поверх лучей */
 .ticket-modal-icon img {
@@ -495,23 +470,7 @@ body {
   }
 }
 
-.back-to-main {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 24px;
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  color: #6ab2f2;
-  border-radius: 6px;
-  font-weight: 600;
-  text-decoration: none;
-  z-index: 9000;
-  transition: transform 0.15s ease;
-  display: none;
-}
-
+ 
 
 
 /* ===== ФИНАЛЬНЫЙ ЭКРАН ===== */
@@ -589,13 +548,7 @@ body {
 }
   
 
-.back-to-main.visible {
-  display: inline-block;
-}
-
-.back-to-main:active {
-  transform: translateX(-50%) scale(0.96);
-}
+ 
 
 @media (max-width: 480px) {
   .promo-title {
@@ -873,31 +826,7 @@ function preloadImages() {
   // ===== ПРЕЛОАД ВИДЕО =====
 const videoCache = {};
 
-function preloadVideos() {
-  console.log('🎬 Начинаем прелоад видео...');
-  
-  coupons.forEach((coupon, index) => {
-    const video = document.createElement('video');
-    video.preload = 'auto';
-    video.muted = true;
-    video.playsInline = true;
-    
-    video.addEventListener('loadeddata', () => {
-      videoCache[coupon.videoUrl] = video;
-      console.log(`✅ Видео ${index + 1}/${coupons.length} загружено:`, coupon.title);
-    });
-    
-    video.addEventListener('error', (e) => {
-      console.error(`❌ Ошибка загрузки видео:`, coupon.title, e);
-    });
-    
-    video.src = coupon.videoUrl;
-    video.load();
-  });
-}
-
-// Вызываем сразу при загрузке страницы
-preloadVideos();
+ 
   
 let selectedCoupon = null;
 let promoDisintegrated = false;
@@ -1596,15 +1525,10 @@ function applyCoupon(coupon) {
   
   const promoVideo = document.getElementById('promoVideo');
   
-  if (videoCache[coupon.videoUrl]) {
-    console.log('📦 Используем прелоад видео для:', coupon.title);
-    const cachedVideo = videoCache[coupon.videoUrl];
-    promoVideo.src = cachedVideo.src;
-    promoVideo.load();
-  } else {
-    console.log('⏳ Видео ещё не загружено, грузим обычным способом');
-    promoVideo.src = coupon.videoUrl;
-  }
+ // Просто загружаем видео напрямую
+promoVideo.src = coupon.videoUrl;
+promoVideo.load();
+console.log('🎬 Загружаем видео:', coupon.title, coupon.videoUrl);
   
   const style = document.createElement('style');
   style.textContent = `
