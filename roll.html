@@ -1787,47 +1787,47 @@ function applyCoupon(coupon) {
 document.querySelectorAll('.promo-animation-webm').forEach(v => {
   v.classList.remove('active');
   v.pause();
-  v.currentTime = 0;
 });
 
-// Определяем нужное видео
+// Показываем нужное видео
 let videoClass = '';
-let videoSrc = '';
-if (coupon.videoUrl.includes('FinalY2')) {
-  videoClass = 'promo-video-yellow';
-  videoSrc = 'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm';
-} else if (coupon.videoUrl.includes('FinalR2')) {
-  videoClass = 'promo-video-red';
-  videoSrc = 'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm';
-} else if (coupon.videoUrl.includes('FinalB2')) {
-  videoClass = 'promo-video-blue';
-  videoSrc = 'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm';
-} else if (coupon.videoUrl.includes('FinalG2')) {
-  videoClass = 'promo-video-green';
-  videoSrc = 'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm';
-}
+if (coupon.videoUrl.includes('FinalY2')) videoClass = 'promo-video-yellow';
+else if (coupon.videoUrl.includes('FinalR2')) videoClass = 'promo-video-red';
+else if (coupon.videoUrl.includes('FinalB2')) videoClass = 'promo-video-blue';
+else if (coupon.videoUrl.includes('FinalG22')) videoClass = 'promo-video-green';
 
 const activeVideo = document.querySelector(`.${videoClass}`);
 if (activeVideo) {
-  // 🎯 УСТАНАВЛИВАЕМ SRC ПРИНУДИТЕЛЬНО
-  if (!activeVideo.src || activeVideo.src !== videoSrc) {
-    console.log('⏳ Устанавливаем src видео:', coupon.title);
-    activeVideo.src = videoSrc;
-  }
-  
   activeVideo.classList.add('active');
   
-  // Загружаем и логируем результат
-  activeVideo.load();
+  // 🎯 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ВИДЕО
+  if (activeVideo.readyState < 3) {
+    console.log('⏳ Загружаем видео:', coupon.title);
+    activeVideo.load();
+    
+    activeVideo.addEventListener('loadeddata', function onLoaded() {
+      console.log('✅ Видео загружено:', coupon.title);
+      activeVideo.removeEventListener('loadeddata', onLoaded);
+    });
+  } else {
+    console.log('✅ Видео уже загружено:', coupon.title);
+  }
+}
   
-  activeVideo.addEventListener('loadeddata', function onLoad() {
-    console.log('✅ Видео готово:', coupon.title, activeVideo.readyState);
-    activeVideo.removeEventListener('loadeddata', onLoad);
-  }, { once: true });
+  const style = document.createElement('style');
+  style.textContent = `
+    .promo-code-box:hover {
+      color: ${coupon.codeColor} !important;
+    }
+    .promo-code-box.copied {
+      color: ${coupon.codeColor} !important;
+    }
+  `;
+  document.head.appendChild(style);
   
-  activeVideo.addEventListener('error', function(e) {
-    console.error('❌ Ошибка видео:', coupon.title, e);
-  }, { once: true });
+  // 🎯 СОХРАНЯЕМ ВРЕМЯ СРАЗУ ПРИ ПОКАЗЕ ПРОМОКОДА
+  setLastSpinTime();
+  console.log('✅ Время лотереи зафиксировано');
 }
 
 // ===== КОНФЕТТІ =====
