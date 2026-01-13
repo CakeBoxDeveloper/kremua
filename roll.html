@@ -1963,53 +1963,59 @@ window.addEventListener('load', async () => {
 // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (БЕЗ БИЛЕТА ИЛИ С ВАЛИДНЫМ) → РУЛЕТКА =====
   // Показываем рулетку
  // Показываем рулетку
+// 🎯 ШАГ 1: СНАЧАЛА ПОКАЗЫВАЕМ LOADER
 loader.classList.remove('hidden');
 
-// Инициализируем промокоды на превью
-initPreviewCoupons();
-
-// Автозапуск превью купонов для Android
-// 🎯 АВТОЗАПУСК ПРЕВЬЮ ВИДЕО (с множественными попытками)
-const previewVideos = document.querySelectorAll('.coupon-preview-item video');
-previewVideos.forEach((video, index) => {
-  // Попытка 1: сразу
-  video.play().catch(e => {
-    console.log(`⚠️ Preview video ${index + 1} autoplay blocked:`, e.message);
-    
-    // Попытка 2: через 500ms
-    setTimeout(() => {
-      video.play().catch(() => {
-        console.log(`⚠️ Preview video ${index + 1} 2nd attempt failed`);
-        
-        // Попытка 3: через 1500ms
-        setTimeout(() => {
-          video.play().catch(() => {
-            console.log(`⚠️ Preview video ${index + 1} 3rd attempt failed`);
-          });
-        }, 1000);
-      });
-    }, 500);
-  });
-});
-
- 
-
-// 🎯 ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
-const rouletteSound = document.getElementById('rouletteSound');
-if (rouletteSound) {
-  rouletteSound.currentTime = 0;
-  rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
-}
+// 🎯 ШАГ 2: ДАЁМ ВРЕМЯ НА РЕНДЕРИНГ (важно!)
+setTimeout(() => {
+  // Инициализируем промокоды на превью
+  initPreviewCoupons();
   
-  setTimeout(() => {
-  // 🎯 ОСТАНАВЛИВАЕМ ЗВУК РУЛЕТКИ
+  // Запускаем видео превью
+  const previewVideos = document.querySelectorAll('.coupon-preview-item video');
+  
+  previewVideos.forEach((video, index) => {
+    video.muted = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    
+    video.addEventListener('loadeddata', () => {
+      console.log(`✅ Preview video ${index + 1} loaded`);
+      
+      video.play()
+        .then(() => console.log(`✅ Preview video ${index + 1} playing`))
+        .catch(e => {
+          console.log(`⚠️ Preview video ${index + 1} blocked:`, e.message);
+          setTimeout(() => video.play().catch(() => {}), 300);
+        });
+    }, { once: true });
+    
+    video.addEventListener('error', (e) => {
+      console.error(`❌ Preview video ${index + 1} error:`, e);
+    }, { once: true });
+    
+    video.load();
+  });
+  
+  // 🎯 ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
+  const rouletteSound = document.getElementById('rouletteSound');
+  if (rouletteSound) {
+    rouletteSound.currentTime = 0;
+    rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
+  }
+  
+}, 100); // 👈 100ms задержка для рендеринга DOM
+
+// 🎯 ШАГ 3: ЧЕРЕЗ 5 СЕКУНД ПОКАЗЫВАЕМ ПРОМОКОД
+setTimeout(() => {
+  // Останавливаем звук рулетки
   const rouletteSound = document.getElementById('rouletteSound');
   if (rouletteSound) {
     rouletteSound.pause();
     rouletteSound.currentTime = 0;
   }
   
-  // 🎯 ЗАПУСКАЕМ ЗВУК ВЫИГРЫША
+  // Запускаем звук выигрыша
   const winSound = document.getElementById('winSound');
   if (winSound) {
     winSound.currentTime = 0;
@@ -2020,33 +2026,32 @@ if (rouletteSound) {
   
   const randomCoupon = selectRandomCoupon();
   applyCoupon(randomCoupon);
+  
+  setTimeout(() => {
+    promoOverlay.classList.add('active');
     
     setTimeout(() => {
-      promoOverlay.classList.add('active');
-      
-      setTimeout(() => {
-        animatePromoCode();
-      }, 600);
-      
-      const promoVideo = document.getElementById('promoVideo');
-      if (promoVideo) {
-        promoVideo.play().catch(err => {
-          console.log('Автозапуск видео заблокирован:', err);
-        });
-      }
-      
-      setTimeout(() => {
-        launchCanvasConfetti();
-      }, 200);
-      
-      if (promoTimer) {
-        clearTimeout(promoTimer);
-      }
-      startPromoTimer();
-      
-    }, 300);
-  }, 5000);
-});
+      animatePromoCode();
+    }, 600);
+    
+    const promoVideo = document.getElementById('promoVideo');
+    if (promoVideo) {
+      promoVideo.play().catch(err => {
+        console.log('Автозапуск видео заблокирован:', err);
+      });
+    }
+    
+    setTimeout(() => {
+      launchCanvasConfetti();
+    }, 200);
+    
+    if (promoTimer) {
+      clearTimeout(promoTimer);
+    }
+    startPromoTimer();
+    
+  }, 300);
+}, 5000);
 
 // ===== ТАЙМЕР ПРОМОКОДА (15 СЕКУНД) =====
 function startPromoTimer() {
