@@ -52,17 +52,18 @@ body {
 
 .coupons-table th {
   padding: 12px 16px;
-  text-align: left;
-  font-size: 14px;
+  text-align: center;
+  font-size: 15px;
   font-weight: 700;
   color: #6ab2f2;
   border-bottom: 2px solid #6ab2f2;
 }
 
 .coupons-table td {
-  padding: 12px 16px;
+  padding: 10px 16px;
   font-size: 14px;
-  border-bottom: 1px solid rgba(106, 178, 242, 0.2);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .coupons-table tbody tr:last-child td {
@@ -70,11 +71,11 @@ body {
 }
 
 .coupons-table tbody tr {
-  transition: background 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .coupons-table tbody tr:hover {
-  background: #22364a;
+  transform: scale(1.02);
 }
 
 .coupon-name {
@@ -83,39 +84,54 @@ body {
   gap: 8px;
 }
 
-.coupon-color-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
+.coupon-icon {
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 }
 
 .coupon-discount {
   font-weight: 700;
   text-align: right;
+  white-space: nowrap;
 }
 
-/* Цвета для точек */
-.coupon-color-dot.yellow {
-  background: #af8246;
-  box-shadow: 0 0 8px rgba(175, 130, 70, 0.6);
+/* Стили для строк разных купонов */
+.coupons-table tbody tr.green-coupon {
+  background: #1d3a22;
+  color: #6af27d;
 }
 
-.coupon-color-dot.red {
-  background: #6d2121;
-  box-shadow: 0 0 8px rgba(109, 33, 33, 0.6);
+.coupons-table tbody tr.green-coupon:hover {
+  background: #24502f;
 }
 
-.coupon-color-dot.blue {
-  background: #5c94cc;
-  box-shadow: 0 0 8px rgba(92, 148, 204, 0.6);
+.coupons-table tbody tr.yellow-coupon {
+  background: #443621;
+  color: #f7a632;
 }
 
-.coupon-color-dot.green {
-  background: #005330;
-  box-shadow: 0 0 8px rgba(0, 83, 48, 0.6);
+.coupons-table tbody tr.yellow-coupon:hover {
+  background: #554729;
 }
-/* 👆 ЗАКОНЧИЛИ ДОБАВЛЯТЬ */
+
+.coupons-table tbody tr.blue-coupon {
+  background: #1d2b3a;
+  color: #6ab2f2;
+}
+
+.coupons-table tbody tr.blue-coupon:hover {
+  background: #22364a;
+}
+
+.coupons-table tbody tr.red-coupon {
+  background: #3a1d2b;
+  color: #f27db0;
+}
+
+.coupons-table tbody tr.red-coupon:hover {
+  background: #4a2236;
+}
   
 
 /* ✅ АДАПТИВНОЕ МАСШТАБИРОВАНИЕ ДЛЯ ДЕСКТОПА */
@@ -739,58 +755,76 @@ mask-image: linear-gradient(
 </div>
 
 <!-- ЛОАДЕР (РУЛЕТКА) -->
-<div id="loader" class="loader hidden">
-
-<!-- 👇 ДОБАВЬ ТАБЛИЦУ ЗДЕСЬ -->
   <div class="coupons-table">
     <table>
       <thead>
         <tr>
-          <th>Купон</th>
-          <th style="text-align: right;">Знижка</th>
+          <th colspan="2">Що можна виграти?</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <!-- Зелёный купон -->
+        <tr class="green-coupon">
           <td>
             <div class="coupon-name">
-              <span class="coupon-color-dot yellow"></span>
-              <span>Жовтий</span>
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#005330" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#1d3a22"/>
+                <circle cx="100" cy="25" r="8" fill="#1d3a22"/>
+              </svg>
+              <span>Зелений купон</span>
             </div>
           </td>
-          <td class="coupon-discount" style="color: #af8246;">15%</td>
+          <td class="coupon-discount">150 грн</td>
         </tr>
-        <tr>
+        
+        <!-- Жёлтый купон -->
+        <tr class="yellow-coupon">
           <td>
             <div class="coupon-name">
-              <span class="coupon-color-dot red"></span>
-              <span>Червоний</span>
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#af8246" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#443621"/>
+                <circle cx="100" cy="25" r="8" fill="#443621"/>
+              </svg>
+              <span>Жовтий купон</span>
             </div>
           </td>
-          <td class="coupon-discount" style="color: #6d2121;">10%</td>
+          <td class="coupon-discount">25%</td>
         </tr>
-        <tr>
+        
+        <!-- Синий купон -->
+        <tr class="blue-coupon">
           <td>
             <div class="coupon-name">
-              <span class="coupon-color-dot blue"></span>
-              <span>Синій</span>
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#5c94cc" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#1d2b3a"/>
+                <circle cx="100" cy="25" r="8" fill="#1d2b3a"/>
+              </svg>
+              <span>Синій купон</span>
             </div>
           </td>
-          <td class="coupon-discount" style="color: #5c94cc;">20%</td>
+          <td class="coupon-discount">50%</td>
         </tr>
-        <tr>
+        
+        <!-- Красный купон -->
+        <tr class="red-coupon">
           <td>
             <div class="coupon-name">
-              <span class="coupon-color-dot green"></span>
-              <span>Зелений</span>
+              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="50" fill="#6d2121" rx="4"/>
+                <circle cx="0" cy="25" r="8" fill="#3a1d1d"/>
+                <circle cx="100" cy="25" r="8" fill="#3a1d1d"/>
+              </svg>
+              <span>Червоний купон</span>
             </div>
           </td>
-          <td class="coupon-discount" style="color: #005330;">50%</td>
+          <td class="coupon-discount">🎂 Торт</td>
         </tr>
       </tbody>
     </table>
   </div>
-  <!-- 👆 ЗАКОНЧИЛИ ДОБАВЛЯТЬ ТАБЛИЦУ -->
   
   <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
   <div class="loader-text">Генеруємо ваш промокод...</div>
