@@ -857,41 +857,10 @@ mask-image: linear-gradient(
         alt="Base"
       >
       
-  <video 
-  class="promo-animation-webm promo-video-yellow" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
-
-<video 
-  class="promo-animation-webm promo-video-red" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
-
-<video 
-  class="promo-animation-webm promo-video-blue" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
-
-<video 
-  class="promo-animation-webm promo-video-green" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
+ <video class="promo-animation-webm promo-video-yellow" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm" loop muted playsinline preload="metadata"></video>
+<video class="promo-animation-webm promo-video-red" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm" loop muted playsinline preload="metadata"></video>
+<video class="promo-animation-webm promo-video-blue" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm" loop muted playsinline preload="metadata"></video>
+<video class="promo-animation-webm promo-video-green" src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm" loop muted playsinline preload="metadata"></video>
       
       <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">
         XXXX-XXXX-XXXX-XXXX
@@ -953,7 +922,7 @@ mask-image: linear-gradient(
 const coupons = [
   {
     title: "Тобi випав жовтий купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm",
+   videoClass: "promo-video-yellow",
     codeColor: "#af8246",
     particleColor: "#ffd282",
     discount: "15%",
@@ -961,7 +930,7 @@ const coupons = [
   },
   {
     title: "Тобi випав червоний купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm",
+    videoClass: "promo-video-red",
     codeColor: "#6d2121",
     particleColor: "#9c2d35",
     discount: "10%",
@@ -969,7 +938,7 @@ const coupons = [
   },
   {
     title: "Тобi випав синій купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm",
+    videoClass: "promo-video-blue",
     codeColor: "#5c94cc",
     particleColor: "#5c94cc",
     discount: "20%",
@@ -977,7 +946,7 @@ const coupons = [
   },
   {
     title: "Тобi випав зелений купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm",
+    videoClass: "promo-video-green",
     codeColor: "#005330",
     particleColor: "#007042",
     discount: "50%",
@@ -1081,6 +1050,40 @@ function preloadImages() {
     });
   });
 }
+
+
+
+  function showPromo(coupon) {
+  const overlay = document.getElementById('promoOverlay');
+  const title = document.getElementById('promoTitle');
+  const codeBox = document.getElementById('promoCode');
+  
+  // 1. Скрываем и полностью останавливаем все видео
+  document.querySelectorAll('.promo-animation-webm').forEach(v => {
+      v.classList.remove('active');
+      v.pause(); 
+      v.currentTime = 0;
+  });
+  
+  // 2. Находим нужное видео по классу и запускаем его
+  const activeVideo = document.querySelector('.' + coupon.videoClass);
+  if (activeVideo) {
+      activeVideo.classList.add('active');
+      activeVideo.play().catch(e => console.log("Autoplay blocked:", e));
+  }
+
+  title.innerText = "Тобi випав " + coupon.title;
+  codeBox.style.color = coupon.codeColor;
+  
+  // Генерация кода (сохраните вашу длину кода, если она важна)
+  codeBox.innerText = "KREM-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+  
+  overlay.classList.add('active');
+}
+
+
+
+  
 
   // ===== ПРЕЛОАД ВИДЕО =====
 const videoCache = {};
