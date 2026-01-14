@@ -611,10 +611,18 @@ document.getElementById('downloadBtn').onclick = async () => {
             const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined';
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             
-            if (isTelegramApp) {
-              // Telegram Mini App: открываем текущую страницу во внешнем браузере
-              const currentUrl = window.location.href;
-              window.Telegram.WebApp.openLink(currentUrl);
+          if (isTelegramApp) {
+  // Telegram Mini App: просто скачиваем файл (работает в Telegram)
+  const link = document.createElement('a');
+  link.href = imageUrl;
+  link.download = `kremua-blueprint-${timestamp}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  setTimeout(() => {
+    window.Telegram.WebApp.showAlert('Файл збережено! Відкрийте "Завантаження" у вашому телефоні, щоб знайти креслення.');
+  }, 300);
               
               // Показываем подсказку
               setTimeout(() => {
