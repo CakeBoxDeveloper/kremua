@@ -1590,7 +1590,7 @@ textarea {
   </div> 
 </div>
     
-<a href="https://cakeboxdeveloper.github.io/kremua/constructor" class="catalog-btn constructor-btn">
+<a href="https://cakeboxdeveloper.github.io/kremua/constructor" onclick="openConstructor(); return false;" class="catalog-btn constructor-btn">
    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/wand-sparkles.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: brightness(0) saturate(100%) invert(68%) sepia(82%) saturate(433%) hue-rotate(359deg) brightness(101%) contrast(93%);">
   Конструктор тортів
 </a>
@@ -3410,7 +3410,18 @@ function updateLotteryButton() {
 // Обновляем кнопку каждую секунду
 setInterval(updateLotteryButton, 1000);
 updateLotteryButton(); // Первый запуск
+  function openConstructor() {
+  const constructorUrl = 'https://your-domain.com/constructor.html'; // Замени на свой URL
   
+  // Проверяем, запущено ли в Telegram Mini App
+  if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined') {
+    // Открываем во внешнем браузере
+    window.Telegram.WebApp.openLink(constructorUrl);
+  } else {
+    // Обычный переход
+    window.location.href = 'constructor.html';
+  }
+}
 
 </script>
 
