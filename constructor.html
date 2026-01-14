@@ -400,9 +400,8 @@ input, textarea {
 
  <div class="faq-block">
   <div class="faq-content1">
-    Створіть власний торт за допомогою конструктора. Оберіть тип, начинку, добавки та формат — ми підготуємо технічне завдання для кондитера.
     <br><br>
-    Щоб зрозуміти, як працює конструктор, створіть <span id="randomCakeBtn" style="color: #6ab2f2; cursor: pointer; text-decoration: underline; font-weight: 600;">випадковий торт</span>.
+    Щоб зрозуміти, як працює конструктор, спробуйте створити <span id="randomCakeBtn" style="color: #6ab2f2; cursor: pointer; font-weight: 600;">випадковий торт</span>.
   </div>
 </div>
 
@@ -641,8 +640,17 @@ async function typeComment(text, element) {
 }
 
 // Функция плавного скролла и выбора элемента
+// Функция плавного скролла и выбора элемента
 async function scrollAndSelect(container, tag) {
-  // Плавный скролл к элементу
+  // Вычисляем позицию с запасом 15% от высоты экрана
+  const elementRect = tag.getBoundingClientRect();
+  const offset = window.innerHeight * 0.15;
+  const scrollTop = window.pageYOffset + elementRect.top - offset;
+  
+  // Плавный скролл страницы
+  window.scrollTo({ top: scrollTop, behavior: 'smooth' });
+  
+  // Плавный скролл элемента внутри контейнера
   tag.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   
   // Ждем завершения скролла
@@ -708,7 +716,17 @@ document.getElementById('randomCakeBtn').onclick = async function() {
   await typeComment(randomComment, commentField);
   
   // Скроллим к кнопке создания
-  document.getElementById('createBtn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+ // Скроллим к кнопке создания
+  const createBtn = document.getElementById('createBtn');
+  const btnRect = createBtn.getBoundingClientRect();
+  const btnOffset = window.innerHeight * 0.15;
+  const btnScrollTop = window.pageYOffset + btnRect.top - btnOffset;
+  
+  window.scrollTo({ top: btnScrollTop, behavior: 'smooth' });
+  await new Promise(resolve => setTimeout(resolve, 800));
+  
+  // Автоматически нажимаем кнопку
+  createBtn.click();
 };
 
   
