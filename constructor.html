@@ -436,11 +436,11 @@ input, textarea {
   <div class="pdf-modal-content">
     <p id="modalHint" style="font-size: 13px; color: #6ab2f2; margin-bottom: 12px;">Це ваше ТЗ. Збережіть та відправте кондитеру.</p>
     <div class="pdf-preview" id="pdfPreview"></div>
-   <button class="create-btn" id="downloadBtn" style="color: #6af27d; border-color: #6af27d; margin-bottom: 8px;">Завантажити PNG</button>
-<button class="telegram-send-btn" id="telegramSendBtn">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/send.svg" style="width: 18px; height: 18px; filter: invert(72%) sepia(18%) saturate(1106%) hue-rotate(178deg) brightness(101%) contrast(93%);">
+  <button class="create-btn" id="downloadBtn" style="color: #6af27d; border-color: #6af27d; margin-bottom: 8px;">
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/send.svg" style="width: 18px; height: 18px; filter: invert(81%) sepia(38%) saturate(464%) hue-rotate(72deg) brightness(98%) contrast(96%);">
   Відправити файл
 </button>
+ 
 <button class="back-btn-full" id="closeModalBtn" style="padding: 10px;">Закрити</button>
   </div>
 </div>
@@ -563,12 +563,11 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
         sound.currentTime = 0;
         sound.play().catch(e => console.log("Interaction required for audio"));
         
-        document.getElementById('downloadBtn').onclick = async () => {
+    document.getElementById('downloadBtn').onclick = async () => {
     const now = new Date();
     const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
     
     try {
-        // Конвертируем base64 в blob
         const response = await fetch(imageUrl);
         const blob = await response.blob();
         const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
@@ -578,7 +577,7 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
             await navigator.share({
                 files: [file],
                 title: 'Креслення торта',
-                text: 'Моє технічне завдання для кондитера'
+                text: 'Вітаю! Хочу замовити торт, ось моє ТЗ'
             });
         } else {
             // Fallback: обычное скачивание
@@ -587,6 +586,17 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
             link.download = `kremua-blueprint-${timestamp}.png`;
             link.click();
         }
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `kremua-blueprint-${timestamp}.png`;
+            link.click();
+        }
+    }
+};
+
+      
     } catch (err) {
         // Если пользователь отменил или произошла ошибка
         if (err.name !== 'AbortError') {
@@ -606,15 +616,7 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
     }, 2500);
   };
 };
-document.getElementById('telegramSendBtn').onclick = () => {
-  // Открываем диалог выбора чата в Telegram
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.shareToStory();
-  } else {
-    // Fallback для обычного браузера
-    window.open('https://t.me/share/url?url=' + encodeURIComponent(window.location.href), '_blank');
-  }
-};
+
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
 
 window.addEventListener('load', () => {
