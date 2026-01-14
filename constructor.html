@@ -642,6 +642,14 @@ document.getElementById('downloadBtn').onclick = async () => {
             alert('Помилка завантаження файлу');
           }
         };
+      } catch (e) {
+        loader.classList.remove('active');
+        loaderText.style.display = 'none';
+        alert('Помилка створення.');
+      }
+    }, 2500);
+  };
+};
 
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
 
