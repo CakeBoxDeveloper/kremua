@@ -3410,8 +3410,10 @@ function updateLotteryButton() {
 // Обновляем кнопку каждую секунду
 setInterval(updateLotteryButton, 1000);
 updateLotteryButton(); // Первый запуск
-  function openConstructor() {
-  const constructorUrl = 'https://your-domain.com/constructor.html'; // Замени на свой URL
+
+  
+function openConstructor() {
+  const constructorUrl = 'https://cakeboxdeveloper.github.io/kremua/constructor'; // 👈 используй полный URL
   
   // Проверяем, запущено ли в Telegram Mini App
   if (window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined') {
@@ -3419,7 +3421,7 @@ updateLotteryButton(); // Первый запуск
     window.Telegram.WebApp.openLink(constructorUrl);
   } else {
     // Обычный переход
-    window.location.href = 'constructor.html';
+    window.location.href = constructorUrl; // 👈 используй полный URL, не относительный путь
   }
 }
 
