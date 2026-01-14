@@ -57,6 +57,43 @@ input, textarea {
   padding: 16px;
 }
 
+  .telegram-send-btn {
+  width: 100%;
+  padding: 14px 0;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #6ab2f2;
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.telegram-send-btn:active {
+  transform: scale(0.96);
+  background: #6ab2f2;
+  color: #17212b;
+}
+
+.create-btn:active {
+  transform: scale(0.96);
+  background: #6af27d;
+  color: #1d3a22;
+}
+
+.back-btn-full:active {
+  transform: scale(0.96);
+  background: #6ab2f2;
+  color: #17212b;
+}
+
 .header {
   text-align: center;
   margin-top: -40px;
@@ -399,8 +436,12 @@ input, textarea {
   <div class="pdf-modal-content">
     <p id="modalHint" style="font-size: 13px; color: #6ab2f2; margin-bottom: 12px;">Це ваше ТЗ. Збережіть та відправте кондитеру.</p>
     <div class="pdf-preview" id="pdfPreview"></div>
-    <button class="create-btn" id="downloadBtn" style="color: #6af27d; border-color: #6af27d; margin-bottom: 8px;">Завантажити PNG</button>
-    <button class="back-btn-full" id="closeModalBtn" style="padding: 10px;">Закрити</button>
+   <button class="create-btn" id="downloadBtn" style="color: #6af27d; border-color: #6af27d; margin-bottom: 8px;">Завантажити PNG</button>
+<button class="telegram-send-btn" id="telegramSendBtn">
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/send.svg" style="width: 18px; height: 18px; filter: invert(72%) sepia(18%) saturate(1106%) hue-rotate(178deg) brightness(101%) contrast(93%);">
+  Відправити файл
+</button>
+<button class="back-btn-full" id="closeModalBtn" style="padding: 10px;">Закрити</button>
   </div>
 </div>
 
@@ -541,7 +582,15 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
     }, 2500);
   };
 };
-
+document.getElementById('telegramSendBtn').onclick = () => {
+  // Открываем диалог выбора чата в Telegram
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.shareToStory();
+  } else {
+    // Fallback для обычного браузера
+    window.open('https://t.me/share/url?url=' + encodeURIComponent(window.location.href), '_blank');
+  }
+};
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
 
 window.addEventListener('load', () => {
