@@ -604,53 +604,51 @@ document.getElementById('downloadBtn').onclick = async () => {
           const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
           
           try {
-            // Конвертируем base64 в blob URL
             const response = await fetch(imageUrl);
             const blob = await response.blob();
-            const blobUrl = URL.createObjectURL(blob);
+            const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
             
             const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined';
             const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
             
-            if (isMobile || isTelegramApp) {
-              // Мобильные устройства и Telegram: открываем blob URL в новой вкладке
-              const newTab = window.open(blobUrl, '_blank');
+            if (isTelegramApp) {
+              // Telegram Mini App: открываем текущую страницу во внешнем браузере
+              const currentUrl = window.location.href;
+              window.Telegram.WebApp.openLink(currentUrl);
               
-              if (isTelegramApp && newTab) {
-                setTimeout(() => {
-                  window.Telegram.WebApp.showAlert('Натисніть на зображення довше, потім оберіть "Зберегти" або "Поділитися"');
-                }, 800);
-              }
+              // Показываем подсказку
+              setTimeout(() => {
+                window.Telegram.WebApp.showAlert('Сторінка відкриється у браузері. Натисніть кнопку "Відправити файл" ще раз для відправки.');
+              }, 500);
               
-              // Освобождаем память через 30 секунд
-              setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+            } else if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+              // Мобильный браузер: Web Share API
+              await navigator.share({
+                files: [file],
+                title: 'Креслення торта',
+                text: 'Вітаю! Хочу замовити торт, ось моє ТЗ'
+              });
               
             } else {
-              // Desktop: обычное скачивание
+              // Desktop или fallback: обычное скачивание
               const link = document.createElement('a');
-              link.href = blobUrl;
+              link.href = imageUrl;
               link.download = `kremua-blueprint-${timestamp}.png`;
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
-              
-              // Освобождаем память
-              setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
             }
           } catch (err) {
             console.error('Помилка:', err);
-            alert('Помилка завантаження файлу');
+            if (err.name !== 'AbortError') {
+              // Fallback: скачивание
+              const link = document.createElement('a');
+              link.href = imageUrl;
+              link.download = `kremua-blueprint-${timestamp}.png`;
+              link.click();
+            }
           }
         };
-      } catch (e) {
-        loader.classList.remove('active');
-        loaderText.style.display = 'none';
-        alert('Помилка створення.');
-      }
-    }, 2500);
-  };
-};
-
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
 
 
