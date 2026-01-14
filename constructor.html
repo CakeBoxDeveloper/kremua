@@ -606,54 +606,58 @@ document.getElementById('downloadBtn').onclick = async () => {
   try {
     const response = await fetch(imageUrl);
     const blob = await response.blob();
-    const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
     
     const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined';
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     
     if (isTelegramApp) {
-      // Telegram Mini App: просто скачиваем
-      const link = document.createElement('a');
-      link.href = imageUrl;
-      link.download = `kremua-blueprint-${timestamp}.png`;
-      link.click();
+      // Telegram Mini App: открываем в новой вкладке
+      const newWindow = window.open(imageUrl, '_blank');
+      if (!newWindow) {
+        // Если popup заблокирован, показываем alert
+        window.Telegram.WebApp.showAlert('Будь ласка, дозвольте відкриття нових вікон для збереження файлу');
+      } else {
+        setTimeout(() => {
+          window.Telegram.WebApp.showAlert('Натисніть на зображення, потім "Зберегти" або "Поділитися", щоб відправити кондитеру');
+        }, 500);
+      }
       
-      setTimeout(() => {
-        window.Telegram.WebApp.showAlert('Файл збережено! Тепер ви можете переслати його кондитеру через "Вкладення" → "Файл"');
-      }, 300);
+    } else if (isMobile) {
+      // Мобильный браузер: сначала пробуем Web Share API
+      const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
       
-    } else if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
-      // Мобильный браузер: Web Share API
-      await navigator.share({
-        files: [file],
-        title: 'Креслення торта',
-        text: 'Вітаю! Хочу замовити торт, ось моє ТЗ'
-      });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'Креслення торта',
+            text: 'Вітаю! Хочу замовити торт, ось моє ТЗ'
+          });
+        } catch (shareErr) {
+          // Если Web Share отменен или не работает, открываем изображение в новой вкладке
+          if (shareErr.name !== 'AbortError') {
+            window.open(imageUrl, '_blank');
+          }
+        }
+      } else {
+        // Fallback: открываем изображение в новой вкладке для долгого нажатия
+        window.open(imageUrl, '_blank');
+      }
       
     } else {
-      // Desktop или fallback: обычное скачивание
+      // Desktop: обычное скачивание
       const link = document.createElement('a');
       link.href = imageUrl;
       link.download = `kremua-blueprint-${timestamp}.png`;
+      document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     }
   } catch (err) {
     console.error('Помилка:', err);
-    if (err.name !== 'AbortError') {
-      const link = document.createElement('a');
-      link.href = imageUrl;
-      link.download = `kremua-blueprint-${timestamp}.png`;
-      link.click();
-    }
+    // Fallback: открываем в новой вкладке
+    window.open(imageUrl, '_blank');
   }
-};
-      } catch (e) {
-        loader.classList.remove('active');
-        loaderText.style.display = 'none';
-        alert('Помилка створення.');
-      }
-    }, 2500);
-  };
 };
 
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
