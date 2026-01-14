@@ -563,16 +563,40 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
         sound.currentTime = 0;
         sound.play().catch(e => console.log("Interaction required for audio"));
         
-        document.getElementById('downloadBtn').onclick = () => {
+        document.getElementById('downloadBtn').onclick = async () => {
     const now = new Date();
-    // Форматируем дату в строку (день, месяц, часы, минуты)
     const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
     
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    // Формируем имя: kremua-blueprint-1101-1430.png
-    link.download = `kremua-blueprint-${timestamp}.png`;
-    link.click();
+    try {
+        // Конвертируем base64 в blob
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
+        
+        // Проверяем поддержку Web Share API
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+                files: [file],
+                title: 'Креслення торта',
+                text: 'Моє технічне завдання для кондитера'
+            });
+        } else {
+            // Fallback: обычное скачивание
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `kremua-blueprint-${timestamp}.png`;
+            link.click();
+        }
+    } catch (err) {
+        // Если пользователь отменил или произошла ошибка
+        if (err.name !== 'AbortError') {
+            // Fallback: скачивание
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `kremua-blueprint-${timestamp}.png`;
+            link.click();
+        }
+    }
 };
       } catch (e) {
         loader.classList.remove('active');
