@@ -570,8 +570,12 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
         document.getElementById('pdfModal').classList.add('active');
 
         // Меняем текст кнопки в зависимости от платформы
+// Меняем текст кнопки в зависимости от платформы
 const downloadBtn = document.getElementById('downloadBtn');
-if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
+const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined';
+
+if (isTelegramApp) {
+  
   downloadBtn.innerHTML = `
     <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/download.svg" style="width: 18px; height: 18px; filter: invert(81%) sepia(38%) saturate(464%) hue-rotate(72deg) brightness(98%) contrast(96%);">
     Зберегти файл
@@ -586,16 +590,19 @@ if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData
         sound.currentTime = 0;
         sound.play().catch(e => console.log("Interaction required for audio"));
         
-   document.getElementById('downloadBtn').onclick = async () => {
+document.getElementById('downloadBtn').onclick = async () => {
   const now = new Date();
   const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
   
   try {
     const response = await fetch(imageUrl);
     const blob = await response.blob();
+    const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
     
     // Проверяем, запущено ли в Telegram Mini App
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData) {
+    const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined';
+    
+    if (isTelegramApp) {
       // Для Telegram: скачиваем файл
       const link = document.createElement('a');
       link.href = imageUrl;
