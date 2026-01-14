@@ -564,50 +564,37 @@ modalHint.innerHTML = `Це ваше ТЗ. Орієнтовна вартість
         sound.play().catch(e => console.log("Interaction required for audio"));
         
     document.getElementById('downloadBtn').onclick = async () => {
-    const now = new Date();
-    const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
-    
-    try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
-        
-        // Проверяем поддержку Web Share API
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
+          const now = new Date();
+          const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
+          
+          try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
+            
+            // Проверяем поддержку Web Share API
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+              await navigator.share({
                 files: [file],
                 title: 'Креслення торта',
                 text: 'Вітаю! Хочу замовити торт, ось моє ТЗ'
-            });
-        } else {
-            // Fallback: обычное скачивание
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = `kremua-blueprint-${timestamp}.png`;
-            link.click();
-        }
-    } catch (err) {
-        if (err.name !== 'AbortError') {
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = `kremua-blueprint-${timestamp}.png`;
-            link.click();
-        }
-    }
-};
-
-      
-    } catch (err) {
-        // Если пользователь отменил или произошла ошибка
-        if (err.name !== 'AbortError') {
-            // Fallback: скачивание
-            const link = document.createElement('a');
-            link.href = imageUrl;
-            link.download = `kremua-blueprint-${timestamp}.png`;
-            link.click();
-        }
-    }
-};
+              });
+            } else {
+              // Fallback: обычное скачивание
+              const link = document.createElement('a');
+              link.href = imageUrl;
+              link.download = `kremua-blueprint-${timestamp}.png`;
+              link.click();
+            }
+          } catch (err) {
+            if (err.name !== 'AbortError') {
+              const link = document.createElement('a');
+              link.href = imageUrl;
+              link.download = `kremua-blueprint-${timestamp}.png`;
+              link.click();
+            }
+          }
+        };
       } catch (e) {
         loader.classList.remove('active');
         loaderText.style.display = 'none';
