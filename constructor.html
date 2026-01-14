@@ -372,6 +372,51 @@ input, textarea {
 }
 .telegram-btn { background: #1d2b3a; border: 1px solid #6ab2f2; color: #6ab2f2; }
 .instagram-btn { background: #3a1d2b; border: 1px solid #f27db0; color: #f27db0; }
+
+  .format-info-modal {
+  position: fixed; inset: 0; z-index: 9997;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: all 0.4s ease;
+  background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
+}
+.format-info-modal.active { opacity: 1; pointer-events: all; }
+.format-info-content {
+  background: #1d2b3a; border: 2px solid #f7a632;
+  border-radius: 12px; padding: 20px; max-width: 90%;
+  width: 350px; max-height: 80vh; overflow-y: auto;
+  transform: scale(0.8); transition: 0.4s;
+}
+.format-info-modal.active .format-info-content { transform: scale(1); }
+.format-info-title {
+  font-size: 20px; font-weight: 700; color: #f7a632;
+  text-align: center; margin-bottom: 16px;
+}
+.format-item {
+  background: #17212b; border: 1px solid #f7a632;
+  border-radius: 8px; padding: 12px; margin-bottom: 12px;
+}
+.format-item-title {
+  font-size: 16px; font-weight: 700; color: #f7a632;
+  margin-bottom: 6px;
+}
+.format-item-desc {
+  font-size: 14px; color: #ffffff; line-height: 1.5;
+  margin-bottom: 4px;
+}
+.format-item-guests {
+  font-size: 13px; color: #6ab2f2; font-weight: 600;
+}
+.format-guide {
+  background: #1d3a22; border: 1px solid #6af27d;
+  border-radius: 8px; padding: 12px; margin-top: 16px;
+}
+.format-guide-title {
+  font-size: 15px; font-weight: 700; color: #6af27d;
+  margin-bottom: 8px; text-align: center;
+}
+.format-guide-text {
+  font-size: 13px; color: #ffffff; line-height: 1.6;
+}
 </style>
 </head>
 <body>
@@ -421,9 +466,12 @@ input, textarea {
   </div>
 
   <div class="slider-section">
-    <div class="slider-label">Формат</div>
-    <div class="slider-container" id="formatsSlider"></div>
+  <div class="slider-label" id="formatLabel" style="cursor: pointer;">
+    Формат
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/info.svg" style="width: 16px; height: 16px; margin-left: 4px; vertical-align: middle; filter: invert(72%) sepia(18%) saturate(1106%) hue-rotate(178deg) brightness(101%) contrast(93%);">
   </div>
+  <div class="slider-container" id="formatsSlider"></div>
+</div>
 
   <div class="comment-section">
     <div class="slider-label">Додатковий коментар</div>
@@ -453,7 +501,47 @@ input, textarea {
 <button class="back-btn-full" id="closeModalBtn" style="padding: 10px;">Закрити</button>
   </div>
 </div>
-
+<div id="formatInfoModal" class="format-info-modal">
+  <div class="format-info-content">
+    <div class="format-info-title">Формати тортів</div>
+    
+    <div class="format-item">
+      <div class="format-item-title">#спліт (450 грн)</div>
+      <div class="format-item-desc">Маленький торт у формі серця, ідеальний для романтичного вечора або особистого святкування.</div>
+      <div class="format-item-guests">👥 Для 2-3 гостей</div>
+    </div>
+    
+    <div class="format-item">
+      <div class="format-item-title">#бенто (600 грн)</div>
+      <div class="format-item-desc">Компактний квадратний торт, популярний формат для невеликих святкувань та подарунків.</div>
+      <div class="format-item-guests">👥 Для 4-6 гостей</div>
+    </div>
+    
+    <div class="format-item">
+      <div class="format-item-title">#максі (1200 грн)</div>
+      <div class="format-item-desc">Класичний круглий торт середнього розміру, оптимальний для сімейних свят та вечірок.</div>
+      <div class="format-item-guests">👥 Для 8-12 гостей</div>
+    </div>
+    
+    <div class="format-item">
+      <div class="format-item-title">#XXL (2500 грн)</div>
+      <div class="format-item-desc">Великий торт для масштабних заходів, весіль та корпоративів. Вражаючий розмір та дизайн.</div>
+      <div class="format-item-guests">👥 Для 20+ гостей</div>
+    </div>
+    
+    <div class="format-guide">
+      <div class="format-guide-title">💡 Як обрати формат?</div>
+      <div class="format-guide-text">
+        <strong>Крок 1:</strong> Порахуйте кількість гостей<br>
+        <strong>Крок 2:</strong> Додайте 1-2 людини про запас<br>
+        <strong>Крок 3:</strong> Оберіть формат за рекомендацією<br><br>
+        <em>Пам'ятайте: краще взяти трохи більший торт, ніж залишити гостей голодними! 😊</em>
+      </div>
+    </div>
+    
+    <button class="back-btn-full" id="closeFormatInfoBtn" style="margin-top: 16px; padding: 10px;">Закрити</button>
+  </div>
+</div>
 <audio id="successSound" src="https://github.com/CakeBoxDeveloper/kremua/raw/main/HeavenGate.mp3"></audio>
 
 <script>
@@ -667,6 +755,22 @@ document.getElementById('downloadBtn').onclick = async () => {
 };
 
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
+
+// Обработчики для модального окна с информацией о форматах
+document.getElementById('formatLabel').onclick = function() {
+  document.getElementById('formatInfoModal').classList.add('active');
+};
+
+document.getElementById('closeFormatInfoBtn').onclick = function() {
+  document.getElementById('formatInfoModal').classList.remove('active');
+};
+
+// Закрытие по клику вне модального окна
+document.getElementById('formatInfoModal').onclick = function(e) {
+  if (e.target === this) {
+    this.classList.remove('active');
+  }
+};
 
 
 // Случайные комментарии
