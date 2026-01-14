@@ -381,22 +381,25 @@ input, textarea {
 }
 .format-info-modal.active { opacity: 1; pointer-events: all; }
 .format-info-content {
-  background: #1d2b3a; border: 2px solid #f7a632;
+  background: #1d2b3a; border: 2px solid #6ab2f2;
   border-radius: 12px; padding: 20px; max-width: 90%;
   width: 350px; max-height: 80vh; overflow-y: auto;
   transform: scale(0.8); transition: 0.4s;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.format-info-content::-webkit-scrollbar { display: none; }
 .format-info-modal.active .format-info-content { transform: scale(1); }
 .format-info-title {
-  font-size: 20px; font-weight: 700; color: #f7a632;
+  font-size: 20px; font-weight: 700; color: #6ab2f2;
   text-align: center; margin-bottom: 16px;
 }
 .format-item {
-  background: #17212b; border: 1px solid #f7a632;
+  background: #17212b; border: 1px solid #6ab2f2;
   border-radius: 8px; padding: 12px; margin-bottom: 12px;
 }
 .format-item-title {
-  font-size: 16px; font-weight: 700; color: #f7a632;
+  font-size: 16px; font-weight: 700; color: #6ab2f2;
   margin-bottom: 6px;
 }
 .format-item-desc {
@@ -465,10 +468,10 @@ input, textarea {
     <div class="slider-container" id="additivesSlider"></div>
   </div>
 
-  <div class="slider-section">
-  <div class="slider-label" id="formatLabel" style="cursor: pointer;">
+<div class="slider-section">
+  <div class="slider-label" id="formatLabel" style="cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;">
     Формат
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/info.svg" style="width: 16px; height: 16px; margin-left: 4px; vertical-align: middle; filter: invert(72%) sepia(18%) saturate(1106%) hue-rotate(178deg) brightness(101%) contrast(93%);">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/info.svg" style="width: 16px; height: 16px; filter: invert(72%) sepia(18%) saturate(1106%) hue-rotate(178deg) brightness(101%) contrast(93%);">
   </div>
   <div class="slider-container" id="formatsSlider"></div>
 </div>
@@ -503,41 +506,43 @@ input, textarea {
 </div>
 <div id="formatInfoModal" class="format-info-modal">
   <div class="format-info-content">
-    <div class="format-info-title">Формати тортів</div>
+    <div class="format-info-title">Якого розміру бувають торти</div>
     
     <div class="format-item">
-      <div class="format-item-title">#спліт (450 грн)</div>
+      <div class="format-item-title">#спліт</div>
       <div class="format-item-desc">Маленький торт у формі серця, ідеальний для романтичного вечора або особистого святкування.</div>
-      <div class="format-item-guests">👥 Для 2-3 гостей</div>
+      <div class="format-item-guests">Для 2-3 гостей</div>
     </div>
     
     <div class="format-item">
-      <div class="format-item-title">#бенто (600 грн)</div>
+      <div class="format-item-title">#бенто</div>
       <div class="format-item-desc">Компактний квадратний торт, популярний формат для невеликих святкувань та подарунків.</div>
-      <div class="format-item-guests">👥 Для 4-6 гостей</div>
+      <div class="format-item-guests">Для 4-6 гостей</div>
     </div>
     
     <div class="format-item">
-      <div class="format-item-title">#максі (1200 грн)</div>
+      <div class="format-item-title">#максі</div>
       <div class="format-item-desc">Класичний круглий торт середнього розміру, оптимальний для сімейних свят та вечірок.</div>
-      <div class="format-item-guests">👥 Для 8-12 гостей</div>
+      <div class="format-item-guests">Для 8-12 гостей</div>
     </div>
     
     <div class="format-item">
-      <div class="format-item-title">#XXL (2500 грн)</div>
+      <div class="format-item-title">#XXL</div>
       <div class="format-item-desc">Великий торт для масштабних заходів, весіль та корпоративів. Вражаючий розмір та дизайн.</div>
-      <div class="format-item-guests">👥 Для 20+ гостей</div>
+      <div class="format-item-guests">Для 20+ гостей</div>
     </div>
     
     <div class="format-guide">
-      <div class="format-guide-title">💡 Як обрати формат?</div>
+      <div class="format-guide-title">Як обрати формат?</div>
       <div class="format-guide-text">
         <strong>Крок 1:</strong> Порахуйте кількість гостей<br>
         <strong>Крок 2:</strong> Додайте 1-2 людини про запас<br>
         <strong>Крок 3:</strong> Оберіть формат за рекомендацією<br><br>
-        <em>Пам'ятайте: краще взяти трохи більший торт, ніж залишити гостей голодними! 😊</em>
+        Пам'ятайте: краще взяти трохи більший торт, ніж залишити гостей голодними!
       </div>
     </div>
+    
+   
     
     <button class="back-btn-full" id="closeFormatInfoBtn" style="margin-top: 16px; padding: 10px;">Закрити</button>
   </div>
