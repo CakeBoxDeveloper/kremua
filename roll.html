@@ -1205,6 +1205,15 @@ async function checkAndUsePromoTicket() {
     return false;
   }
   
+  // 🎯 ТЕСТОВЫЙ БИЛЕТ - ВСЕГДА ВАЛИДЕН
+  if (ticketCode === 'TEST-FOREVER') {
+    localStorage.removeItem('lottery_last_spin');
+    console.log('✅ Тестовый билет активирован!');
+    showTicketModal('success', '🎮 Тестовий білет! Можна крутити безкінечно!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return true;
+  }
+  
   try {
     console.log('🎫 Проверяем билет:', ticketCode);
     
