@@ -1205,7 +1205,7 @@ async function checkAndUsePromoTicket() {
     return false;
   }
   
-  // 🎯 ТЕСТОВЫЙ БИЛЕТ - ВСЕГДА ВАЛИДЕН
+  // 🎯 ТЕСТОВЫЙ БИЛЕТ - ПРОВЕРЯЕМ ПЕРВЫМ ДЕЛОМ (ДО ПРОВЕРКИ ФОРМАТА)
   if (ticketCode === 'TEST-FOREVER') {
     localStorage.removeItem('lottery_last_spin');
     console.log('✅ Тестовый билет активирован!');
@@ -1220,7 +1220,7 @@ async function checkAndUsePromoTicket() {
     const parts = ticketCode.split('-');
     if (parts.length < 3) {
       console.log('❌ Неверный формат билета');
-      showTicketModal('error', 'Недійсний формат білета!');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Недійсний формат білета!');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1231,7 +1231,7 @@ async function checkAndUsePromoTicket() {
     
     if (signature !== expectedSignature) {
       console.log('❌ Неверная подпись билета');
-      showTicketModal('error', 'Недійсний білет! Підпис не збігається.');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Недійсний білет! Підпис не збігається.');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1242,7 +1242,7 @@ async function checkAndUsePromoTicket() {
     
     if (age > maxAge) {
       console.log('❌ Билет истёк');
-      showTicketModal('error', 'Білет прострочено! Термін дії минув.');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Білет прострочено! Термін дії минув.');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1250,7 +1250,7 @@ async function checkAndUsePromoTicket() {
     const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
     if (usedTickets.includes(ticketCode)) {
       console.log('❌ Этот билет уже использован');
-      showTicketModal('error', 'Цей білет вже використано!');  // 👈 ИЗМЕНЕНО
+      showTicketModal('error', 'Цей білет вже використано!');
       window.history.replaceState({}, document.title, window.location.pathname);
       return false;
     }
@@ -1260,7 +1260,7 @@ async function checkAndUsePromoTicket() {
     localStorage.removeItem('lottery_last_spin');
     
     console.log('✅ Білет активовано!');
-    showTicketModal('success', 'Ти отримуєш один лотерейний білет! Нумо, швидше, крути барабан!');  // 👈 ИЗМЕНЕНО
+    showTicketModal('success', 'Ти отримуєш один лотерейний білет! Нумо, швидше, крути барабан!');
     
     window.history.replaceState({}, document.title, window.location.pathname);
     
@@ -1268,7 +1268,7 @@ async function checkAndUsePromoTicket() {
     
   } catch (error) {
     console.error('Ошибка проверки билета:', error);
-    showTicketModal('error', 'Помилка перевірки білета!');  // 👈 ИЗМЕНЕНО
+    showTicketModal('error', 'Помилка перевірки білета!');
     return false;
   }
 }
