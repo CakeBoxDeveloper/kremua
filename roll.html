@@ -24,14 +24,14 @@ body {
 
 .tap-hint {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  top: 50%;               /* 👈 ИЗМЕНИЛИ: центр по вертикали */
+  left: 50%;              /* 👈 ИЗМЕНИЛИ: центр по горизонтали */
+  transform: translate(-50%, -50%);  /* 👈 ИЗМЕНИЛИ: точное центрирование */
   z-index: 100;
   pointer-events: none;
   animation: pulse-hint 1.5s ease-in-out infinite;
-  width: 80px;
-  height: 80px;
+  width: 100px;           /* 👈 ИЗМЕНИЛИ: ровно 100px */
+  height: 100px;          /* 👈 ИЗМЕНИЛИ: ровно 100px */
 }
 
 .tap-hint img {
@@ -44,11 +44,11 @@ body {
 @keyframes pulse-hint {
   0%, 100% {
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);  /* 👈 ИЗМЕНИЛИ: сохраняем центрирование */
   }
   50% {
     opacity: 0.7;
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: translate(-50%, -50%) scale(1.1);  /* 👈 ИЗМЕНИЛИ: сохраняем центрирование */
   }
 }
 
