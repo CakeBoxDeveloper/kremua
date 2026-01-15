@@ -2050,46 +2050,56 @@ if (rouletteSound) {
   rouletteSound.currentTime = 0;
   rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
 }
+
+setTimeout(async () => {  // 👈 ДОБАВИЛИ async
+  loader.classList.add('hidden');
   
-  setTimeout(() => {
-    loader.classList.add('hidden');
-    
-    const randomCoupon = selectRandomCoupon();
-    applyCoupon(randomCoupon);
-    
-   setTimeout(() => {
-  promoOverlay.classList.add('active');
+  const randomCoupon = selectRandomCoupon();
+  applyCoupon(randomCoupon);
   
-  // 🎯 ВОСПРОИЗВОДИМ ЗВУК ВЫИГРЫША
-  const winSound = document.getElementById('winSound');
-  if (winSound) {
-    winSound.currentTime = 0;
-    winSound.play().catch(e => console.log('Win sound play failed:', e));
+  // 🎯 ЖДЁМ ЗАГРУЗКИ ВИДЕО ПЕРЕД ПОКАЗОМ
+  const activeVideo = document.querySelector('.promo-animation-webm.active');
+  if (activeVideo && activeVideo.readyState < 3) {
+    console.log('⏳ Ждём загрузки видео перед показом...');
+    await new Promise((resolve) => {
+      activeVideo.addEventListener('loadeddata', resolve, { once: true });
+      activeVideo.load();
+    });
+    console.log('✅ Видео загружено, показываем промокод');
   }
   
   setTimeout(() => {
-    animatePromoCode();
-  }, 600);
-      
-      const activeVideo = document.querySelector('.promo-animation-webm.active');
-      if (activeVideo) {
-        activeVideo.play().catch(err => {
-          console.log('Автозапуск видео заблокирован:', err);
-        });
-      }
-      
-      setTimeout(() => {
-        launchCanvasConfetti();
-      }, 200);
-      
-      if (promoTimer) {
-        clearTimeout(promoTimer);
-      }
-      startPromoTimer();
-      
-    }, 300);
-  }, 5000);
-});
+    promoOverlay.classList.add('active');
+    
+    // 🎯 ВОСПРОИЗВОДИМ ЗВУК ВЫИГРЫША
+    const winSound = document.getElementById('winSound');
+    if (winSound) {
+      winSound.currentTime = 0;
+      winSound.play().catch(e => console.log('Win sound play failed:', e));
+    }
+    
+    setTimeout(() => {
+      animatePromoCode();
+    }, 600);
+    
+    // 🎯 ЗАПУСКАЕМ ВИДЕО (УЖЕ ЗАГРУЖЕННОЕ)
+    if (activeVideo) {
+      activeVideo.play().catch(err => {
+        console.log('Автозапуск видео заблокирован:', err);
+      });
+    }
+    
+    setTimeout(() => {
+      launchCanvasConfetti();
+    }, 200);
+    
+    if (promoTimer) {
+      clearTimeout(promoTimer);
+    }
+    startPromoTimer();
+    
+  }, 300);
+}, 5000);
 
 // ===== ТАЙМЕР ПРОМОКОДА (15 СЕКУНД) =====
 function startPromoTimer() {
