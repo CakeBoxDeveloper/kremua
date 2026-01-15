@@ -215,7 +215,7 @@ input, textarea {
 }
 
 #randomCakeBtn.animating {
-  animation: glow-flash 0.4s ease;
+  animation: glow-flash 0.6s ease-in-out;
 }
 
 .slider-section {
@@ -572,25 +572,25 @@ input, textarea {
     <div class="format-item">
       <div class="format-item-title">#спліт</div>
       <div class="format-item-desc">Кілька тістечок за улюбленим рецептом</div>
-      <div class="format-item-guests">Для 2-3 гостей</div>
+      <div class="format-item-guests">Для 1-2 гостей</div>
     </div>
     
     <div class="format-item">
       <div class="format-item-title">#бенто</div>
       <div class="format-item-desc">Компактний торт в подарунок.</div>
-      <div class="format-item-guests">Для 4-6 гостей</div>
+      <div class="format-item-guests">Для 3-4 гостей</div>
     </div>
     
     <div class="format-item">
       <div class="format-item-title">#максі</div>
       <div class="format-item-desc">Вистачить на всю родину.</div>
-      <div class="format-item-guests">Для 8-12 гостей</div>
+      <div class="format-item-guests">Для 5-8 гостей</div>
     </div>
     
     <div class="format-item">
       <div class="format-item-title">#XXL</div>
       <div class="format-item-desc">Великий торт для великих святкувань.</div>
-      <div class="format-item-guests">Для 20+ гостей</div>
+      <div class="format-item-guests">Для 8-16 гостей</div>
     </div>
     
    <div class="format-guide">
@@ -608,7 +608,7 @@ input, textarea {
      
   <div class="format-guide-text">
     <div style="padding: 20px 10px;">
-      <input type="range" id="guestsSlider" min="2" max="25" value="8" style="width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #6af27d 0%, #6af27d 32%, #2a4a2f 32%, #2a4a2f 100%); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
+      <input type="range" id="guestsSlider" min="2" max="20" value="8" style="width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #6af27d 0%, #6af27d 32%, #2a4a2f 32%, #2a4a2f 100%); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
       <div style="text-align: center; margin-top: 16px; font-size: 16px; color: #ffffff;">
         <div style="font-size: 28px; font-weight: 700; color: #6af27d; margin-bottom: 8px;" id="guestsCount">8 гостей</div>
         <div style="font-size: 14px; color: #ffffff; line-height: 1.5;" id="formatRecommendation">Для такої кількості гостей вам потрібен торт формату <span style="color: #f7a632; font-weight: 700;">#максі</span></div>
@@ -927,15 +927,14 @@ async function scrollAndSelect(container, tag) {
 document.getElementById('randomCakeBtn').onclick = async function() {
   // Добавляем анимацию
   this.classList.add('animating');
-  setTimeout(() => this.classList.remove('animating'), 300);
+  setTimeout(() => this.classList.remove('animating'), 400);
   
   // Сбрасываем все выборы
   document.querySelectorAll('.slider-tag.selected').forEach(t => t.classList.remove('selected'));
   document.getElementById('commentField').value = '';
   
-  // Скроллим наверх
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  await new Promise(resolve => setTimeout(resolve, 800));
+  // Небольшая задержка перед началом
+  await new Promise(resolve => setTimeout(resolve, 400));
   
   // 1. Выбираем тип торта
   const typeContainer = document.getElementById('typeSlider');
@@ -1034,24 +1033,31 @@ function updateGuestsCalculator() {
     guestsCount.textContent = guests + ' гостя';
   }
   
- // Определяем формат
-let format = '';
-let formatColor = '#f7a632';
+  // Определяем формат
+  let format = '';
+  let formatColor = '#f7a632';
+  let message = '';
 
-if (guests <= 2) {
-  format = '#спліт';
-} else if (guests <= 4) {
-  format = '#бенто';
-} else if (guests <= 8) {
-  format = '#максі';
-} else {
-  format = '#XXL';
-}
+  if (guests <= 2) {
+    format = '#спліт';
+    message = `Для такої кількості гостей вам потрібен торт формату <span style="color: ${formatColor}; font-weight: 700;">${format}</span>`;
+  } else if (guests <= 4) {
+    format = '#бенто';
+    message = `Для такої кількості гостей вам потрібен торт формату <span style="color: ${formatColor}; font-weight: 700;">${format}</span>`;
+  } else if (guests <= 8) {
+    format = '#максі';
+    message = `Для такої кількості гостей вам потрібен торт формату <span style="color: ${formatColor}; font-weight: 700;">${format}</span>`;
+  } else if (guests <= 16) {
+    format = '#XXL';
+    message = `Для такої кількості гостей вам потрібен торт формату <span style="color: ${formatColor}; font-weight: 700;">${format}</span>`;
+  } else {
+    message = `Для <span style="color: #6af27d; font-weight: 700;">${guests} гостей</span> вам потрібно <span style="color: #6af27d; font-weight: 700;">кілька тортів</span>`;
+  }
   
-  formatRecommendation.innerHTML = `Для такої кількості гостей вам потрібен торт формату <span style="color: ${formatColor}; font-weight: 700;">${format}</span>`;
+  formatRecommendation.innerHTML = message;
   
   // Обновляем градиент бегунка
-  const percentage = ((guests - 2) / (25 - 2)) * 100;
+  const percentage = ((guests - 2) / (20 - 2)) * 100;
   guestsSlider.style.background = `linear-gradient(to right, #6af27d 0%, #6af27d ${percentage}%, #2a4a2f ${percentage}%, #2a4a2f 100%)`;
 }
 
