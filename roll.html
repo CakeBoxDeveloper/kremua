@@ -1071,15 +1071,8 @@ function preloadImages() {
       'https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true'
     ];
     
-    const videosToPreload = [
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm',
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm',
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm',
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm'
-    ];
-    
     let loadedCount = 0;
-    const totalAssets = imagesToPreload.length + videosToPreload.length;
+    const totalAssets = imagesToPreload.length + 4; // +4 видео
     
     console.log('🖼️ Начинаем прелоад ресурсов...');
     
@@ -1104,16 +1097,17 @@ function preloadImages() {
       img.src = src;
     });
     
-    // Загружаем видео
-    videosToPreload.forEach((src) => {
-      const video = document.createElement('video');
-      video.preload = 'auto';
+    // 🎯 ПРАВИЛЬНАЯ ЗАГРУЗКА ВИДЕО - находим элементы на странице
+    const videoElements = document.querySelectorAll('.promo-animation-webm');
+    
+    videoElements.forEach((video) => {
+      // Устанавливаем правильные атрибуты
+      video.setAttribute('preload', 'auto');
       video.muted = true;
       video.playsInline = true;
       
-      video.onloadeddata = () => {
+      const onVideoReady = () => {
         loadedCount++;
-        videoCache[src] = video;
         console.log(`✅ Видео ${loadedCount}/${totalAssets} загружено`);
         if (loadedCount === totalAssets) {
           console.log('✅ Все ресурсы загружены!');
@@ -1121,21 +1115,28 @@ function preloadImages() {
         }
       };
       
-      video.onerror = () => {
-        loadedCount++;
-        console.log(`⚠️ Ошибка загрузки видео: ${loadedCount}/${totalAssets}`);
-        if (loadedCount === totalAssets) {
-          resolve();
-        }
-      };
-      
-      video.src = src;
+      // Проверяем готовность видео
+      if (video.readyState >= 3) {
+        onVideoReady();
+      } else {
+        video.addEventListener('loadeddata', onVideoReady, { once: true });
+        video.addEventListener('error', () => {
+          loadedCount++;
+          console.log(`⚠️ Ошибка загрузки видео: ${loadedCount}/${totalAssets}`);
+          if (loadedCount === totalAssets) {
+            resolve();
+          }
+        }, { once: true });
+        
+        // Принудительно запускаем загрузку
+        video.load();
+      }
     });
   });
 }
 
   // ===== ПРЕЛОАД ВИДЕО =====
-const videoCache = {};
+ 
 
  
   
@@ -1845,9 +1846,11 @@ function applyCoupon(coupon) {
   
 // Скрываем все видео
 // Скрываем все видео
+// Скрываем все видео
 document.querySelectorAll('.promo-animation-webm').forEach(v => {
   v.classList.remove('active');
   v.pause();
+  v.currentTime = 0; // 🎯 СБРАСЫВАЕМ НА НАЧАЛО
 });
 
 // Показываем нужное видео
@@ -1861,17 +1864,15 @@ const activeVideo = document.querySelector(`.${videoClass}`);
 if (activeVideo) {
   activeVideo.classList.add('active');
   
-  // 🎯 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ВИДЕО
-  if (activeVideo.readyState < 3) {
-    console.log('⏳ Загружаем видео:', coupon.title);
-    activeVideo.load();
-    
-    activeVideo.addEventListener('loadeddata', function onLoaded() {
-      console.log('✅ Видео загружено:', coupon.title);
-      activeVideo.removeEventListener('loadeddata', onLoaded);
-    });
+  // 🎯 ГАРАНТИРОВАННЫЙ ЗАПУСК
+  console.log('🎬 Подготовка видео:', coupon.title);
+  
+  // Проверяем готовность
+  if (activeVideo.readyState >= 3) {
+    console.log('✅ Видео готово к воспроизведению');
   } else {
-    console.log('✅ Видео уже загружено:', coupon.title);
+    console.log('⏳ Ждём загрузки видео...');
+    activeVideo.load(); // Принудительная загрузка
   }
 }
   
@@ -2071,12 +2072,29 @@ if (rouletteSound) {
     animatePromoCode();
   }, 600);
       
-      const activeVideo = document.querySelector('.promo-animation-webm.active');
-      if (activeVideo) {
-        activeVideo.play().catch(err => {
-          console.log('Автозапуск видео заблокирован:', err);
-        });
-      }
+    // 🎯 ЗАПУСК ВИДЕО С МНОЖЕСТВЕННЫМИ ПОПЫТКАМИ
+const activeVideo = document.querySelector('.promo-animation-webm.active');
+if (activeVideo) {
+  console.log('🎬 Попытка запуска видео...');
+  
+  const attemptPlay = (attempts = 0) => {
+    if (attempts > 5) {
+      console.log('❌ Не удалось запустить видео после 5 попыток');
+      return;
+    }
+    
+    activeVideo.play()
+      .then(() => {
+        console.log('✅ Видео запущено успешно');
+      })
+      .catch(err => {
+        console.log(`⚠️ Попытка ${attempts + 1} не удалась:`, err.message);
+        setTimeout(() => attemptPlay(attempts + 1), 200);
+      });
+  };
+  
+  attemptPlay();
+}
       
       setTimeout(() => {
         launchCanvasConfetti();
