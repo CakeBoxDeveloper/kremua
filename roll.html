@@ -352,7 +352,7 @@ body {
 .ticket-modal.error .ticket-modal-icon::before {
   content: '';
   position: absolute;
-  inset: -20px;
+  inset: -10px;
   background: 
     radial-gradient(
       circle,
@@ -367,14 +367,14 @@ body {
   z-index: -1;
   opacity: 1; /* 👈 Всегда видимое для error */
   transition: opacity 0.6s ease;
-  filter: blur(5px);
+  filter: blur(3px);
 }
 
 /* 👇 ДОБАВЬ ЭТО - убедись что золотое свечение только для success */
 .ticket-modal.success .ticket-modal-icon::before {
   content: '';
   position: absolute;
-  inset: -20px;
+  inset: -10px;
   background: 
     radial-gradient(
       circle,
@@ -389,7 +389,7 @@ body {
   z-index: -1;
   opacity: 1;
   transition: opacity 0.6s ease;
-  filter: blur(5px);
+  filter: blur(3px);
 }
 
 .ticket-modal.active {
