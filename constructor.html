@@ -58,6 +58,27 @@ input, textarea {
   padding: 16px;
 }
 
+  #guestsSlider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #6af27d;
+  cursor: pointer;
+  border: 3px solid #1d3a22;
+  box-shadow: 0 2px 8px rgba(106, 242, 125, 0.4);
+}
+#guestsSlider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #6af27d;
+  cursor: pointer;
+  border: 3px solid #1d3a22;
+  box-shadow: 0 2px 8px rgba(106, 242, 125, 0.4);
+}
+
   .telegram-send-btn {
   width: 100%;
   padding: 14px 0;
@@ -532,15 +553,18 @@ input, textarea {
       <div class="format-item-guests">Для 20+ гостей</div>
     </div>
     
-    <div class="format-guide">
-      <div class="format-guide-title">Як обрати формат?</div>
-      <div class="format-guide-text">
-        <strong>Крок 1:</strong> Порахуйте кількість гостей<br>
-        <strong>Крок 2:</strong> Додайте 1-2 людини про запас<br>
-        <strong>Крок 3:</strong> Оберіть формат за рекомендацією<br><br>
-        Пам'ятайте: краще взяти трохи більший торт, ніж залишити гостей голодними!
+   <div class="format-guide">
+  <div class="format-guide-title">Калькулятор розміру торта</div>
+  <div class="format-guide-text">
+    <div style="padding: 20px 10px;">
+      <input type="range" id="guestsSlider" min="2" max="25" value="8" style="width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #6af27d 0%, #6af27d 32%, #2a4a2f 32%, #2a4a2f 100%); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
+      <div style="text-align: center; margin-top: 16px; font-size: 16px; color: #ffffff;">
+        <div style="font-size: 28px; font-weight: 700; color: #6af27d; margin-bottom: 8px;" id="guestsCount">8 гостей</div>
+        <div style="font-size: 14px; color: #ffffff; line-height: 1.5;" id="formatRecommendation">Для такої кількості гостей вам потрібен торт формату <span style="color: #f7a632; font-weight: 700;">#максі</span></div>
       </div>
     </div>
+  </div>
+</div>
     
    
     
@@ -909,6 +933,54 @@ for (let i = 0; i < additivesCount; i++) {
 window.addEventListener('load', () => {
   setTimeout(() => { document.getElementById('loader').classList.remove('active'); }, 1500);
 });
+
+
+
+
+// Калькулятор размера торта
+const guestsSlider = document.getElementById('guestsSlider');
+const guestsCount = document.getElementById('guestsCount');
+const formatRecommendation = document.getElementById('formatRecommendation');
+
+function updateGuestsCalculator() {
+  const guests = parseInt(guestsSlider.value);
+  
+  // Обновляем текст количества гостей
+  if (guests === 2) {
+    guestsCount.textContent = '2 гостя';
+  } else if (guests >= 5 && guests <= 20) {
+    guestsCount.textContent = guests + ' гостей';
+  } else if (guests > 20) {
+    guestsCount.textContent = guests + ' гостей';
+  } else {
+    guestsCount.textContent = guests + ' гостя';
+  }
+  
+  // Определяем формат
+  let format = '';
+  let formatColor = '#f7a632';
+  
+  if (guests <= 3) {
+    format = '#спліт';
+  } else if (guests <= 6) {
+    format = '#бенто';
+  } else if (guests <= 12) {
+    format = '#максі';
+  } else {
+    format = '#XXL';
+  }
+  
+  formatRecommendation.innerHTML = `Для такої кількості гостей вам потрібен торт формату <span style="color: ${formatColor}; font-weight: 700;">${format}</span>`;
+  
+  // Обновляем градиент бегунка
+  const percentage = ((guests - 2) / (25 - 2)) * 100;
+  guestsSlider.style.background = `linear-gradient(to right, #6af27d 0%, #6af27d ${percentage}%, #2a4a2f ${percentage}%, #2a4a2f 100%)`;
+}
+
+guestsSlider.addEventListener('input', updateGuestsCalculator);
+updateGuestsCalculator();
+
+  
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </body>
