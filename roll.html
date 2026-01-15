@@ -22,22 +22,22 @@ body {
   min-height: 100vh;
 }
 
-  .tap-hint {
+.tap-hint {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 20px;
   font-weight: 700;
-  color: #d4af37;
+  color: #17212b;  /* 👈 ЗМІНИЛИ: колір фону сторінки */
   text-align: center;
   z-index: 100;
   pointer-events: none;
   animation: pulse-glow 2s ease-in-out infinite;
   text-shadow: 
-    0 0 10px rgba(212, 175, 55, 0.8),
-    0 0 20px rgba(212, 175, 55, 0.6),
-    0 0 30px rgba(212, 175, 55, 0.4);
+    0 0 10px rgba(23, 33, 43, 0.8),
+    0 0 20px rgba(23, 33, 43, 0.6),
+    0 0 30px rgba(23, 33, 43, 0.4);
   white-space: nowrap;
   padding: 0 20px;
 }
@@ -850,6 +850,58 @@ mask-image: linear-gradient(
 </div>
 
 <!-- ЛОАДЕР (РУЛЕТКА) -->
+<!-- Змінюємо стилі для .tap-hint -->
+<style>
+/* ... інші стилі ... */
+
+.tap-hint {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  font-weight: 700;
+  color: #17212b;  /* 👈 ЗМІНИЛИ: колір фону сторінки */
+  text-align: center;
+  z-index: 100;
+  pointer-events: none;
+  animation: pulse-glow 2s ease-in-out infinite;
+  text-shadow: 
+    0 0 10px rgba(23, 33, 43, 0.8),
+    0 0 20px rgba(23, 33, 43, 0.6),
+    0 0 30px rgba(23, 33, 43, 0.4);
+  white-space: nowrap;
+  padding: 0 20px;
+}
+
+/* ... інші стилі ... */
+
+/* 👇 ДОДАЄМО НОВИЙ СТИЛЬ ДЛЯ ПОЗИЦІОНУВАННЯ ВІДНОСНО WEBM */
+.loader {
+  position: fixed;
+  inset: 0;
+  background: #17212b;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.loader-content-wrapper {  /* 👈 НОВИЙ КОНТЕЙНЕР */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ... інші стилі ... */
+</style>
+
+<!-- Змінюємо HTML лоадера -->
 <div id="loader" class="loader">
   <div class="coupons-table">
     <table>
@@ -859,7 +911,7 @@ mask-image: linear-gradient(
         </tr>
       </thead>
       <tbody>
-        <!-- Зелёный купон -->
+        <!-- Зелёний купон -->
         <tr class="green-coupon">
           <td>
             <div class="coupon-name">
@@ -922,8 +974,12 @@ mask-image: linear-gradient(
     </table>
   </div>
   
-  <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
-  <div class="tap-hint">натисни, щоб зупинити рулетку</div>
+  <!-- 👇 НОВИЙ КОНТЕЙНЕР ДЛЯ WEBM + НАДПИСУ -->
+  <div class="loader-content-wrapper">
+    <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
+    <div class="tap-hint">натисни, щоб зупинити рулетку</div>
+  </div>
+  
   <div class="loader-text">Генеруємо ваш промокод...</div>
 </div>
   
@@ -1177,6 +1233,7 @@ let selectedCoupon = null;
 let promoDisintegrated = false;
 let promoTimer = null; // 👈 Убедись что эта строка есть
 let countdownInterval = null;
+  let rouletteSound = null;
 let isDecoding = true; // 👈 Добавь если нет
 let finalPromoCode = ''; // 👈 Добавь если нет
 
@@ -1389,7 +1446,7 @@ function waitForModalClose() {
     }, 100);
   });
 }
-  function closeTicketModal() {
+ function closeTicketModal() {
   const modal = document.querySelector('.ticket-modal');
   if (modal) {
     modal.classList.remove('active');
@@ -1401,6 +1458,9 @@ function waitForModalClose() {
       if (wasInvalid) {
         document.getElementById('loader').classList.add('hidden');
         showFinalScreen();
+      } else {
+        // 👇 ДОБАВИЛИ: Если билет валидный - запускаем звук рулетки
+        startRouletteSound();
       }
     }, 300);
   }
@@ -1473,6 +1533,27 @@ shopBtn.onclick = function(e) {
   ].join(':');
   
   document.getElementById('countdownTimer').textContent = formattedTime;
+}
+
+
+  // ===== УПРАВЛЕНИЕ ЗВУКОМ РУЛЕТКИ =====
+function startRouletteSound() {
+  rouletteSound = document.getElementById('rouletteSound');
+  if (rouletteSound) {
+    rouletteSound.loop = true;
+    rouletteSound.currentTime = 0;
+    rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
+    console.log('🔊 Звук рулетки запущен (loop)');
+  }
+}
+
+function stopRouletteSound() {
+  if (rouletteSound) {
+    rouletteSound.pause();
+    rouletteSound.currentTime = 0;
+    rouletteSound.loop = false;
+    console.log('🔇 Звук рулетки остановлен');
+  }
 }
 
 // ===== ЗАПУСК ТАЙМЕРА =====
@@ -2066,10 +2147,15 @@ window.addEventListener('load', async () => {
   }
   
   // ===== СЦЕНАРИЙ 3: ВАЛИДНЫЙ БИЛЕТ =====
+ // ===== СЦЕНАРИЙ 3: ВАЛИДНЫЙ БИЛЕТ =====
   if (ticketActivated === true) {
     await waitForModalClose();
+    // Звук запустится в closeTicketModal после нажатия "Крутити барабан!"
+  } else if (canUserSpin) {
+    // ===== СЦЕНАРИЙ 4: ЕЖЕДНЕВНАЯ РУЛЕТКА (БЕЗ БИЛЕТА) =====
+    // 👇 ЗАПУСКАЕМ ЗВУК СРАЗУ
+    startRouletteSound();
   }
-  
   // ===== СЦЕНАРИЙ 4: РУЛЕТКА С ТАПОМ =====
   loader.classList.add('visible');
   
@@ -2094,12 +2180,9 @@ window.addEventListener('load', async () => {
   }
   
   function stopRoulette() {
+     stopRouletteSound();
     // 🎯 ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
-    const rouletteSound = document.getElementById('rouletteSound');
-    if (rouletteSound) {
-      rouletteSound.currentTime = 0;
-      rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
-    }
+  
     
     setTimeout(() => {
       loader.classList.add('hidden');
