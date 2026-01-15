@@ -989,8 +989,11 @@ mask-image: linear-gradient(
   </a>
 </div>
 
-<audio id="spinnerSound" preload="auto">
-  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Spinner.mp3" type="audio/mpeg">
+<audio id="rouletteSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Roulette.mp3" type="audio/mpeg">
+</audio>
+<audio id="winSound" preload="auto">
+  <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Win.mp3" type="audio/mpeg">
 </audio>
 <audio id="ticketSound" preload="auto">
   <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/TicketKR.mp3" type="audio/mpeg">
@@ -2029,14 +2032,15 @@ window.addEventListener('load', async () => {
   
   // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (ПЕРВЫЙ РАЗ ИЛИ ВАЛИДНЫЙ БИЛЕТ) → РУЛЕТКА =====
   // ✅ ТОЛЬКО ПОСЛЕ ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА ПОКАЗЫВАЕМ РУЛЕТКУ
-  loader.classList.add('visible');
-  
-  // 🎯 ВОСПРОИЗВОДИМ ЗВУК СПИННЕРА
-  const spinnerSound = document.getElementById('spinnerSound');
-  if (spinnerSound) {
-    spinnerSound.currentTime = 0;
-    spinnerSound.play().catch(e => console.log('Spinner sound play failed:', e));
-  }
+// ✅ ТОЛЬКО ПОСЛЕ ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА ПОКАЗЫВАЕМ РУЛЕТКУ
+loader.classList.add('visible');
+
+// 🎯 ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
+const rouletteSound = document.getElementById('rouletteSound');
+if (rouletteSound) {
+  rouletteSound.currentTime = 0;
+  rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
+}
   
   setTimeout(() => {
     loader.classList.add('hidden');
@@ -2044,12 +2048,19 @@ window.addEventListener('load', async () => {
     const randomCoupon = selectRandomCoupon();
     applyCoupon(randomCoupon);
     
-    setTimeout(() => {
-      promoOverlay.classList.add('active');
-      
-      setTimeout(() => {
-        animatePromoCode();
-      }, 600);
+   setTimeout(() => {
+  promoOverlay.classList.add('active');
+  
+  // 🎯 ВОСПРОИЗВОДИМ ЗВУК ВЫИГРЫША
+  const winSound = document.getElementById('winSound');
+  if (winSound) {
+    winSound.currentTime = 0;
+    winSound.play().catch(e => console.log('Win sound play failed:', e));
+  }
+  
+  setTimeout(() => {
+    animatePromoCode();
+  }, 600);
       
       const activeVideo = document.querySelector('.promo-animation-webm.active');
       if (activeVideo) {
