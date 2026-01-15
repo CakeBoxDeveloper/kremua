@@ -202,15 +202,20 @@ input, textarea {
   transform: scale(0.95);
 }
 
-@keyframes pulse-random {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+@keyframes glow-flash {
+  0% { 
+    text-shadow: 0 0 0px #6ab2f2;
+  }
+  50% { 
+    text-shadow: 0 0 20px #6ab2f2, 0 0 30px #6ab2f2, 0 0 40px #6ab2f2;
+  }
+  100% { 
+    text-shadow: 0 0 0px #6ab2f2;
+  }
 }
 
 #randomCakeBtn.animating {
-  animation: pulse-random 0.3s ease;
-  color: #6af27d;
+  animation: glow-flash 0.4s ease;
 }
 
 .slider-section {
@@ -432,16 +437,16 @@ input, textarea {
 }
 .format-info-content::-webkit-scrollbar { display: none; }
 .format-info-content.fade-top {
-  mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #1d2b3a 10%, #1d2b3a 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #1d2b3a 10%, #1d2b3a 100%);
 }
 .format-info-content.fade-bottom {
-  mask-image: linear-gradient(to bottom, black 0%, black 95%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 95%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #1d2b3a 0%, #1d2b3a 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #1d2b3a 0%, #1d2b3a 90%, transparent 100%);
 }
 .format-info-content.fade-both {
-  mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #1d2b3a 10%, #1d2b3a 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #1d2b3a 10%, #1d2b3a 90%, transparent 100%);
 }
   
 .format-info-modal.active .format-info-content { transform: scale(1); }
@@ -1029,19 +1034,19 @@ function updateGuestsCalculator() {
     guestsCount.textContent = guests + ' гостя';
   }
   
-  // Определяем формат
-  let format = '';
-  let formatColor = '#f7a632';
-  
-  if (guests <= 3) {
-    format = '#спліт';
-  } else if (guests <= 6) {
-    format = '#бенто';
-  } else if (guests <= 12) {
-    format = '#максі';
-  } else {
-    format = '#XXL';
-  }
+ // Определяем формат
+let format = '';
+let formatColor = '#f7a632';
+
+if (guests <= 2) {
+  format = '#спліт';
+} else if (guests <= 4) {
+  format = '#бенто';
+} else if (guests <= 8) {
+  format = '#максі';
+} else {
+  format = '#XXL';
+}
   
   formatRecommendation.innerHTML = `Для такої кількості гостей вам потрібен торт формату <span style="color: ${formatColor}; font-weight: 700;">${format}</span>`;
   
