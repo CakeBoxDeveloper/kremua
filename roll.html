@@ -7,8 +7,8 @@
 <link rel="icon" href="https://github.com/cakeboxdeveloper/kremua/raw/refs/heads/main/AIcon.ico" type="image/x-icon">
 
 <style>
-body {  
-  margin: 0; 
+body { 
+  margin: 0;
   font-family: Arial, sans-serif; 
   background: #17212b;
   color: white;
@@ -21,121 +21,6 @@ body {
   justify-content: center;
   min-height: 100vh;
 }
-
-.loader-text {
-  font-size: 18px;
-  color: #d4af37;
-  margin-top: 10px;
-  animation: pulse 1.5s ease-in-out infinite;
-  text-align: center;
-  width: 90%;
-  max-width: 600px;
-}
-
-/* 👇 ДОБАВЬ ОТСЮДА */
-/* ===== ТАБЛИЦА КУПОНОВ НАД РУЛЕТКОЙ ===== */
-.coupons-table {
-  margin-bottom: 30px;
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  border-radius: 8px;
-  overflow: hidden;
-  max-width: 400px;
-  width: 90%;
-}
-
-.coupons-table table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.coupons-table thead {
-  background: #22364a;
-}
-
-.coupons-table th {
-  padding: 12px 16px;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 700;
-  color: #6ab2f2;
-  border-bottom: 2px solid #6ab2f2;
-}
-
-.coupons-table td {
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.coupons-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.coupons-table tbody tr {
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.coupons-table tbody tr:hover {
-  transform: scale(1.02);
-}
-
-.coupon-name {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.coupon-icon {
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
-}
-
-.coupon-discount {
-  font-weight: 700;
-  text-align: right;
-  white-space: nowrap;
-}
-
-/* Стили для строк разных купонов */
-.coupons-table tbody tr.green-coupon {
-  background: #1d3a22;
-  color: #6af27d;
-}
-
-.coupons-table tbody tr.green-coupon:hover {
-  background: #24502f;
-}
-
-.coupons-table tbody tr.yellow-coupon {
-  background: #443621;
-  color: #f7a632;
-}
-
-.coupons-table tbody tr.yellow-coupon:hover {
-  background: #554729;
-}
-
-.coupons-table tbody tr.blue-coupon {
-  background: #1d2b3a;
-  color: #6ab2f2;
-}
-
-.coupons-table tbody tr.blue-coupon:hover {
-  background: #22364a;
-}
-
-.coupons-table tbody tr.red-coupon {
-  background: #3a1d2b;
-  color: #f27db0;
-}
-
-.coupons-table tbody tr.red-coupon:hover {
-  background: #4a2236;
-}
-  
 
 /* ✅ АДАПТИВНОЕ МАСШТАБИРОВАНИЕ ДЛЯ ДЕСКТОПА */
 @media (min-width: 769px) {
@@ -519,14 +404,6 @@ body {
   transform: scale(1.08);
 }
 
-  .promo-animation-webm {
-  display: none; /* Скрываем все по умолчанию */
-}
-
-.promo-animation-webm.active {
-  display: block; /* Показываем только активное */
-}
-
 .promo-code-box {
   position: absolute;
   top: 85%;
@@ -766,82 +643,10 @@ mask-image: linear-gradient(
 </div>
 
 <!-- ЛОАДЕР (РУЛЕТКА) -->
-<div id="loader" class="loader">
-  <div class="coupons-table">
-    <table>
-      <thead>
-        <tr>
-          <th colspan="2">Що можна виграти?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Зелёный купон -->
-        <tr class="green-coupon">
-          <td>
-            <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#005330" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#1d3a22"/>
-                <circle cx="100" cy="25" r="8" fill="#1d3a22"/>
-              </svg>
-              <span>Зелений купон</span>
-            </div>
-          </td>
-          <td class="coupon-discount">150 грн</td>
-        </tr>
-        
-        <!-- Жёлтый купон -->
-        <tr class="yellow-coupon">
-          <td>
-            <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#af8246" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#443621"/>
-                <circle cx="100" cy="25" r="8" fill="#443621"/>
-              </svg>
-              <span>Жовтий купон</span>
-            </div>
-          </td>
-          <td class="coupon-discount">25%</td>
-        </tr>
-        
-        <!-- Синий купон -->
-        <tr class="blue-coupon">
-          <td>
-            <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#5c94cc" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#1d2b3a"/>
-                <circle cx="100" cy="25" r="8" fill="#1d2b3a"/>
-              </svg>
-              <span>Синій купон</span>
-            </div>
-          </td>
-          <td class="coupon-discount">50%</td>
-        </tr>
-        
-        <!-- Красный купон -->
-        <tr class="red-coupon">
-          <td>
-            <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#6d2121" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#3a1d1d"/>
-                <circle cx="100" cy="25" r="8" fill="#3a1d1d"/>
-              </svg>
-              <span>Червоний купон</span>
-            </div>
-          </td>
-          <td class="coupon-discount">🎂 Торт</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
+<div id="loader" class="loader hidden">
   <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
   <div class="loader-text">Генеруємо ваш промокод...</div>
 </div>
-  
 
 <!-- ПРОМОКОД ОВЕРЛЕЙ -->
 <canvas id="particleCanvas"></canvas>
@@ -857,41 +662,14 @@ mask-image: linear-gradient(
         alt="Base"
       >
       
-  <video 
-  class="promo-animation-webm promo-video-yellow" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
-
-<video 
-  class="promo-animation-webm promo-video-red" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
-
-<video 
-  class="promo-animation-webm promo-video-blue" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
-
-<video 
-  class="promo-animation-webm promo-video-green" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm"
-  loop 
-  muted 
-  playsinline 
-  preload="metadata">
-</video>
+      <video 
+        src="" 
+        class="promo-animation-webm"
+        id="promoVideo"
+        loop
+        muted
+        playsinline
+      ></video>
       
       <div class="promo-code-box" id="promoCode" onclick="copyPromoCode(event)">
         XXXX-XXXX-XXXX-XXXX
@@ -926,7 +704,7 @@ mask-image: linear-gradient(
   </div>
   
   <div class="countdown-container">
-    <div class="countdown-text" id="countdownText">
+    <div class="countdown-text">
       Наступна спроба через:
     </div>
     <div class="countdown-timer" id="countdownTimer">
@@ -977,7 +755,7 @@ const coupons = [
   },
   {
     title: "Тобi випав зелений купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm",
     codeColor: "#005330",
     particleColor: "#007042",
     discount: "50%",
@@ -1010,7 +788,6 @@ function getRandomPrediction() {
 
 
  // ===== ПРЕЛОАД ИЗОБРАЖЕНИЙ =====
-// ===== ПРЕЛОАД ИЗОБРАЖЕНИЙ И ВИДЕО =====
 function preloadImages() {
   return new Promise((resolve) => {
     const imagesToPreload = [
@@ -1019,65 +796,29 @@ function preloadImages() {
       'https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true'
     ];
     
-    const videosToPreload = [
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm',
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm',
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm',
-      'https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG22.webm'
-    ];
-    
     let loadedCount = 0;
-    const totalAssets = imagesToPreload.length + videosToPreload.length;
+    const totalImages = imagesToPreload.length;
     
-    console.log('🖼️ Начинаем прелоад ресурсов...');
+    console.log('🖼️ Начинаем прелоад изображений...');
     
-    // Загружаем изображения
     imagesToPreload.forEach((src) => {
       const img = new Image();
       img.onload = () => {
         loadedCount++;
-        console.log(`✅ Изображение ${loadedCount}/${totalAssets} загружено`);
-        if (loadedCount === totalAssets) {
-          console.log('✅ Все ресурсы загружены!');
+        console.log(`✅ Изображение ${loadedCount}/${totalImages} загружено`);
+        if (loadedCount === totalImages) {
+          console.log('✅ Все изображения загружены!');
           resolve();
         }
       };
       img.onerror = () => {
         loadedCount++;
-        console.log(`⚠️ Ошибка загрузки изображения: ${loadedCount}/${totalAssets}`);
-        if (loadedCount === totalAssets) {
+        console.log(`⚠️ Ошибка загрузки изображения, но продолжаем: ${loadedCount}/${totalImages}`);
+        if (loadedCount === totalImages) {
           resolve();
         }
       };
       img.src = src;
-    });
-    
-    // Загружаем видео
-    videosToPreload.forEach((src) => {
-      const video = document.createElement('video');
-      video.preload = 'auto';
-      video.muted = true;
-      video.playsInline = true;
-      
-      video.onloadeddata = () => {
-        loadedCount++;
-        videoCache[src] = video;
-        console.log(`✅ Видео ${loadedCount}/${totalAssets} загружено`);
-        if (loadedCount === totalAssets) {
-          console.log('✅ Все ресурсы загружены!');
-          resolve();
-        }
-      };
-      
-      video.onerror = () => {
-        loadedCount++;
-        console.log(`⚠️ Ошибка загрузки видео: ${loadedCount}/${totalAssets}`);
-        if (loadedCount === totalAssets) {
-          resolve();
-        }
-      };
-      
-      video.src = src;
     });
   });
 }
@@ -1782,37 +1523,12 @@ function applyCoupon(coupon) {
   const promoCodeBox = document.getElementById('promoCode');
   promoCodeBox.style.color = coupon.codeColor;
   
-// Скрываем все видео
-// Скрываем все видео
-document.querySelectorAll('.promo-animation-webm').forEach(v => {
-  v.classList.remove('active');
-  v.pause();
-});
-
-// Показываем нужное видео
-let videoClass = '';
-if (coupon.videoUrl.includes('FinalY2')) videoClass = 'promo-video-yellow';
-else if (coupon.videoUrl.includes('FinalR2')) videoClass = 'promo-video-red';
-else if (coupon.videoUrl.includes('FinalB2')) videoClass = 'promo-video-blue';
-else if (coupon.videoUrl.includes('FinalG22')) videoClass = 'promo-video-green';
-
-const activeVideo = document.querySelector(`.${videoClass}`);
-if (activeVideo) {
-  activeVideo.classList.add('active');
+  const promoVideo = document.getElementById('promoVideo');
   
-  // 🎯 ПРИНУДИТЕЛЬНАЯ ЗАГРУЗКА ВИДЕО
-  if (activeVideo.readyState < 3) {
-    console.log('⏳ Загружаем видео:', coupon.title);
-    activeVideo.load();
-    
-    activeVideo.addEventListener('loadeddata', function onLoaded() {
-      console.log('✅ Видео загружено:', coupon.title);
-      activeVideo.removeEventListener('loadeddata', onLoaded);
-    });
-  } else {
-    console.log('✅ Видео уже загружено:', coupon.title);
-  }
-}
+ // Просто загружаем видео напрямую
+promoVideo.src = coupon.videoUrl;
+promoVideo.load();
+console.log('🎬 Загружаем видео:', coupon.title, coupon.videoUrl);
   
   const style = document.createElement('style');
   style.textContent = `
@@ -2003,12 +1719,12 @@ window.addEventListener('load', async () => {
         animatePromoCode();
       }, 600);
       
-    const activeVideo = document.querySelector('.promo-animation-webm.active');
-if (activeVideo) {
-  activeVideo.play().catch(err => {
-    console.log('Автозапуск видео заблокирован:', err);
-  });
-}
+      const promoVideo = document.getElementById('promoVideo');
+      if (promoVideo) {
+        promoVideo.play().catch(err => {
+          console.log('Автозапуск видео заблокирован:', err);
+        });
+      }
       
       setTimeout(() => {
         launchCanvasConfetti();
