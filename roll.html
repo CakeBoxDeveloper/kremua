@@ -1678,6 +1678,7 @@ function copyPromoCode(event) {
   finalPromoCode = code;
   copyTextToClipboard(code);
 }
+  
 
 function copyTextToClipboard(text) {
   clearTimeout(promoTimer);
@@ -2179,67 +2180,82 @@ window.addEventListener('load', async () => {
     setTimeout(() => stopRoulette(), 500);
   }
   
-  function stopRoulette() {
-     stopRouletteSound();
-    // 🎯 ВОСПРОИЗВОДИМ ЗВУК РУЛЕТКИ
+function stopRoulette() {
+  // 🎯 НЕ ОСТАНАВЛИВАЕМ ЗВУК РУЛЕТКИ ЗДЕСЬ!
   
+  setTimeout(() => {
+    loader.classList.add('hidden');
     
+    const randomCoupon = selectRandomCoupon();
+    applyCoupon(randomCoupon);
+    
+    // Через 300мс показываем промокод
     setTimeout(() => {
-      loader.classList.add('hidden');
-      
-      const randomCoupon = selectRandomCoupon();
-      applyCoupon(randomCoupon);
-      
-      setTimeout(() => {
-        promoOverlay.classList.add('active');
-        
-        // 🎯 ВОСПРОИЗВОДИМ ЗВУК ВЫИГРЫША
-        const winSound = document.getElementById('winSound');
-        if (winSound) {
-          winSound.currentTime = 0;
-          winSound.play().catch(e => console.log('Win sound play failed:', e));
-        }
-        
-        setTimeout(() => {
-          animatePromoCode();
-        }, 600);
-        
-        // 🎯 ЗАПУСК ВИДЕО С МНОЖЕСТВЕННЫМИ ПОПЫТКАМИ
-        const activeVideo = document.querySelector('.promo-animation-webm.active');
-        if (activeVideo) {
-          console.log('🎬 Попытка запуска видео...');
-          
-          const attemptPlay = (attempts = 0) => {
-            if (attempts > 5) {
-              console.log('❌ Не удалось запустить видео после 5 попыток');
-              return;
-            }
-            
-            activeVideo.play()
-              .then(() => {
-                console.log('✅ Видео запущено успешно');
-              })
-              .catch(err => {
-                console.log(`⚠️ Попытка ${attempts + 1} не удалась:`, err.message);
-                setTimeout(() => attemptPlay(attempts + 1), 200);
-              });
-          };
-          
-          attemptPlay();
-        }
-        
-        setTimeout(() => {
-          launchCanvasConfetti();
-        }, 200);
-        
-        if (promoTimer) {
-          clearTimeout(promoTimer);
-        }
-        startPromoTimer();
-        
-      }, 300);
-    }, 2000);
+      showPromoCode(); // 👈 ВЫЗЫВАЕМ НОВУЮ ФУНКЦИЮ
+    }, 300);
+  }, 2000);
+}
+
+// ===== НОВАЯ ФУНКЦИЯ ПОКАЗА ПРОМОКОДА =====
+function showPromoCode() {
+  const promoOverlay = document.getElementById('promoOverlay');
+  
+  // 🎯 ОСТАНАВЛИВАЕМ РУЛЕТКУ ПРЯМО ПЕРЕД ЗВУКОМ ВЫИГРЫША
+  stopRouletteSound();
+  
+  promoOverlay.classList.add('active');
+  
+  // 🎯 ВОСПРОИЗВОДИМ ЗВУК ВЫИГРЫША
+  const winSound = document.getElementById('winSound');
+  if (winSound) {
+    winSound.currentTime = 0;
+    winSound.play().catch(e => console.log('Win sound play failed:', e));
   }
+  
+  setTimeout(() => {
+    animatePromoCode();
+  }, 600);
+  
+  // 🎯 ЗАПУСК ВИДЕО С МНОЖЕСТВЕННЫМИ ПОПЫТКАМИ
+  const activeVideo = document.querySelector('.promo-animation-webm.active');
+  if (activeVideo) {
+    console.log('🎬 Попытка запуска видео...');
+    
+    const attemptPlay = (attempts = 0) => {
+      if (attempts > 5) {
+        console.log('❌ Не удалось запустить видео после 5 попыток');
+        return;
+      }
+      
+      activeVideo.play()
+        .then(() => {
+          console.log('✅ Видео запущено успешно');
+        })
+        .catch(err => {
+          console.log(`⚠️ Попытка ${attempts + 1} не удалась:`, err.message);
+          setTimeout(() => attemptPlay(attempts + 1), 200);
+        });
+    };
+    
+    attemptPlay();
+  }
+  
+  setTimeout(() => {
+    launchCanvasConfetti();
+  }, 200);
+  
+  // 🎯 ТАЙМЕР АВТОРАСПАДА (14 СЕКУНД)
+  if (promoTimer) {
+    clearTimeout(promoTimer);
+  }
+  
+  promoTimer = setTimeout(() => {
+    if (!promoDisintegrated) {
+      console.log('⏰ 14 секунд истекли - автораспад промокода');
+      disintegratePromo();
+    }
+  }, 14000);
+}
   
   // Вешаем обработчик на весь лоадер
   loader.addEventListener('click', handleTap);
