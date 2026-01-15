@@ -209,9 +209,14 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  opacity: 0;                    /* 👈 ИЗМЕНИЛИ: по умолчанию невидим */
+  pointer-events: none;          /* 👈 ИЗМЕНИЛИ: по умолчанию неактивен */
+  transition: opacity 0.5s ease;
+}
+
+.loader.visible {                /* 👈 ДОБАВИЛИ: новый класс для показа */
   opacity: 1;
   pointer-events: all;
-  transition: opacity 0.5s ease;
 }
 
 .loader.hidden {
@@ -2024,7 +2029,7 @@ window.addEventListener('load', async () => {
   
   // ===== СЦЕНАРИЙ 4: МОЖЕТ КРУТИТЬ (ПЕРВЫЙ РАЗ ИЛИ ВАЛИДНЫЙ БИЛЕТ) → РУЛЕТКА =====
   // ✅ ТОЛЬКО ПОСЛЕ ЗАКРЫТИЯ МОДАЛЬНОГО ОКНА ПОКАЗЫВАЕМ РУЛЕТКУ
-  loader.classList.remove('hidden');
+  loader.classList.add('visible');
   
   // 🎯 ВОСПРОИЗВОДИМ ЗВУК СПИННЕРА
   const spinnerSound = document.getElementById('spinnerSound');
