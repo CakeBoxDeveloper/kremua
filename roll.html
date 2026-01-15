@@ -27,25 +27,28 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 20px;
-  font-weight: 700;
-  color: #17212b;  /* 👈 ЗМІНИЛИ: колір фону сторінки */
-  text-align: center;
   z-index: 100;
   pointer-events: none;
-  animation: pulse-glow 2s ease-in-out infinite;
-  white-space: nowrap;
-  padding: 0 20px;
+  animation: pulse-hint 1.5s ease-in-out infinite;
+  width: 80px;
+  height: 80px;
 }
 
-@keyframes pulse-glow {
+.tap-hint img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.5));
+}
+
+@keyframes pulse-hint {
   0%, 100% {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
   50% {
-    opacity: 0.6;
-    transform: translate(-50%, -50%) scale(1.05);
+    opacity: 0.7;
+    transform: translate(-50%, -50%) scale(1.1);
   }
 }
 
@@ -967,10 +970,12 @@ mask-image: linear-gradient(
   </div>
   
   <!-- 👇 НОВИЙ КОНТЕЙНЕР ДЛЯ WEBM + НАДПИСУ -->
-  <div class="loader-content-wrapper">
-    <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
-    <div class="tap-hint">натисни, щоб зупинити рулетку</div>
+ <div class="loader-content-wrapper">
+  <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
+  <div class="tap-hint">
+    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/People/Backhand%20Index%20Pointing%20Up.webp?raw=true" alt="Tap">
   </div>
+</div>
   
   <div class="loader-text">Генеруємо ваш промокод...</div>
 </div>
@@ -2169,23 +2174,18 @@ window.addEventListener('load', async () => {
     loader.removeEventListener('click', handleTap);
     
     // Через 10мс останавливаем рулетку
-    setTimeout(() => stopRoulette(), 10);
+    stopRoulette();
   }
   
 function stopRoulette() {
-  // 🎯 НЕ ОСТАНАВЛИВАЕМ ЗВУК РУЛЕТКИ ЗДЕСЬ!
+  // 🎯 СРАЗУ СКРЫВАЕМ ЛОАДЕР
+  loader.classList.add('hidden');
   
-  setTimeout(() => {
-    loader.classList.add('hidden');
-    
-    const randomCoupon = selectRandomCoupon();
-    applyCoupon(randomCoupon);
-    
-    // Через 300мс показываем промокод
-    setTimeout(() => {
-      showPromoCode(); // 👈 ВЫЗЫВАЕМ НОВУЮ ФУНКЦИЮ
-    }, 300);
-  }, 2000);
+  const randomCoupon = selectRandomCoupon();
+  applyCoupon(randomCoupon);
+  
+  // 🎯 БЕЗ ЗАДЕРЖКИ ПОКАЗЫВАЕМ ПРОМОКОД
+  showPromoCode();
 }
 
 // ===== НОВАЯ ФУНКЦИЯ ПОКАЗА ПРОМОКОДА =====
