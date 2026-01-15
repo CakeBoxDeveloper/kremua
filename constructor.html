@@ -58,7 +58,7 @@ input, textarea {
   padding: 16px;
 }
 
-  #guestsSlider::-webkit-slider-thumb {
+ #guestsSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
   width: 24px;
@@ -67,7 +67,6 @@ input, textarea {
   background: #6af27d;
   cursor: pointer;
   border: 3px solid #1d3a22;
-  box-shadow: 0 2px 8px rgba(106, 242, 125, 0.4);
 }
 #guestsSlider::-moz-range-thumb {
   width: 24px;
@@ -76,7 +75,6 @@ input, textarea {
   background: #6af27d;
   cursor: pointer;
   border: 3px solid #1d3a22;
-  box-shadow: 0 2px 8px rgba(106, 242, 125, 0.4);
 }
 
   .telegram-send-btn {
@@ -187,12 +185,32 @@ input, textarea {
   color: #ffffff;
 }
 
-  #randomCakeBtn:hover {
+#randomCakeBtn {
+  color: #6ab2f2; 
+  cursor: pointer; 
+  font-weight: 600;
+  transition: all 0.15s ease;
+  display: inline-block;
+}
+
+#randomCakeBtn:hover {
   color: #8dc5f5;
 }
 
 #randomCakeBtn:active {
   color: #5a9dd8;
+  transform: scale(0.95);
+}
+
+@keyframes pulse-random {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+#randomCakeBtn.animating {
+  animation: pulse-random 0.3s ease;
+  color: #6af27d;
 }
 
 .slider-section {
@@ -401,6 +419,8 @@ input, textarea {
   background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
 }
 .format-info-modal.active { opacity: 1; pointer-events: all; }
+
+  
 .format-info-content {
   background: #1d2b3a; border: 2px solid #6ab2f2;
   border-radius: 12px; padding: 20px; max-width: 90%;
@@ -408,8 +428,22 @@ input, textarea {
   transform: scale(0.8); transition: 0.4s;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  position: relative;
 }
 .format-info-content::-webkit-scrollbar { display: none; }
+.format-info-content.fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 100%);
+}
+.format-info-content.fade-bottom {
+  mask-image: linear-gradient(to bottom, black 0%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 95%, transparent 100%);
+}
+.format-info-content.fade-both {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 95%, transparent 100%);
+}
+  
 .format-info-modal.active .format-info-content { transform: scale(1); }
 .format-info-title {
   font-size: 20px; font-weight: 700; color: #6ab2f2;
@@ -437,6 +471,7 @@ input, textarea {
 .format-guide-title {
   font-size: 15px; font-weight: 700; color: #6af27d;
   margin-bottom: 8px; text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
 }
 .format-guide-text {
   font-size: 13px; color: #ffffff; line-height: 1.6;
@@ -554,7 +589,18 @@ input, textarea {
     </div>
     
    <div class="format-guide">
-  <div class="format-guide-title">Калькулятор розміру торта</div>
+  <div class="format-guide-title">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6af27d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="2" width="16" height="20" rx="2"/>
+      <line x1="8" y1="6" x2="16" y2="6"/>
+      <line x1="8" y1="10" x2="16" y2="10"/>
+      <line x1="8" y1="14" x2="16" y2="14"/>
+      <line x1="8" y1="18" x2="12" y2="18"/>
+    </svg>
+    Калькулятор розміру торта
+  </div>
+
+     
   <div class="format-guide-text">
     <div style="padding: 20px 10px;">
       <input type="range" id="guestsSlider" min="2" max="25" value="8" style="width: 100%; height: 8px; border-radius: 4px; background: linear-gradient(to right, #6af27d 0%, #6af27d 32%, #2a4a2f 32%, #2a4a2f 100%); outline: none; -webkit-appearance: none; appearance: none; cursor: pointer;">
@@ -786,8 +832,11 @@ document.getElementById('downloadBtn').onclick = async () => {
 document.getElementById('closeModalBtn').onclick = () => document.getElementById('pdfModal').classList.remove('active');
 
 // Обработчики для модального окна с информацией о форматах
+// Обработчики для модального окна с информацией о форматах
 document.getElementById('formatLabel').onclick = function() {
-  document.getElementById('formatInfoModal').classList.add('active');
+  const modal = document.getElementById('formatInfoModal');
+  modal.classList.add('active');
+  updateModalFade();
 };
 
 document.getElementById('closeFormatInfoBtn').onclick = function() {
@@ -800,6 +849,25 @@ document.getElementById('formatInfoModal').onclick = function(e) {
     this.classList.remove('active');
   }
 };
+
+// Обновление fade-эффекта при скролле модалки
+function updateModalFade() {
+  const content = document.querySelector('.format-info-content');
+  const scrollTop = content.scrollTop;
+  const maxScroll = content.scrollHeight - content.clientHeight;
+  
+  content.classList.remove('fade-top', 'fade-bottom', 'fade-both');
+  
+  if (scrollTop <= 5 && maxScroll > 5) {
+    content.classList.add('fade-bottom');
+  } else if (scrollTop >= maxScroll - 5) {
+    content.classList.add('fade-top');
+  } else if (maxScroll > 5) {
+    content.classList.add('fade-both');
+  }
+}
+
+document.querySelector('.format-info-content').addEventListener('scroll', updateModalFade);
 
 
 // Случайные комментарии
@@ -850,7 +918,12 @@ async function scrollAndSelect(container, tag) {
 }
 
 // Основная функция случайного торта
+// Основная функция случайного торта
 document.getElementById('randomCakeBtn').onclick = async function() {
+  // Добавляем анимацию
+  this.classList.add('animating');
+  setTimeout(() => this.classList.remove('animating'), 300);
+  
   // Сбрасываем все выборы
   document.querySelectorAll('.slider-tag.selected').forEach(t => t.classList.remove('selected'));
   document.getElementById('commentField').value = '';
