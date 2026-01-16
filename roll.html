@@ -1827,6 +1827,7 @@ function promptManualCopy(text) {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   
@@ -1838,24 +1839,16 @@ function disintegratePromo() {
   const rect = document.getElementById('promoCard').getBoundingClientRect();
   
   const particles = [];
-  const blockSize = 8; // Размер блоков
+  const blockSize = 4; // 🎯 УМЕНЬШИЛИ В ДВА РАЗА (было 8)
   const totalDuration = 3000;
   const crumbleDuration = 1500;
   
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 ЦЕНТР КАРТОЧКИ
-  const centerX = rect.width / 2;
-  const centerY = rect.height / 2;
-  const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
-  
   for (let y = 0; y < rect.height; y += blockSize) {
     for (let x = 0; x < rect.width; x += blockSize) {
-      // 🎯 РАССТОЯНИЕ ОТ ЦЕНТРА (для определения задержки)
-      const dx = x - centerX;
-      const dy = y - centerY;
-      const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
-      const normalizedDistance = 1 - (distanceFromCenter / maxDistance); // 0 на краях, 1 в центре
+      // 🎯 ЗАДЕРЖКА ЗАВИСИТ ОТ ВЫСОТЫ (Y координаты)
+      const normalizedY = y / rect.height; // 0 сверху, 1 снизу
       
       particles.push({
         x: rect.left + x,
@@ -1867,7 +1860,7 @@ function disintegratePromo() {
         rotation: 0,
         rotationSpeed: (Math.random() - 0.5) * 5, // Случайное вращение
         opacity: 1,
-        crumbleDelay: normalizedDistance * crumbleDuration, // Края крошатся первыми
+        crumbleDelay: normalizedY * crumbleDuration, // 🎯 ВЕРХ КРОШИТСЯ ПЕРВЫМ
         active: false,
         gravity: 0.3 + Math.random() * 0.2 // Случайная гравитация
       });
@@ -1876,15 +1869,15 @@ function disintegratePromo() {
   
   let startTime = Date.now();
   
-  // 🎯 ГЕНЕРАТОР МАСКИ "КРОШЕНИЯ" ОТ КРАЁВ К ЦЕНТРУ
+  // 🎯 ГЕНЕРАТОР МАСКИ "КРОШЕНИЯ" СВЕРХУ ВНИЗ
   function generateCrumbleMask(progress) {
-    const crumbleRadius = (1 - progress) * maxDistance * 1.2;
-    return `radial-gradient(
-      circle at center,
-      black 0%,
-      black ${crumbleRadius}px,
-      rgba(0,0,0,0.3) ${crumbleRadius + 10}px,
-      transparent ${crumbleRadius + 20}px
+    const crumbleY = progress * rect.height;
+    return `linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent ${crumbleY}px,
+      rgba(0,0,0,0.3) ${crumbleY + 10}px,
+      black ${crumbleY + 20}px
     )`;
   }
   
