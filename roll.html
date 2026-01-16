@@ -31,8 +31,8 @@ body {
   transform: translate(-50%, -50%);
   z-index: 10001;   /* 👈 ВЫШЕ .loader (у него 9999) */
   pointer-events: none;
-  width: 10px;      /* 👈 УМЕНЬШИЛ ДО 60px */
-  height: 10px;
+  width: 100px;      /* 👈 УМЕНЬШИЛ ДО 60px */
+  height: 100px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -50,14 +50,6 @@ body {
   display: block;
 }
 
-@keyframes pulse-hint {
-  0%, 100% {
-    transform: scale(1) translateY(0);
-  }
-  50% {
-    transform: scale(1.1) translateY(-5px);
-  }
-}
 
 .loader-text {
   font-size: 18px;
