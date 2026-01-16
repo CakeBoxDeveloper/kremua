@@ -763,13 +763,11 @@ const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 if (isTelegramApp) {
-  // Загружаем изображение на временный хостинг (например, imgur, imgbb)
-  const response = await fetch(imageUrl);
-  const blob = await response.blob();
-  
-  // Или просто открываем прямую ссылку на изображение
-  window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent('Вітаю! Хочу замовити торт, ось моє ТЗ')}`);
-
+  // Telegram Mini App
+  downloadBtn.innerHTML = `
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/download.svg" style="width: 18px; height: 18px; filter: invert(81%) sepia(38%) saturate(464%) hue-rotate(72deg) brightness(98%) contrast(96%);">
+    Зберегти файл
+  `;
 } else if (isMobile) {
   // Обычный мобильный браузер
   downloadBtn.innerHTML = `
@@ -788,86 +786,63 @@ if (isTelegramApp) {
         sound.play().catch(e => console.log("Interaction required for audio"));
         
 document.getElementById('downloadBtn').onclick = async () => {
-  const now = new Date();
-  const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
+          const now = new Date();
+          const timestamp = `${now.getDate()}${now.getMonth()+1}-${now.getHours()}${now.getMinutes()}`;
+          
+          try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
+            
+            const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined';
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            
+          if (isTelegramApp) {
+  // Telegram Mini App: просто скачиваем файл (работает в Telegram)
+  const link = document.createElement('a');
+  link.href = imageUrl;
+  link.download = `kremua-blueprint-${timestamp}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
   
-  try {
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-    
-    const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window.Telegram.WebApp.initDataUnsafe !== 'undefined';
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    
-    if (isTelegramApp) {
-      // Telegram Mini App: принудительное скачивание через data URL
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = function() {
-        const base64data = reader.result;
-        
-        // Создаем временную ссылку для скачивания
-        const link = document.createElement('a');
-        link.href = base64data;
-        link.download = `kremua-blueprint-${timestamp}.png`;
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        
-        // Программно кликаем
-        link.click();
-        
-        // Удаляем через секунду
-        setTimeout(() => {
-          document.body.removeChild(link);
-        }, 1000);
-        
-        // Показываем подсказку пользователю
-        setTimeout(() => {
-          window.Telegram.WebApp.showPopup({
-            title: 'Файл збережено! 📥',
-            message: 'Відкрийте "Завантаження" у вашому телефоні, щоб знайти креслення. Потім ви зможете надіслати його у будь-який чат.',
-            buttons: [{type: 'ok'}]
-          });
-        }, 500);
-      };
-      
-    } else if (isMobile && navigator.canShare) {
-      // Обычный мобильный браузер: Web Share API
-      const file = new File([blob], `kremua-blueprint-${timestamp}.png`, { type: 'image/png' });
-      
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: 'Креслення торта',
-          text: 'Вітаю! Хочу замовити торт, ось моє ТЗ'
-        });
-      } else {
-        // Fallback: скачивание
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `kremua-blueprint-${timestamp}.png`;
-        link.click();
-      }
-      
-    } else {
-      // Desktop: обычное скачивание
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `kremua-blueprint-${timestamp}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-    
-  } catch (err) {
-    console.error('Помилка:', err);
-    
-    // Ultimate fallback
-    const link = document.createElement('a');
-    link.href = imageUrl;
-    link.download = `kremua-blueprint-${timestamp}.png`;
-    link.click();
-  }
-};
+  setTimeout(() => {
+    window.Telegram.WebApp.showAlert('Файл збережено! Відкрийте "Завантаження" у вашому телефоні, щоб знайти креслення.');
+  }, 300);
+              
+              // Показываем подсказку
+              setTimeout(() => {
+                window.Telegram.WebApp.showAlert('Сторінка відкриється у браузері. Натисніть кнопку "Відправити файл" ще раз для відправки.');
+              }, 500);
+              
+            } else if (isMobile && navigator.canShare && navigator.canShare({ files: [file] })) {
+              // Мобильный браузер: Web Share API
+              await navigator.share({
+                files: [file],
+                title: 'Креслення торта',
+                text: 'Вітаю! Хочу замовити торт, ось моє ТЗ'
+              });
+              
+            } else {
+              // Desktop или fallback: обычное скачивание
+              const link = document.createElement('a');
+              link.href = imageUrl;
+              link.download = `kremua-blueprint-${timestamp}.png`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+            }
+          } catch (err) {
+            console.error('Помилка:', err);
+            if (err.name !== 'AbortError') {
+              // Fallback: скачивание
+              const link = document.createElement('a');
+              link.href = imageUrl;
+              link.download = `kremua-blueprint-${timestamp}.png`;
+              link.click();
+            }
+          }
+        };
       } catch (e) {
         loader.classList.remove('active');
         loaderText.style.display = 'none';
