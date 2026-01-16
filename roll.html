@@ -1024,7 +1024,7 @@ mask-image: linear-gradient(
       
   <video 
   class="promo-animation-webm promo-video-yellow" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm"
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowY2.mp4"
   loop 
   muted 
   playsinline 
@@ -1033,7 +1033,7 @@ mask-image: linear-gradient(
 
 <video 
   class="promo-animation-webm promo-video-red" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm"
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowR2.mp4"
   loop 
   muted 
   playsinline 
@@ -1042,7 +1042,7 @@ mask-image: linear-gradient(
 
 <video 
   class="promo-animation-webm promo-video-blue" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm"
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowB2.mp4"
   loop 
   muted 
   playsinline 
@@ -1051,7 +1051,7 @@ mask-image: linear-gradient(
 
 <video 
   class="promo-animation-webm promo-video-green" 
-  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm"
+  src="https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowG2.mp4"
   loop 
   muted 
   playsinline 
@@ -1121,7 +1121,7 @@ mask-image: linear-gradient(
 const coupons = [
   {
     title: "Тобi випав жовтий купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalY2.webm",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowY2.mp4",
     codeColor: "#af8246",
     particleColor: "#ffd282",
     discount: "15%",
@@ -1129,7 +1129,7 @@ const coupons = [
   },
   {
     title: "Тобi випав червоний купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalR2.webm",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowR2.mp4",
     codeColor: "#6d2121",
     particleColor: "#9c2d35",
     discount: "10%",
@@ -1137,7 +1137,7 @@ const coupons = [
   },
   {
     title: "Тобi випав синій купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalB2.webm",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowB2.mp4",
     codeColor: "#5c94cc",
     particleColor: "#5c94cc",
     discount: "20%",
@@ -1145,7 +1145,7 @@ const coupons = [
   },
   {
     title: "Тобi випав зелений купон!",
-    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/FinalG2.webm",
+    videoUrl: "https://raw.githubusercontent.com/cakeboxdeveloper/kremua/main/LowG2.mp4",
     codeColor: "#005330",
     particleColor: "#007042",
     discount: "50%",
@@ -2028,10 +2028,10 @@ document.querySelectorAll('.promo-animation-webm').forEach(v => {
 
 // Показываем нужное видео
 let videoClass = '';
-if (coupon.videoUrl.includes('FinalY2')) videoClass = 'promo-video-yellow';
-else if (coupon.videoUrl.includes('FinalR2')) videoClass = 'promo-video-red';
-else if (coupon.videoUrl.includes('FinalB2')) videoClass = 'promo-video-blue';
-else if (coupon.videoUrl.includes('FinalG2')) videoClass = 'promo-video-green';
+if (coupon.videoUrl.includes('LowY2')) videoClass = 'promo-video-yellow';
+else if (coupon.videoUrl.includes('LowR2')) videoClass = 'promo-video-red';
+else if (coupon.videoUrl.includes('LowB2')) videoClass = 'promo-video-blue';
+else if (coupon.videoUrl.includes('LowG2')) videoClass = 'promo-video-green';
 
 const activeVideo = document.querySelector(`.${videoClass}`);
 if (activeVideo) {
