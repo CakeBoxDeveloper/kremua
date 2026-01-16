@@ -1823,6 +1823,8 @@ function promptManualCopy(text) {
 }
 
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+
+// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   
@@ -1836,93 +1838,69 @@ function disintegratePromo() {
   const particles = [];
   const particleSize = 2;
   const totalDuration = 2000;
-  const burnDuration = 1300;
-  const eraserDuration = 2500;
   
   const particleColor = selectedCoupon.particleColor;
   
-  const maxDistance = Math.sqrt(rect.width * rect.width + rect.height * rect.height);
-  const speedScale = rect.width / 512;
+  // 🎯 ЦЕНТР КАРТОЧКИ
+  const centerX = rect.width / 2;
+  const centerY = rect.height / 2;
   
   for (let y = 0; y < rect.height; y += particleSize) {
     for (let x = 0; x < rect.width; x += particleSize) {
       if (Math.random() > 0.5) continue;
       
-      const distanceFromBottomRight = Math.sqrt(
-        Math.pow(rect.width - x, 2) + Math.pow(rect.height - y, 2)
-      );
+      // 🎯 ВЕКТОР ОТ ЦЕНТРА К ЧАСТИЦЕ
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx);
       
-      const normalizedDistance = distanceFromBottomRight / maxDistance;
+      // 🎯 СКОРОСТЬ В НАПРАВЛЕНИИ ОТ ЦЕНТРА
+      const baseSpeed = 3 + Math.random() * 2;
       
       particles.push({
         x: rect.left + x,
         y: rect.top + y,
         size: Math.random() < 0.5 ? 1 : 2,
         color: particleColor,
-        speedX: -(Math.random() * 2.5 + 1.5) * speedScale,
-        speedY: -(Math.random() * 2.5 + 0.5) * speedScale,
-        opacity: 0,
-        burnDelay: normalizedDistance * burnDuration,
-        active: false
+        speedX: Math.cos(angle) * baseSpeed,
+        speedY: Math.sin(angle) * baseSpeed,
+        opacity: 1,
+        active: true
       });
     }
   }
   
   let startTime = Date.now();
   
-  function generateSoftEraser(progress) {
-    const radius = progress * maxDistance * 1.4;
-    return `linear-gradient(
-      -45deg,
-      transparent 0%,
-      transparent ${radius}px,
-      rgba(0,0,0,0.3) ${radius + 10}px,
-      rgba(0,0,0,0.7) ${radius + 20}px,
-      black ${radius + 30}px
-    )`;
-  }
-  
   function animate() {
     const elapsed = Date.now() - startTime;
-    const burnProgress = Math.min(elapsed / eraserDuration, 1);
+    const progress = Math.min(elapsed / 1500, 1);
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // 🎯 ПЛАВНОЕ РАСТВОРЕНИЕ КАРТОЧКИ
     const promoCard = document.getElementById('promoCard');
-    if (burnProgress < 1) {
-      promoCard.style.maskImage = generateSoftEraser(burnProgress);
-      promoCard.style.webkitMaskImage = generateSoftEraser(burnProgress);
-    } else {
-      promoCard.style.opacity = '0';
-    }
+    promoCard.style.opacity = 1 - progress;
     
     let allGone = true;
     
     particles.forEach(p => {
-      if (!p.active && elapsed >= p.burnDelay) {
-        p.active = true;
-        p.opacity = 1;
-      }
-      
-      if (p.active) {
-        const particleAge = elapsed - p.burnDelay;
-        
-        if (particleAge < 800 && p.opacity > 0) {
-          allGone = false;
-          
-          ctx.globalAlpha = p.opacity;
-          ctx.fillStyle = p.color;
-          ctx.fillRect(p.x, p.y, p.size, p.size);
-          
-          p.x += p.speedX;
-          p.y += p.speedY;
-          p.speedX -= 0.001 * speedScale;
-          p.speedY -= 0.001 * speedScale;
-          
-          p.opacity -= 0.015;
-        }
-      } else {
+      if (p.opacity > 0) {
         allGone = false;
+        
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+        
+        // 🎯 ДВИЖЕНИЕ С УСКОРЕНИЕМ
+        p.x += p.speedX;
+        p.y += p.speedY;
+        p.speedX *= 1.02; // Небольшое ускорение
+        p.speedY *= 1.02;
+        
+        // 🎯 ЗАТУХАНИЕ
+        p.opacity -= 0.012;
       }
     });
     
@@ -1933,14 +1911,10 @@ function disintegratePromo() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       document.getElementById('promoOverlay').classList.remove('active');
       
-  
-      
       // Показываем финальный экран с таймером
       showFinalScreen();
       
       setTimeout(() => {
-        promoCard.style.maskImage = 'none';
-        promoCard.style.webkitMaskImage = 'none';
         promoCard.style.opacity = '1';
       }, 500);
     }
@@ -1949,6 +1923,8 @@ function disintegratePromo() {
   canvas.style.display = 'block';
   animate();
 }
+
+  
 
 // ===== ВЫБОР СЛУЧАЙНОГО КУПОНА =====
 function selectRandomCoupon() {
