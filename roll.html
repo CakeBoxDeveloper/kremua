@@ -1830,8 +1830,10 @@ function promptManualCopy(text) {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 function disintegratePromo() {
   promoDisintegrated = true;
+  console.log('🎬 Начинаем disintegratePromo');
   
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
@@ -1844,64 +1846,103 @@ function disintegratePromo() {
   const crumbleDuration = 1500;
   
   const particleColor = selectedCoupon.particleColor;
+  console.log('🎨 Цвет частиц:', particleColor);
   
-  // 🎯 ПОЛУЧАЕМ SVG-ПОДЛОЖКУ КАК ИСТОЧНИК
+  // 🎯 ПОЛУЧАЕМ SVG-ПОДЛОЖКУ
   const svgElement = document.querySelector('.promo-base-svg');
-  const svgRect = svgElement.getBoundingClientRect();
+  if (!svgElement) {
+    console.error('❌ SVG элемент не найден!');
+    return;
+  }
   
-  // 🎯 СОЗДАЁМ ВРЕМЕННЫЙ CANVAS ДЛЯ АНАЛИЗА SVG
+  const svgRect = svgElement.getBoundingClientRect();
+  console.log('📐 SVG размеры:', svgRect);
+  
+  // 🎯 СОЗДАЁМ ВРЕМЕННЫЙ CANVAS
   const tempCanvas = document.createElement('canvas');
   const tempCtx = tempCanvas.getContext('2d');
   tempCanvas.width = svgRect.width;
   tempCanvas.height = svgRect.height;
   
-  // 🎯 РИСУЕМ SVG НА ВРЕМЕННОМ CANVAS
+  console.log('🖼️ Временный canvas:', tempCanvas.width, 'x', tempCanvas.height);
+  
+  // 🎯 ЗАГРУЖАЕМ SVG
   const img = new Image();
-  img.onload = function() {
-    tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
-    
-    // 🎯 ПОЛУЧАЕМ ДАННЫЕ ПИКСЕЛЕЙ
-    const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-    const pixels = imageData.data;
-    
-    // 🎯 СОЗДАЁМ ЧАСТИЦЫ ТОЛЬКО ГДЕ ЕСТЬ НЕПРОЗРАЧНЫЕ ПИКСЕЛИ
-    for (let y = 0; y < tempCanvas.height; y += blockSize) {
-      for (let x = 0; x < tempCanvas.width; x += blockSize) {
-        const index = (y * tempCanvas.width + x) * 4;
-        const alpha = pixels[index + 3];
-        
-        // Если пиксель не прозрачный
-        if (alpha > 50) {
-          const normalizedY = y / tempCanvas.height;
-          
-          particles.push({
-            x: svgRect.left + x,
-            y: svgRect.top + y,
-            size: blockSize,
-            color: particleColor,
-            velocityX: (Math.random() - 0.5) * 2,
-            velocityY: 0,
-            rotation: 0,
-            rotationSpeed: (Math.random() - 0.5) * 5,
-            opacity: 1,
-            crumbleDelay: normalizedY * crumbleDuration,
-            active: false,
-            gravity: 0.3 + Math.random() * 0.2
-          });
-        }
-      }
-    }
-    
-    startAnimation();
+  img.crossOrigin = 'anonymous'; // 👈 ДОБАВИЛИ для CORS
+  
+  img.onerror = function(e) {
+    console.error('❌ Ошибка загрузки SVG:', e);
+    // Запускаем простую анимацию без анализа SVG
+    fallbackDisintegrate();
   };
   
-  // 🎯 ЗАГРУЖАЕМ SVG КАК ИЗОБРАЖЕНИЕ
+  img.onload = function() {
+    console.log('✅ SVG загружен');
+    
+    try {
+      tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
+      console.log('✅ SVG нарисован на canvas');
+      
+      const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+      const pixels = imageData.data;
+      console.log('✅ Получены данные пикселей:', pixels.length);
+      
+      let particleCount = 0;
+      
+      // 🎯 СОЗДАЁМ ЧАСТИЦЫ
+      for (let y = 0; y < tempCanvas.height; y += blockSize) {
+        for (let x = 0; x < tempCanvas.width; x += blockSize) {
+          const index = (y * tempCanvas.width + x) * 4;
+          const alpha = pixels[index + 3];
+          
+          if (alpha > 50) {
+            particleCount++;
+            const normalizedY = y / tempCanvas.height;
+            
+            particles.push({
+              x: svgRect.left + x,
+              y: svgRect.top + y,
+              size: blockSize,
+              color: particleColor,
+              velocityX: (Math.random() - 0.5) * 2,
+              velocityY: 0,
+              rotation: 0,
+              rotationSpeed: (Math.random() - 0.5) * 5,
+              opacity: 1,
+              crumbleDelay: normalizedY * crumbleDuration,
+              active: false,
+              gravity: 0.3 + Math.random() * 0.2
+            });
+          }
+        }
+      }
+      
+      console.log('✅ Создано частиц:', particleCount);
+      
+      if (particleCount === 0) {
+        console.warn('⚠️ Частицы не созданы, используем fallback');
+        fallbackDisintegrate();
+        return;
+      }
+      
+      startAnimation();
+      
+    } catch (error) {
+      console.error('❌ Ошибка при обработке SVG:', error);
+      fallbackDisintegrate();
+    }
+  };
+  
+  // 🎯 ЗАГРУЖАЕМ SVG
   const svgData = new XMLSerializer().serializeToString(svgElement);
   const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
   const url = URL.createObjectURL(svgBlob);
   img.src = url;
   
+  // 🎯 ФУНКЦИЯ АНИМАЦИИ
   function startAnimation() {
+    console.log('🎬 Запускаем анимацию с', particles.length, 'частицами');
+    
     let startTime = Date.now();
     const promoCard = document.getElementById('promoCard');
     
@@ -1930,6 +1971,7 @@ function disintegratePromo() {
       }
       
       let allGone = true;
+      let activeParticles = 0;
       
       particles.forEach(p => {
         if (!p.active && elapsed >= p.crumbleDelay) {
@@ -1937,6 +1979,8 @@ function disintegratePromo() {
         }
         
         if (p.active) {
+          activeParticles++;
+          
           if (p.y < canvas.height + 50 && p.opacity > 0) {
             allGone = false;
             
@@ -1962,9 +2006,14 @@ function disintegratePromo() {
         }
       });
       
+      if (elapsed % 500 < 16) { // Логируем каждые ~500мс
+        console.log('⏱️ Анимация:', elapsed + 'мс, активных частиц:', activeParticles);
+      }
+      
       if (!allGone || elapsed < totalDuration) {
         requestAnimationFrame(animate);
       } else {
+        console.log('✅ Анимация завершена');
         canvas.style.display = 'none';
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         document.getElementById('promoOverlay').classList.remove('active');
@@ -1981,6 +2030,39 @@ function disintegratePromo() {
     
     canvas.style.display = 'block';
     animate();
+  }
+  
+  // 🎯 ЗАПАСНАЯ АНИМАЦИЯ (ЕСЛИ SVG НЕ ЗАГРУЗИЛСЯ)
+  function fallbackDisintegrate() {
+    console.log('🔄 Используем запасную анимацию');
+    
+    const promoCard = document.getElementById('promoCard');
+    const rect = promoCard.getBoundingClientRect();
+    
+    // Создаём частицы по всей области карточки
+    for (let y = 0; y < rect.height; y += blockSize) {
+      for (let x = 0; x < rect.width; x += blockSize) {
+        const normalizedY = y / rect.height;
+        
+        particles.push({
+          x: rect.left + x,
+          y: rect.top + y,
+          size: blockSize,
+          color: particleColor,
+          velocityX: (Math.random() - 0.5) * 2,
+          velocityY: 0,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 5,
+          opacity: 1,
+          crumbleDelay: normalizedY * crumbleDuration,
+          active: false,
+          gravity: 0.3 + Math.random() * 0.2
+        });
+      }
+    }
+    
+    console.log('✅ Создано fallback частиц:', particles.length);
+    startAnimation();
   }
 }
   
