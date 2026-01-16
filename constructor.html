@@ -763,10 +763,13 @@ const isTelegramApp = window.Telegram && window.Telegram.WebApp && typeof window
 const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
 if (isTelegramApp) {
-  downloadBtn.innerHTML = `
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/download.svg" style="width: 18px; height: 18px; filter: invert(81%) sepia(38%) saturate(464%) hue-rotate(72deg) brightness(98%) contrast(96%);">
-    Зберегти креслення
-  `;
+  // Загружаем изображение на временный хостинг (например, imgur, imgbb)
+  const response = await fetch(imageUrl);
+  const blob = await response.blob();
+  
+  // Или просто открываем прямую ссылку на изображение
+  window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent('Вітаю! Хочу замовити торт, ось моє ТЗ')}`);
+
 } else if (isMobile) {
   // Обычный мобильный браузер
   downloadBtn.innerHTML = `
