@@ -26,13 +26,13 @@ body {
 
 .tap-hint {
   position: fixed;  
-  top: 50%;         /* 👈 ЦЕНТР ЭКРАНА ПО ВЕРТИКАЛИ */
+  top: 60%;         /* 👈 ЦЕНТР ЭКРАНА ПО ВЕРТИКАЛИ */
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10001;   /* 👈 ВЫШЕ .loader (у него 9999) */
   pointer-events: none;
-  width: 60px;      /* 👈 УМЕНЬШИЛ ДО 60px */
-  height: 60px;
+  width: 10px;      /* 👈 УМЕНЬШИЛ ДО 60px */
+  height: 10px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -45,7 +45,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+  filter: none;   
   animation: pulse-hint 1.5s ease-in-out infinite;
   display: block;
 }
