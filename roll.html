@@ -47,6 +47,7 @@ body {
   object-fit: contain;
   filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
   animation: pulse-hint 1.5s ease-in-out infinite;
+  display: block; /* 👈 ДОБАВЬ ЭТУ СТРОКУ */
 }
 
 @keyframes pulse-hint {
@@ -56,7 +57,7 @@ body {
   }
   50% {
     opacity: 0.85;
-    transform: scale(1.1) translateY(-5px);
+    transform: scale(1.05) translateY(-3px);
   }
 }
 
