@@ -50,6 +50,24 @@ body {
   display: block;
 }
 
+  @keyframes pulse-hint {
+  0% {
+    transform: translateX(-20px) rotate(-10deg);
+  }
+  25% {
+    transform: translateX(0px) rotate(0deg); /* 👈 Центр без наклона */
+  }
+  50% {
+    transform: translateX(20px) rotate(10deg);
+  }
+  75% {
+    transform: translateX(0px) rotate(0deg); /* 👈 Центр без наклона */
+  }
+  100% {
+    transform: translateX(-20px) rotate(-10deg);
+  }
+}
+
 
 .loader-text {
   font-size: 18px;
