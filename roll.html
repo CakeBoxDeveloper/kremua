@@ -1832,6 +1832,7 @@ function promptManualCopy(text) {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo');
@@ -1848,109 +1849,88 @@ function disintegratePromo() {
   
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 ПОЛУЧАЕМ SVG-ПОДЛОЖКУ
-  const svgElement = document.querySelector('.promo-base-svg');
-  const svgRect = svgElement.getBoundingClientRect();
+  // 🎯 ОСТАНАВЛИВАЕМ ВСЕ АНИМАЦИИ И ПОЛУЧАЕМ ТОЧНЫЕ КООРДИНАТЫ
+  const promoCard = document.getElementById('promoCard');
+  const wrapper = document.querySelector('.promo-image-wrapper');
   
-  console.log('📐 SVG позиция:', svgRect);
+  // Временно отключаем анимацию
+  const originalAnimation = wrapper.style.animation;
+  wrapper.style.animation = 'none';
   
-  // 🎯 СОЗДАЁМ ВРЕМЕННЫЙ CANVAS
-  const tempCanvas = document.createElement('canvas');
-  const tempCtx = tempCanvas.getContext('2d');
-  tempCanvas.width = svgRect.width;
-  tempCanvas.height = svgRect.height;
+  // Форсируем reflow для применения изменений
+  void wrapper.offsetWidth;
   
-  // 🎯 ЗАГРУЖАЕМ SVG ЧЕРЕЗ FETCH
-  const svgUrl = svgElement.src;
+  // Теперь получаем точные координаты
+  const wrapperRect = wrapper.getBoundingClientRect();
   
-  fetch(svgUrl)
-    .then(response => response.text())
-    .then(svgText => {
-      console.log('✅ SVG загружен через fetch');
+  console.log('📐 Wrapper позиция:', {
+    left: wrapperRect.left,
+    top: wrapperRect.top,
+    width: wrapperRect.width,
+    height: wrapperRect.height
+  });
+  
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ ПО ФОРМЕ БИЛЕТА (используя пропорции)
+  // Билет имеет aspect-ratio: 2 / 1 и скругления по бокам
+  
+  for (let y = 0; y < wrapperRect.height; y += blockSize) {
+    for (let x = 0; x < wrapperRect.width; x += blockSize) {
+      // 🎯 ПРОВЕРЯЕМ, НАХОДИТСЯ ЛИ ТОЧКА ВНУТРИ ФОРМЫ БИЛЕТА
+      // Форма билета: прямоугольник с полукругами по бокам
       
-      // Создаём Blob из SVG текста
-      const blob = new Blob([svgText], { type: 'image/svg+xml;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
+      const centerY = wrapperRect.height / 2;
+      const radius = wrapperRect.height / 2;
       
-      const img = new Image();
-      img.onload = function() {
-        console.log('✅ SVG Image создан');
+      let isInsideShape = false;
+      
+      // Левый полукруг (вырез)
+      if (x < radius) {
+        const dx = x - 0;
+        const dy = y - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        isInsideShape = distance > radius * 0.9; // Немного внутрь от края
+      }
+      // Правый полукруг (вырез)
+      else if (x > wrapperRect.width - radius) {
+        const dx = x - wrapperRect.width;
+        const dy = y - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        isInsideShape = distance > radius * 0.9;
+      }
+      // Центральная часть
+      else {
+        isInsideShape = true;
+      }
+      
+      if (isInsideShape) {
+        const normalizedY = y / wrapperRect.height;
         
-        try {
-          tempCtx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
-          
-          const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-          const pixels = imageData.data;
-          
-          let particleCount = 0;
-          
-          // 🎯 СОЗДАЁМ ЧАСТИЦЫ ТОЛЬКО ГДЕ ЕСТЬ НЕПРОЗРАЧНЫЕ ПИКСЕЛИ
-          for (let y = 0; y < tempCanvas.height; y += blockSize) {
-            for (let x = 0; x < tempCanvas.width; x += blockSize) {
-              const index = (y * tempCanvas.width + x) * 4;
-              const alpha = pixels[index + 3];
-              
-              if (alpha > 50) {
-                particleCount++;
-                const normalizedY = y / tempCanvas.height;
-                
-                particles.push({
-                  x: svgRect.left + x,
-                  y: svgRect.top + y,
-                  size: blockSize,
-                  color: particleColor,
-                  velocityX: (Math.random() - 0.5) * 2,
-                  velocityY: 0,
-                  rotation: 0,
-                  rotationSpeed: (Math.random() - 0.5) * 5,
-                  opacity: 1,
-                  crumbleDelay: normalizedY * crumbleDuration,
-                  active: false,
-                  gravity: 0.3 + Math.random() * 0.2
-                });
-              }
-            }
-          }
-          
-          console.log('✅ Создано частиц:', particleCount);
-          URL.revokeObjectURL(url);
-          
-          if (particleCount === 0) {
-            console.warn('⚠️ Частицы не созданы, используем fallback');
-            fallbackDisintegrate();
-            return;
-          }
-          
-          startAnimation();
-          
-        } catch (error) {
-          console.error('❌ Ошибка при обработке:', error);
-          fallbackDisintegrate();
-        }
-      };
-      
-      img.onerror = function(e) {
-        console.error('❌ Ошибка создания Image:', e);
-        URL.revokeObjectURL(url);
-        fallbackDisintegrate();
-      };
-      
-      img.src = url;
-    })
-    .catch(error => {
-      console.error('❌ Ошибка fetch SVG:', error);
-      fallbackDisintegrate();
-    });
+        particles.push({
+          x: wrapperRect.left + x,
+          y: wrapperRect.top + y,
+          size: blockSize,
+          color: particleColor,
+          velocityX: (Math.random() - 0.5) * 2,
+          velocityY: 0,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 5,
+          opacity: 1,
+          crumbleDelay: normalizedY * crumbleDuration,
+          active: false,
+          gravity: 0.3 + Math.random() * 0.2
+        });
+      }
+    }
+  }
+  
+  console.log('✅ Создано частиц:', particles.length);
   
   // 🎯 ФУНКЦИЯ АНИМАЦИИ
   function startAnimation() {
-    console.log('🎬 Запускаем анимацию с', particles.length, 'частицами');
-    
     let startTime = Date.now();
-    const promoCard = document.getElementById('promoCard');
     
     function generateCrumbleMask(progress) {
-      const crumbleY = progress * svgRect.height;
+      const crumbleY = progress * wrapperRect.height;
       return `linear-gradient(
         to bottom,
         transparent 0%,
@@ -1966,6 +1946,7 @@ function disintegratePromo() {
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
+      // 🎯 ПРИМЕНЯЕМ МАСКУ КРОШЕНИЯ К КАРТОЧКЕ
       if (crumbleProgress < 1) {
         promoCard.style.maskImage = generateCrumbleMask(crumbleProgress);
         promoCard.style.webkitMaskImage = generateCrumbleMask(crumbleProgress);
@@ -1974,6 +1955,7 @@ function disintegratePromo() {
       }
       
       let allGone = true;
+      let activeCount = 0;
       
       particles.forEach(p => {
         if (!p.active && elapsed >= p.crumbleDelay) {
@@ -1983,6 +1965,7 @@ function disintegratePromo() {
         if (p.active) {
           if (p.y < canvas.height + 50 && p.opacity > 0) {
             allGone = false;
+            activeCount++;
             
             ctx.save();
             ctx.globalAlpha = p.opacity;
@@ -2014,6 +1997,9 @@ function disintegratePromo() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         document.getElementById('promoOverlay').classList.remove('active');
         
+        // Восстанавливаем анимацию wrapper
+        wrapper.style.animation = originalAnimation;
+        
         showFinalScreen();
         
         setTimeout(() => {
@@ -2028,37 +2014,7 @@ function disintegratePromo() {
     animate();
   }
   
-  // 🎯 ЗАПАСНАЯ АНИМАЦИЯ
-  function fallbackDisintegrate() {
-    console.log('🔄 Используем запасную анимацию (прямоугольник)');
-    
-    const promoCard = document.getElementById('promoCard');
-    const rect = promoCard.getBoundingClientRect();
-    
-    for (let y = 0; y < rect.height; y += blockSize) {
-      for (let x = 0; x < rect.width; x += blockSize) {
-        const normalizedY = y / rect.height;
-        
-        particles.push({
-          x: rect.left + x,
-          y: rect.top + y,
-          size: blockSize,
-          color: particleColor,
-          velocityX: (Math.random() - 0.5) * 2,
-          velocityY: 0,
-          rotation: 0,
-          rotationSpeed: (Math.random() - 0.5) * 5,
-          opacity: 1,
-          crumbleDelay: normalizedY * crumbleDuration,
-          active: false,
-          gravity: 0.3 + Math.random() * 0.2
-        });
-      }
-    }
-    
-    console.log('✅ Создано fallback частиц:', particles.length);
-    startAnimation();
-  }
+  startAnimation();
 }
   
 
