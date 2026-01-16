@@ -25,14 +25,14 @@ body {
  
 
 .tap-hint {
-  position: fixed;  /* 👈 ИЗМЕНИЛИ с absolute на fixed */
-  top: 60%;
+  position: fixed;  
+  top: 50%;         /* 👈 ЦЕНТР ЭКРАНА ПО ВЕРТИКАЛИ */
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 10000;
+  z-index: 10001;   /* 👈 ВЫШЕ .loader (у него 9999) */
   pointer-events: none;
-  width: 80px;      /* 👈 УВЕЛИЧИЛИ размер */
-  height: 80px;     /* 👈 УВЕЛИЧИЛИ размер */
+  width: 60px;      /* 👈 УМЕНЬШИЛ ДО 60px */
+  height: 60px;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -45,19 +45,17 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+  filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
   animation: pulse-hint 1.5s ease-in-out infinite;
   display: block;
 }
 
 @keyframes pulse-hint {
   0%, 100% {
-    opacity: 1;
     transform: scale(1) translateY(0);
   }
   50% {
-    opacity: 0.85;
-    transform: scale(1.05) translateY(-3px);
+    transform: scale(1.1) translateY(-5px);
   }
 }
 
@@ -988,15 +986,15 @@ mask-image: linear-gradient(
   
 <!-- 👇 НОВИЙ КОНТЕЙНЕР ДЛЯ WEBM + НАДПИСУ -->
 <div class="loader-content-wrapper">
-  <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
-</div>
-
-<!-- 👇 ВЫНЕСЛИ НАРУЖУ -->
-<div class="tap-hint" id="tapHint">
-  <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/People/Backhand%20Index%20Pointing%20Up.webp?raw=true" alt="Tap">
-</div>
+    <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
+  </div>
   
   <div class="loader-text">Генеруємо ваш промокод...</div>
+</div>
+
+<!-- 👇 ВЫНЕСИ СЮДА - ЗА ПРЕДЕЛЫ .loader -->
+<div class="tap-hint" id="tapHint">
+  <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/People/Backhand%20Index%20Pointing%20Up.webp?raw=true" alt="Tap">
 </div>
   
 
