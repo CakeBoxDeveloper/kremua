@@ -1825,6 +1825,7 @@ function promptManualCopy(text) {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   
@@ -1838,25 +1839,30 @@ function disintegratePromo() {
   const particles = [];
   const particleSize = 2;
   const totalDuration = 2000;
+  const burnDuration = 1500;
   
   const particleColor = selectedCoupon.particleColor;
   
   // 🎯 ЦЕНТР КАРТОЧКИ
   const centerX = rect.width / 2;
   const centerY = rect.height / 2;
+  const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
   
   for (let y = 0; y < rect.height; y += particleSize) {
     for (let x = 0; x < rect.width; x += particleSize) {
       if (Math.random() > 0.5) continue;
       
-      // 🎯 ВЕКТОР ОТ ЦЕНТРА К ЧАСТИЦЕ
+      // 🎯 РАССТОЯНИЕ ОТ ЦЕНТРА (для определения задержки горения)
       const dx = x - centerX;
       const dy = y - centerY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+      const distanceFromCenter = Math.sqrt(dx * dx + dy * dy);
+      const normalizedDistance = 1 - (distanceFromCenter / maxDistance); // 0 на краях, 1 в центре
+      
+      // 🎯 ВЕКТОР ОТ ЦЕНТРА К ЧАСТИЦЕ (направление разлёта)
       const angle = Math.atan2(dy, dx);
       
       // 🎯 СКОРОСТЬ В НАПРАВЛЕНИИ ОТ ЦЕНТРА
-      const baseSpeed = 3 + Math.random() * 2;
+      const baseSpeed = 2 + Math.random() * 1.5;
       
       particles.push({
         x: rect.left + x,
@@ -1865,42 +1871,68 @@ function disintegratePromo() {
         color: particleColor,
         speedX: Math.cos(angle) * baseSpeed,
         speedY: Math.sin(angle) * baseSpeed,
-        opacity: 1,
-        active: true
+        opacity: 0,
+        burnDelay: normalizedDistance * burnDuration, // Края горят первыми (задержка = 0)
+        active: false
       });
     }
   }
   
   let startTime = Date.now();
   
+  // 🎯 ГЕНЕРАТОР МАСКИ "ВЫГОРАНИЯ" ОТ КРАЁВ К ЦЕНТРУ
+  function generateBurnMask(progress) {
+    const burnRadius = (1 - progress) * maxDistance * 1.2;
+    return `radial-gradient(
+      circle at center,
+      black 0%,
+      black ${burnRadius}px,
+      rgba(0,0,0,0.5) ${burnRadius + 15}px,
+      transparent ${burnRadius + 30}px
+    )`;
+  }
+  
   function animate() {
     const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / 1500, 1);
+    const burnProgress = Math.min(elapsed / burnDuration, 1);
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 ПЛАВНОЕ РАСТВОРЕНИЕ КАРТОЧКИ
+    // 🎯 ПРИМЕНЯЕМ МАСКУ ВЫГОРАНИЯ К КАРТОЧКЕ
     const promoCard = document.getElementById('promoCard');
-    promoCard.style.opacity = 1 - progress;
+    if (burnProgress < 1) {
+      promoCard.style.maskImage = generateBurnMask(burnProgress);
+      promoCard.style.webkitMaskImage = generateBurnMask(burnProgress);
+    } else {
+      promoCard.style.opacity = '0';
+    }
     
     let allGone = true;
     
     particles.forEach(p => {
-      if (p.opacity > 0) {
+      // 🎯 АКТИВИРУЕМ ЧАСТИЦУ КОГДА ДОШЛО ЕЁ ВРЕМЯ
+      if (!p.active && elapsed >= p.burnDelay) {
+        p.active = true;
+        p.opacity = 1;
+      }
+      
+      if (p.active && p.opacity > 0) {
         allGone = false;
         
         ctx.globalAlpha = p.opacity;
         ctx.fillStyle = p.color;
         ctx.fillRect(p.x, p.y, p.size, p.size);
         
-        // 🎯 ДВИЖЕНИЕ С УСКОРЕНИЕМ
+        // 🎯 ДВИЖЕНИЕ С ЛЁГКИМ УСКОРЕНИЕМ
         p.x += p.speedX;
         p.y += p.speedY;
-        p.speedX *= 1.02; // Небольшое ускорение
-        p.speedY *= 1.02;
+        p.speedX *= 1.01;
+        p.speedY *= 1.01;
         
         // 🎯 ЗАТУХАНИЕ
-        p.opacity -= 0.012;
+        p.opacity -= 0.015;
+      } else if (!p.active) {
+        allGone = false;
       }
     });
     
@@ -1915,6 +1947,8 @@ function disintegratePromo() {
       showFinalScreen();
       
       setTimeout(() => {
+        promoCard.style.maskImage = 'none';
+        promoCard.style.webkitMaskImage = 'none';
         promoCard.style.opacity = '1';
       }, 500);
     }
@@ -1923,7 +1957,6 @@ function disintegratePromo() {
   canvas.style.display = 'block';
   animate();
 }
-
   
 
 // ===== ВЫБОР СЛУЧАЙНОГО КУПОНА =====
