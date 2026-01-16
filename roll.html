@@ -22,17 +22,17 @@ body {
   min-height: 100vh;
 }
 
-<!-- В секции <style> найди и ЗАМЕНИ стили для .tap-hint -->
+ 
 
 .tap-hint {
-  position: fixed;
+  position: fixed;  /* 👈 ИЗМЕНИЛИ с absolute на fixed */
   top: 60%;
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 10000;
   pointer-events: none;
-  width: 10px;
-  height: 10px;
+  width: 80px;      /* 👈 УВЕЛИЧИЛИ размер */
+  height: 80px;     /* 👈 УВЕЛИЧИЛИ размер */
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -44,12 +44,10 @@ body {
 .tap-hint img {
   width: 100%;
   height: 100%;
-  max-width: 100px;  /* 👈 ДОБАВЬ */
-  max-height: 100px; /* 👈 ДОБАВЬ */
   object-fit: contain;
   filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
   animation: pulse-hint 1.5s ease-in-out infinite;
-  display: block; /* 👈 ДОБАВЬ ЭТУ СТРОКУ */
+  display: block;
 }
 
 @keyframes pulse-hint {
@@ -864,21 +862,7 @@ mask-image: linear-gradient(
 <style>
 /* ... інші стилі ... */
 
-.tap-hint {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 20px;
-  font-weight: 700;
-  color: #17212b;  /* 👈 ЗМІНИЛИ: колір фону сторінки */
-  text-align: center;
-  z-index: 100;
-  pointer-events: none;
-  animation: pulse-glow 2s ease-in-out infinite;
-  white-space: nowrap;
-  padding: 0 20px;
-}
+ 
 
 /* ... інші стилі ... */
 
@@ -1002,13 +986,14 @@ mask-image: linear-gradient(
     </table>
   </div>
   
-  <!-- 👇 НОВИЙ КОНТЕЙНЕР ДЛЯ WEBM + НАДПИСУ -->
+<!-- 👇 НОВИЙ КОНТЕЙНЕР ДЛЯ WEBM + НАДПИСУ -->
 <div class="loader-content-wrapper">
   <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
-  
-  <div class="tap-hint" id="tapHint">
-    <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/People/Backhand%20Index%20Pointing%20Up.webp?raw=true" alt="Tap">
-  </div>
+</div>
+
+<!-- 👇 ВЫНЕСЛИ НАРУЖУ -->
+<div class="tap-hint" id="tapHint">
+  <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/People/Backhand%20Index%20Pointing%20Up.webp?raw=true" alt="Tap">
 </div>
   
   <div class="loader-text">Генеруємо ваш промокод...</div>
