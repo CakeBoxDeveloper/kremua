@@ -22,16 +22,23 @@ body {
   min-height: 100vh;
 }
 
+<!-- В секции <style> найди и ЗАМЕНИ стили для .tap-hint -->
+
 .tap-hint {
-  position: absolute;
-  top: 75px;  /* 👈 ИЗМЕНИЛИ: 150px высота WEBM / 2 = 75px */
+  position: fixed;
+  top: 60%;
   left: 50%;
-  transform: translateX(-50%);  /* 👈 ИЗМЕНИЛИ: только по X */
-  margin-top: -50px;  /* 👈 ДОБАВИЛИ: половина высоты иконки (100px / 2) */
-  z-index: 100;
+  transform: translate(-50%, -50%);
+  z-index: 10000;
   pointer-events: none;
   width: 100px;
   height: 100px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.tap-hint.visible {
+  opacity: 1;
 }
 
 .tap-hint img {
@@ -45,11 +52,11 @@ body {
 @keyframes pulse-hint {
   0%, 100% {
     opacity: 1;
-    transform: scale(1) translateY(0);  /* 👈 ИЗМЕНИЛИ: translateY в анимации */
+    transform: scale(1) translateY(0);
   }
   50% {
     opacity: 0.85;
-    transform: scale(1.1) translateY(-5px);  /* 👈 ИЗМЕНИЛИ: немного вверх */
+    transform: scale(1.1) translateY(-5px);
   }
 }
 
@@ -993,15 +1000,12 @@ mask-image: linear-gradient(
   </div>
   
   <!-- 👇 НОВИЙ КОНТЕЙНЕР ДЛЯ WEBM + НАДПИСУ -->
- <div class="loader-content-wrapper">
+<div class="loader-content-wrapper">
   <img src="https://github.com/cakeboxdeveloper/kremua/blob/main/RollingAnim.webp?raw=true" alt="Рулетка">
-
-   
-  <!--div class="tap-hint">
+  
+  <div class="tap-hint" id="tapHint">
     <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/People/Backhand%20Index%20Pointing%20Up.webp?raw=true" alt="Tap">
-  </div!-->
-
-   
+  </div>
 </div>
   
   <div class="loader-text">Генеруємо ваш промокод...</div>
@@ -2173,6 +2177,7 @@ window.addEventListener('load', async () => {
   
   // ===== СЦЕНАРИЙ 3: ВАЛИДНЫЙ БИЛЕТ =====
  // ===== СЦЕНАРИЙ 3: ВАЛИДНЫЙ БИЛЕТ =====
+ // ===== СЦЕНАРИЙ 3: ВАЛИДНЫЙ БИЛЕТ =====
   if (ticketActivated === true) {
     await waitForModalClose();
     // Звук запустится в closeTicketModal после нажатия "Крутити барабан!"
@@ -2184,17 +2189,25 @@ window.addEventListener('load', async () => {
   // ===== СЦЕНАРИЙ 4: РУЛЕТКА С ТАПОМ =====
   loader.classList.add('visible');
   
+  // 🎯 ПОКАЗЫВАЕМ УКАЗАТЕЛЬ ЧЕРЕЗ 0.5 СЕКУНДЫ
+  setTimeout(() => {
+    const tapHint = document.getElementById('tapHint');
+    if (tapHint) {
+      tapHint.classList.add('visible');
+    }
+  }, 500);
+  
   // 🎯 ОБРАБОТЧИК ТАПА
-  function handleTap() {
+ function handleTap() {
     if (rouletteTapped) return;
     rouletteTapped = true;
     
     console.log('👆 Тап по рулетке!');
     
-    // Скрываем надпись
+    // Скрываем указатель
+    const tapHint = document.getElementById('tapHint');
     if (tapHint) {
-      tapHint.style.opacity = '0';
-      tapHint.style.transform = 'translate(-50%, -50%) scale(0.8)';
+      tapHint.classList.remove('visible');
     }
     
     // Убираем обработчик
