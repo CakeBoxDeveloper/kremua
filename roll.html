@@ -1828,6 +1828,7 @@ function promptManualCopy(text) {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   
@@ -1836,40 +1837,40 @@ function disintegratePromo() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   
-  const rect = document.getElementById('promoCard').getBoundingClientRect();
+  const promoCard = document.getElementById('promoCard');
+  const rect = promoCard.getBoundingClientRect();
   
   const particles = [];
-  const blockSize = 4; // 🎯 УМЕНЬШИЛИ В ДВА РАЗА (было 8)
+  const blockSize = 2; // 🎯 УМЕНЬШИЛИ ЕЩЁ В ДВА РАЗА (было 4)
   const totalDuration = 3000;
   const crumbleDuration = 1500;
   
   const particleColor = selectedCoupon.particleColor;
   
+  // 🎯 ВАЖНО: используем getBoundingClientRect() для точных координат
   for (let y = 0; y < rect.height; y += blockSize) {
     for (let x = 0; x < rect.width; x += blockSize) {
-      // 🎯 ЗАДЕРЖКА ЗАВИСИТ ОТ ВЫСОТЫ (Y координаты)
-      const normalizedY = y / rect.height; // 0 сверху, 1 снизу
+      const normalizedY = y / rect.height;
       
       particles.push({
-        x: rect.left + x,
-        y: rect.top + y,
+        x: rect.left + x, // 🎯 rect.left дает точную позицию на экране
+        y: rect.top + y,  // 🎯 rect.top дает точную позицию на экране
         size: blockSize,
         color: particleColor,
-        velocityX: (Math.random() - 0.5) * 2, // Небольшое горизонтальное отклонение
-        velocityY: 0, // Начальная вертикальная скорость
+        velocityX: (Math.random() - 0.5) * 2,
+        velocityY: 0,
         rotation: 0,
-        rotationSpeed: (Math.random() - 0.5) * 5, // Случайное вращение
+        rotationSpeed: (Math.random() - 0.5) * 5,
         opacity: 1,
-        crumbleDelay: normalizedY * crumbleDuration, // 🎯 ВЕРХ КРОШИТСЯ ПЕРВЫМ
+        crumbleDelay: normalizedY * crumbleDuration,
         active: false,
-        gravity: 0.3 + Math.random() * 0.2 // Случайная гравитация
+        gravity: 0.3 + Math.random() * 0.2
       });
     }
   }
   
   let startTime = Date.now();
   
-  // 🎯 ГЕНЕРАТОР МАСКИ "КРОШЕНИЯ" СВЕРХУ ВНИЗ
   function generateCrumbleMask(progress) {
     const crumbleY = progress * rect.height;
     return `linear-gradient(
@@ -1887,8 +1888,7 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 ПРИМЕНЯЕМ МАСКУ КРОШЕНИЯ К КАРТОЧКЕ
-    const promoCard = document.getElementById('promoCard');
+    // 🎯 ПРИМЕНЯЕМ МАСКУ КРОШЕНИЯ
     if (crumbleProgress < 1) {
       promoCard.style.maskImage = generateCrumbleMask(crumbleProgress);
       promoCard.style.webkitMaskImage = generateCrumbleMask(crumbleProgress);
@@ -1899,7 +1899,6 @@ function disintegratePromo() {
     let allGone = true;
     
     particles.forEach(p => {
-      // 🎯 АКТИВИРУЕМ БЛОК КОГДА ДОШЛО ЕГО ВРЕМЯ
       if (!p.active && elapsed >= p.crumbleDelay) {
         p.active = true;
       }
@@ -1916,13 +1915,11 @@ function disintegratePromo() {
           ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
           ctx.restore();
           
-          // 🎯 ФИЗИКА ПАДЕНИЯ
-          p.velocityY += p.gravity; // Гравитация
+          p.velocityY += p.gravity;
           p.x += p.velocityX;
           p.y += p.velocityY;
           p.rotation += p.rotationSpeed;
           
-          // 🎯 ЗАТУХАНИЕ ПОСЛЕ ПАДЕНИЯ ЗА ЭКРАН
           if (p.y > canvas.height - 100) {
             p.opacity -= 0.02;
           }
@@ -1939,7 +1936,6 @@ function disintegratePromo() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       document.getElementById('promoOverlay').classList.remove('active');
       
-      // Показываем финальный экран с таймером
       showFinalScreen();
       
       setTimeout(() => {
