@@ -217,11 +217,11 @@ body {
   border-radius: 6px;
   padding: var(--border-width);
   background: conic-gradient(
-    from 0deg at 50% 50%,
-    #6ab2f2 0%,
-    #6ab2f2 calc(100% - var(--burn-progress, 0%)),
-    transparent calc(100% - var(--burn-progress, 0%)),
-    transparent 100%
+    from -90deg at 50% 50%,  /* 👈 ИЗМЕНИЛИ: начало с левого верхнего угла */
+    transparent 0%,
+    transparent var(--burn-progress, 0%),
+    #6ab2f2 var(--burn-progress, 0%),
+    #6ab2f2 100%
   );
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
@@ -229,6 +229,30 @@ body {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
+}
+
+  .my-coupons-container::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #ff6b35 0%, transparent 70%);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 10px #ff6b35,
+    0 0 20px #f7a632;
+  animation: sparkle 0.3s infinite;
+  
+  /* Позиционирование на конце фитиля */
+  left: calc(50% + (200px * cos((var(--burn-progress, 0%) * 3.6deg) - 90deg)));
+  top: calc(50% + (200px * sin((var(--burn-progress, 0%) * 3.6deg) - 90deg)));
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.3); }
 }
   
 
@@ -253,6 +277,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative; /* 👈 ДОБАВЬ */
+  z-index: 1; /* 👈 ДОБАВЬ */
 }
   .my-coupon-item.copied {
   background: var(--coupon-color); /* Цвет промокода становится фоном */
@@ -1720,7 +1746,7 @@ function showFinalScreen() {
     startCountdown();
     initWinnersWidget();
     animateLotteryCounter();
-    setTimeout(() => updateMyCouponsList(), 100); // Задержка для синхронизации
+    updateMyCouponsList();
     startCouponTimer(); // 👈 ДОБАВЬТЕ ЭТУ СТРОКУ
   }, 500);
 }
@@ -2104,7 +2130,11 @@ let startTime = Date.now();
      
       
       // Показываем финальный экран
-      showFinalScreen();
+      // Проверяем, не показан ли уже финальный экран
+const finalScreen = document.getElementById('finalScreen');
+if (!finalScreen.classList.contains('visible')) {
+  showFinalScreen();
+}
     }
   }
   
@@ -2570,14 +2600,14 @@ function updateMyCouponsList() {
   // 6. УБРАЛИ .reverse() и убрали discount из HTML
 container.innerHTML = coupons
   .map(coupon => {
-    const color = coupon.color || couponColors[coupon.discount] || '#6ab2f2'; // 👈 ИЗМЕНИЛИ: сначала берём сохранённый цвет
+    const color = coupon.color || couponColors[coupon.discount] || '#6ab2f2';
     return `
-  <div class="my-coupon-item" 
-       style="border-color: ${color}; --coupon-color: ${color};" 
-       onclick="copyCouponFromList('${coupon.code}', '${color}', this)">
-    <span class="my-coupon-code" style="color: ${color};">${coupon.code}</span>
-  </div>
-`;
+      <div class="my-coupon-item" 
+           style="border-color: ${color}; --coupon-color: ${color};" 
+           onclick="copyCouponFromList('${coupon.code}', '${color}', this)">
+        <span class="my-coupon-code" style="color: ${color};">${coupon.code}</span>
+      </div>
+    `;
   })
   .join('');
   
