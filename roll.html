@@ -1958,27 +1958,27 @@ function disintegratePromo() {
   
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 БЕРЁМ КООРДИНАТЫ ПРЯМО ОТ SVG (визуально видимого элемента)
-  const svgElement = document.querySelector('.promo-base-svg');
-  const svgRect = svgElement.getBoundingClientRect();
+  const wrapper = document.querySelector('.promo-image-wrapper');
+  const wrapperRect = wrapper.getBoundingClientRect();
   
-  console.log('📐 SVG координаты:', {
-    left: svgRect.left,
-    top: svgRect.top,
-    width: svgRect.width,
-    height: svgRect.height,
-    right: svgRect.right,
-    bottom: svgRect.bottom
+  // 🎯 КАЛИБРОВКА СМЕЩЕНИЯ - настройте эти значения
+  const offsetX = 20; // 👈 УВЕЛИЧЬТЕ/УМЕНЬШИТЕ для сдвига вправо/влево
+  const offsetY = 15; // 👈 УВЕЛИЧЬТЕ/УМЕНЬШИТЕ для сдвига вниз/вверх
+  
+  console.log('📐 Wrapper + offset:', {
+    originalLeft: wrapperRect.left,
+    originalTop: wrapperRect.top,
+    correctedLeft: wrapperRect.left + offsetX,
+    correctedTop: wrapperRect.top + offsetY
   });
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ ПО КООРДИНАТАМ SVG
-  for (let y = 0; y < svgRect.height; y += blockSize) {
-    for (let x = 0; x < svgRect.width; x += blockSize) {
-      const normalizedY = y / svgRect.height;
+  for (let y = 0; y < wrapperRect.height; y += blockSize) {
+    for (let x = 0; x < wrapperRect.width; x += blockSize) {
+      const normalizedY = y / wrapperRect.height;
       
       particles.push({
-        x: svgRect.left + x,
-        y: svgRect.top + y,
+        x: wrapperRect.left + x + offsetX, // 👈 ДОБАВЛЯЕМ СМЕЩЕНИЕ
+        y: wrapperRect.top + y + offsetY,  // 👈 ДОБАВЛЯЕМ СМЕЩЕНИЕ
         initialY: y,
         size: blockSize,
         color: particleColor,
@@ -2004,14 +2004,7 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 ОТЛАДКА: рисуем рамку вокруг SVG каждый кадр
-    const currentSvgRect = svgElement.getBoundingClientRect();
-    ctx.strokeStyle = '#00ff00';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(currentSvgRect.left, currentSvgRect.top, currentSvgRect.width, currentSvgRect.height);
-    
     if (crumbleProgress >= 1) {
-      const wrapper = document.querySelector('.promo-image-wrapper');
       wrapper.style.opacity = '0';
       wrapper.style.transition = 'opacity 0.3s ease';
     }
