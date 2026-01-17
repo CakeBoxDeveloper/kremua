@@ -1961,18 +1961,25 @@ function disintegratePromo() {
   
   const wrapper = document.querySelector('.promo-image-wrapper');
   
-  // 🎯 КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: ждём следующего кадра перед получением координат
-  requestAnimationFrame(() => {
+  // 🎯 КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: ждём 100мс перед получением координат
+  setTimeout(() => {
     const wrapperRect = wrapper.getBoundingClientRect();
     
-    console.log('📐 Wrapper (после рендера):', {
-      left: wrapperRect.left,
-      top: wrapperRect.top,
-      width: wrapperRect.width,
-      height: wrapperRect.height
+    // 🎯 ОТЛАДКА: выводим все возможные смещения
+    const promoCard = document.getElementById('promoCard');
+    const promoCardRect = promoCard.getBoundingClientRect();
+    const overlay = document.getElementById('promoOverlay');
+    const overlayRect = overlay.getBoundingClientRect();
+    
+    console.log('📐 Координаты элементов:', {
+      wrapper: { left: wrapperRect.left, top: wrapperRect.top, width: wrapperRect.width, height: wrapperRect.height },
+      promoCard: { left: promoCardRect.left, top: promoCardRect.top },
+      overlay: { left: overlayRect.left, top: overlayRect.top },
+      windowScroll: { x: window.scrollX, y: window.scrollY },
+      canvasSize: { width: canvas.width, height: canvas.height }
     });
     
-    // 🎯 СОЗДАЁМ ЧАСТИЦЫ ПОСЛЕ ПОЛУЧЕНИЯ ТОЧНЫХ КООРДИНАТ
+    // 🎯 СОЗДАЁМ ЧАСТИЦЫ С ТОЧНЫМИ КООРДИНАТАМИ
     for (let y = 0; y < wrapperRect.height; y += blockSize) {
       for (let x = 0; x < wrapperRect.width; x += blockSize) {
         const normalizedY = y / wrapperRect.height;
@@ -1996,6 +2003,7 @@ function disintegratePromo() {
     }
     
     console.log('✅ Создано частиц:', particles.length);
+    console.log('🎯 Первые 3 частицы:', particles.slice(0, 3));
     
     let startTime = Date.now();
     
@@ -2004,6 +2012,12 @@ function disintegratePromo() {
       const crumbleProgress = Math.min(elapsed / crumbleDuration, 1);
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // 🎯 ВИЗУАЛЬНАЯ ОТЛАДКА - рисуем рамку КАЖДЫЙ КАДР
+      const currentRect = wrapper.getBoundingClientRect();
+      ctx.strokeStyle = '#ff0000';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(currentRect.left, currentRect.top, currentRect.width, currentRect.height);
       
       if (crumbleProgress >= 1) {
         wrapper.style.opacity = '0';
@@ -2062,7 +2076,8 @@ function disintegratePromo() {
     
     canvas.style.display = 'block';
     animate();
-  });
+    
+  }, 100); // 👈 Задержка 100мс
 }
   
   
