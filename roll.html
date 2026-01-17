@@ -1958,128 +1958,114 @@ function disintegratePromo() {
   
   const particleColor = selectedCoupon.particleColor;
   
-  const wrapper = document.querySelector('.promo-image-wrapper');
-  const wrapperRect = wrapper.getBoundingClientRect();
+  // 🎯 БЕРЁМ КООРДИНАТЫ ПРЯМО ОТ SVG (визуально видимого элемента)
+  const svgElement = document.querySelector('.promo-base-svg');
+  const svgRect = svgElement.getBoundingClientRect();
   
-  // 🎯 НОВОЕ РЕШЕНИЕ: создаём маркер для точных координат
-  const marker = document.createElement('div');
-  marker.style.cssText = `
-    position: fixed;
-    left: ${wrapperRect.left}px;
-    top: ${wrapperRect.top}px;
-    width: ${wrapperRect.width}px;
-    height: ${wrapperRect.height}px;
-    pointer-events: none;
-    z-index: 99999;
-    border: 2px solid lime;
-  `;
-  document.body.appendChild(marker);
+  console.log('📐 SVG координаты:', {
+    left: svgRect.left,
+    top: svgRect.top,
+    width: svgRect.width,
+    height: svgRect.height,
+    right: svgRect.right,
+    bottom: svgRect.bottom
+  });
   
-  setTimeout(() => {
-    const markerRect = marker.getBoundingClientRect();
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ ПО КООРДИНАТАМ SVG
+  for (let y = 0; y < svgRect.height; y += blockSize) {
+    for (let x = 0; x < svgRect.width; x += blockSize) {
+      const normalizedY = y / svgRect.height;
+      
+      particles.push({
+        x: svgRect.left + x,
+        y: svgRect.top + y,
+        initialY: y,
+        size: blockSize,
+        color: particleColor,
+        velocityX: (Math.random() - 0.5) * 2,
+        velocityY: 0,
+        rotation: 0,
+        rotationSpeed: (Math.random() - 0.5) * 5,
+        opacity: 1,
+        crumbleDelay: normalizedY * crumbleDuration,
+        active: false,
+        gravity: 0.3 + Math.random() * 0.2
+      });
+    }
+  }
+  
+  console.log('✅ Создано частиц:', particles.length);
+  
+  let startTime = Date.now();
+  
+  function animate() {
+    const elapsed = Date.now() - startTime;
+    const crumbleProgress = Math.min(elapsed / crumbleDuration, 1);
     
-    console.log('📐 Сравнение координат:', {
-      wrapper: { left: wrapperRect.left, top: wrapperRect.top },
-      marker: { left: markerRect.left, top: markerRect.top },
-      difference: { 
-        x: markerRect.left - wrapperRect.left, 
-        y: markerRect.top - wrapperRect.top 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 🎯 ОТЛАДКА: рисуем рамку вокруг SVG каждый кадр
+    const currentSvgRect = svgElement.getBoundingClientRect();
+    ctx.strokeStyle = '#00ff00';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(currentSvgRect.left, currentSvgRect.top, currentSvgRect.width, currentSvgRect.height);
+    
+    if (crumbleProgress >= 1) {
+      const wrapper = document.querySelector('.promo-image-wrapper');
+      wrapper.style.opacity = '0';
+      wrapper.style.transition = 'opacity 0.3s ease';
+    }
+    
+    let allGone = true;
+    
+    particles.forEach(p => {
+      if (!p.active && elapsed >= p.crumbleDelay) {
+        p.active = true;
+      }
+      
+      if (p.active) {
+        if (p.y < canvas.height + 50 && p.opacity > 0) {
+          allGone = false;
+          
+          ctx.save();
+          ctx.globalAlpha = p.opacity;
+          ctx.translate(p.x + p.size / 2, p.y + p.size / 2);
+          ctx.rotate(p.rotation * Math.PI / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+          
+          p.velocityY += p.gravity;
+          p.x += p.velocityX;
+          p.y += p.velocityY;
+          p.rotation += p.rotationSpeed;
+          
+          if (p.y > canvas.height - 100) {
+            p.opacity -= 0.02;
+          }
+        }
+      } else {
+        allGone = false;
       }
     });
     
-    // 🎯 ИСПОЛЬЗУЕМ КООРДИНАТЫ МАРКЕРА
-    for (let y = 0; y < markerRect.height; y += blockSize) {
-      for (let x = 0; x < markerRect.width; x += blockSize) {
-        const normalizedY = y / markerRect.height;
-        
-        particles.push({
-          x: markerRect.left + x,
-          y: markerRect.top + y,
-          initialY: y,
-          size: blockSize,
-          color: particleColor,
-          velocityX: (Math.random() - 0.5) * 2,
-          velocityY: 0,
-          rotation: 0,
-          rotationSpeed: (Math.random() - 0.5) * 5,
-          opacity: 1,
-          crumbleDelay: normalizedY * crumbleDuration,
-          active: false,
-          gravity: 0.3 + Math.random() * 0.2
-        });
-      }
-    }
-    
-    console.log('✅ Создано частиц:', particles.length);
-    
-    // Удаляем маркер
-    marker.remove();
-    
-    let startTime = Date.now();
-    
-    function animate() {
-      const elapsed = Date.now() - startTime;
-      const crumbleProgress = Math.min(elapsed / crumbleDuration, 1);
-      
+    if (!allGone || elapsed < totalDuration) {
+      requestAnimationFrame(animate);
+    } else {
+      console.log('✅ Анимация завершена');
+      canvas.style.display = 'none';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      document.getElementById('promoOverlay').classList.remove('active');
       
-      if (crumbleProgress >= 1) {
-        wrapper.style.opacity = '0';
-        wrapper.style.transition = 'opacity 0.3s ease';
-      }
-      
-      let allGone = true;
-      
-      particles.forEach(p => {
-        if (!p.active && elapsed >= p.crumbleDelay) {
-          p.active = true;
-        }
-        
-        if (p.active) {
-          if (p.y < canvas.height + 50 && p.opacity > 0) {
-            allGone = false;
-            
-            ctx.save();
-            ctx.globalAlpha = p.opacity;
-            ctx.translate(p.x + p.size / 2, p.y + p.size / 2);
-            ctx.rotate(p.rotation * Math.PI / 180);
-            ctx.fillStyle = p.color;
-            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-            ctx.restore();
-            
-            p.velocityY += p.gravity;
-            p.x += p.velocityX;
-            p.y += p.velocityY;
-            p.rotation += p.rotationSpeed;
-            
-            if (p.y > canvas.height - 100) {
-              p.opacity -= 0.02;
-            }
-          }
-        } else {
-          allGone = false;
-        }
-      });
-      
-      if (!allGone || elapsed < totalDuration) {
-        requestAnimationFrame(animate);
-      } else {
-        console.log('✅ Анимация завершена');
-        canvas.style.display = 'none';
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        document.getElementById('promoOverlay').classList.remove('active');
-        
-        const finalScreen = document.getElementById('finalScreen');
-        if (!finalScreen.classList.contains('visible')) {
-          showFinalScreen();
-        }
+      const finalScreen = document.getElementById('finalScreen');
+      if (!finalScreen.classList.contains('visible')) {
+        showFinalScreen();
       }
     }
-    
-    canvas.style.display = 'block';
-    animate();
-    
-  }, 50);
+  }
+  
+  canvas.style.display = 'block';
+  animate();
 }
   
   
