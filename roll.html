@@ -7,7 +7,7 @@
 <link rel="icon" href="https://github.com/cakeboxdeveloper/kremua/raw/refs/heads/main/AIcon.ico" type="image/x-icon">
 
 <style>
-body {   
+body {  
   margin: 0; 
   font-family: Arial, sans-serif; 
   background: #17212b;
@@ -1352,7 +1352,7 @@ function preloadImages() {
  
   
 let selectedCoupon = null;
-let promoDisintegrated = false = false;
+let promoDisintegrated = false;
 let promoTimer = null; // 👈 Убедись что эта строка есть
 let countdownInterval = null;
   let rouletteSound = null;
@@ -1935,7 +1935,7 @@ function showCopyFeedback() {
   }
   
   promoCodeEl.textContent = "промокод скопійовано ✓";
-  setTimeout(() => egratePromo(), 1200);
+  setTimeout(() => disintegratePromo(), 1200);
 }
 
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
@@ -1952,7 +1952,7 @@ function disintegratePromo() {
   canvas.height = window.innerHeight;
   
   const particles = [];
-  const blockSize = 2; // 👈 Маленькие частицы
+  const blockSize = 4;
   const totalDuration = 3000;
   const crumbleDuration = 1500;
   
@@ -1961,36 +1961,35 @@ function disintegratePromo() {
   const wrapper = document.querySelector('.promo-image-wrapper');
   const wrapperRect = wrapper.getBoundingClientRect();
   
-  console.log('📐 Wrapper:', {
-    left: wrapperRect.left,
-    top: wrapperRect.top,
-    width: wrapperRect.width,
-    height: wrapperRect.height
+  // 🎯 КАЛИБРОВКА СМЕЩЕНИЯ - настройте эти значения
+  const offsetX = 40; // 👈 УВЕЛИЧЬТЕ/УМЕНЬШИТЕ для сдвига вправо/влево
+  const offsetY = 5; // 👈 УВЕЛИЧЬТЕ/УМЕНЬШИТЕ для сдвига вниз/вверх
+  
+  console.log('📐 Wrapper + offset:', {
+    originalLeft: wrapperRect.left,
+    originalTop: wrapperRect.top,
+    correctedLeft: wrapperRect.left + offsetX,
+    correctedTop: wrapperRect.top + offsetY
   });
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С ТУРБУЛЕНТНОСТЬЮ
   for (let y = 0; y < wrapperRect.height; y += blockSize) {
     for (let x = 0; x < wrapperRect.width; x += blockSize) {
       const normalizedY = y / wrapperRect.height;
       
-      // Турбулентность
-      const turbulenceX = (Math.random() - 0.5) * blockSize * 2;
-      const turbulenceY = (Math.random() - 0.5) * blockSize * 2;
-      
       particles.push({
-        x: wrapperRect.left + x + turbulenceX,
-        y: wrapperRect.top + y + turbulenceY,
+        x: wrapperRect.left + x + offsetX, // 👈 ДОБАВЛЯЕМ СМЕЩЕНИЕ
+        y: wrapperRect.top + y + offsetY,  // 👈 ДОБАВЛЯЕМ СМЕЩЕНИЕ
         initialY: y,
-        size: blockSize + Math.random() * blockSize,
+        size: blockSize,
         color: particleColor,
-        velocityX: (Math.random() - 0.5) * 4,
-        velocityY: (Math.random() - 0.5) * 2,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 10,
+        velocityX: (Math.random() - 0.5) * 2,
+        velocityY: 0,
+        rotation: 0,
+        rotationSpeed: (Math.random() - 0.5) * 5,
         opacity: 1,
-        crumbleDelay: normalizedY * crumbleDuration + (Math.random() - 0.5) * 200,
+        crumbleDelay: normalizedY * crumbleDuration,
         active: false,
-        gravity: 0.3 + Math.random() * 0.4
+        gravity: 0.3 + Math.random() * 0.2
       });
     }
   }
@@ -2005,10 +2004,10 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 МАСКА КРОШЕНИЯ (сверху вниз)
-    const maskY = crumbleProgress * 100;
-    wrapper.style.maskImage = `linear-gradient(to bottom, transparent 0%, transparent ${maskY}%, black ${maskY}%, black 100%)`;
-    wrapper.style.webkitMaskImage = `linear-gradient(to bottom, transparent 0%, transparent ${maskY}%, black ${maskY}%, black 100%)`;
+    if (crumbleProgress >= 1) {
+      wrapper.style.opacity = '0';
+      wrapper.style.transition = 'opacity 0.3s ease';
+    }
     
     let allGone = true;
     
