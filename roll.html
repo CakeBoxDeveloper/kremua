@@ -1960,6 +1960,7 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
+// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo с маской и частицами');
@@ -1971,20 +1972,27 @@ function disintegratePromo() {
   canvas.style.display = 'block';
   
   const wrapper = document.querySelector('.promo-image-wrapper');
+  const baseSvg = document.querySelector('.promo-base-svg');
+  
+  // 🎯 ИСПОЛЬЗУЕМ КООРДИНАТЫ SVG ВМЕСТО WRAPPER
   const wrapperRect = wrapper.getBoundingClientRect();
+  const svgRect = baseSvg.getBoundingClientRect();
+  
+  console.log('📐 WrapperRect:', wrapperRect);
+  console.log('📐 SVG Rect:', svgRect);
   
   const particles = [];
   const blockSize = 4;
-  const totalDuration = 2000; // 2 секунды на полное стирание
+  const totalDuration = 2000;
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ ДЛЯ ВСЕЙ ОБЛАСТИ КУПОНА
-  for (let y = 0; y < wrapperRect.height; y += blockSize) {
-    for (let x = 0; x < wrapperRect.width; x += blockSize) {
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ НА ОСНОВЕ SVG (ВИДИМОЙ ЧАСТИ)
+  for (let y = 0; y < svgRect.height; y += blockSize) {
+    for (let x = 0; x < svgRect.width; x += blockSize) {
       particles.push({
-        x: wrapperRect.left + x,
-        y: wrapperRect.top + y,
-        relativeY: y, // Относительная позиция в купоне
+        x: svgRect.left + x,
+        y: svgRect.top + y,
+        relativeY: y, // Относительная позиция
         size: blockSize,
         color: particleColor,
         velocityX: (Math.random() - 0.5) * 3,
@@ -2008,7 +2016,7 @@ function disintegratePromo() {
     
     // 🎯 ОБНОВЛЯЕМ МАСКУ (стирание сверху вниз)
     const erasedPercent = progress * 100;
-    const erasedHeight = (progress * wrapperRect.height); // В пикселях
+    const erasedHeight = (progress * svgRect.height); // 👈 ИСПОЛЬЗУЕМ SVG HEIGHT
     
     wrapper.style.maskImage = `linear-gradient(
       to bottom,
@@ -2028,7 +2036,6 @@ function disintegratePromo() {
     
     // 🎯 АКТИВИРУЕМ ЧАСТИЦЫ ПО МЕРЕ СТИРАНИЯ
     particles.forEach(p => {
-      // Активируем частицу когда маска дошла до её позиции
       if (!p.active && p.relativeY <= erasedHeight) {
         p.active = true;
       }
