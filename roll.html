@@ -1017,10 +1017,10 @@ mask-image: linear-gradient(
         <tr class="green-coupon">
           <td>
             <div class="coupon-name">
-         <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100" height="50" fill="none" stroke="#6af27d" stroke-width="4" rx="4"/>
-  <circle cx="0" cy="25" r="8" fill="none" stroke="#6af27d" stroke-width="4"/>
-  <circle cx="100" cy="25" r="8" fill="none" stroke="#6af27d" stroke-width="4"/>
+    <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="#005330" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="#1d3a22"/>
+  <circle cx="100" cy="25" r="8" fill="#1d3a22"/>
 </svg>
               <span>Зелений купон</span>
             </div>
@@ -1032,10 +1032,10 @@ mask-image: linear-gradient(
         <tr class="yellow-coupon">
           <td>
             <div class="coupon-name">
-         <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100" height="50" fill="none" stroke="#f7a632" stroke-width="4" rx="4"/>
-  <circle cx="0" cy="25" r="8" fill="none" stroke="#f7a632" stroke-width="4"/>
-  <circle cx="100" cy="25" r="8" fill="none" stroke="#f7a632" stroke-width="4"/>
+   <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="#af8246" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="#443621"/>
+  <circle cx="100" cy="25" r="8" fill="#443621"/>
 </svg>
               <span>Жовтий купон</span>
             </div>
@@ -1047,10 +1047,10 @@ mask-image: linear-gradient(
         <tr class="blue-coupon">
           <td>
             <div class="coupon-name">
-     <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100" height="50" fill="none" stroke="#6ab2f2" stroke-width="4" rx="4"/>
-  <circle cx="0" cy="25" r="8" fill="none" stroke="#6ab2f2" stroke-width="4"/>
-  <circle cx="100" cy="25" r="8" fill="none" stroke="#6ab2f2" stroke-width="4"/>
+ <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="#5c94cc" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="#1d2b3a"/>
+  <circle cx="100" cy="25" r="8" fill="#1d2b3a"/>
 </svg>
               <span>Синій купон</span>
             </div>
@@ -1062,10 +1062,10 @@ mask-image: linear-gradient(
         <tr class="red-coupon">
           <td>
             <div class="coupon-name">
-     <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-  <rect width="100" height="50" fill="none" stroke="#f27db0" stroke-width="4" rx="4"/>
-  <circle cx="0" cy="25" r="8" fill="none" stroke="#f27db0" stroke-width="4"/>
-  <circle cx="100" cy="25" r="8" fill="none" stroke="#f27db0" stroke-width="4"/>
+<svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="#6d2121" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="#3a1d1d"/>
+  <circle cx="100" cy="25" r="8" fill="#3a1d1d"/>
 </svg>
               <span>Червоний купон</span>
             </div>
@@ -1196,9 +1196,10 @@ mask-image: linear-gradient(
   <source src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Trig3.mp3" type="audio/mpeg">
 </audio>
 
-<audio id="rouletteSound" preload="auto">
+<audio id="rouletteSound" loop preload="auto">
   <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/RouletteLood.mp3" type="audio/mpeg">
 </audio>
+  
 <audio id="winSound" preload="auto">
   <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/Win.mp3" type="audio/mpeg">
 </audio>
@@ -1656,7 +1657,7 @@ shopBtn.onclick = function(e) {
 function startRouletteSound() {
   rouletteSound = document.getElementById('rouletteSound');
   if (rouletteSound) {
-    rouletteSound.loop = true; // 👈 ОСТАВЛЯЕМ loop, но звук должен быть длиннее
+    rouletteSound.loop = false; // 👈 ОСТАВЛЯЕМ loop, но звук должен быть длиннее
     rouletteSound.currentTime = 0;
     rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
     console.log('🔊 Звук рулетки запущен (loop)');
@@ -1944,16 +1945,15 @@ function disintegratePromo() {
   const particleColor = selectedCoupon.particleColor;
   
   // 🎯 ПОЛУЧАЕМ WRAPPER И ОСТАНАВЛИВАЕМ ЕГО АНИМАЦИЮ
-  const wrapper = document.querySelector('.promo-image-wrapper');
+    const wrapper = document.querySelector('.promo-image-wrapper');
   const promoCard = document.getElementById('promoCard');
   
   // Останавливаем анимацию качания
-  const originalAnimation = wrapper.style.animation;
-  wrapper.style.animation = 'none';
-  void wrapper.offsetWidth; // Force reflow
+ 
+ 
   
   // Получаем точные координаты ПОСЛЕ остановки анимации
-  const wrapperRect = wrapper.getBoundingClientRect();
+const wrapperRect = wrapper.getBoundingClientRect();
   
   console.log('📐 Wrapper:', {
     left: wrapperRect.left,
@@ -1970,7 +1970,7 @@ function disintegratePromo() {
       particles.push({
         x: wrapperRect.left + x,
         y: wrapperRect.top + y,
-        initialY: y, // 👈 ДОБАВИЛИ: запоминаем начальную Y позицию внутри wrapper
+        initialY: y,
         size: blockSize,
         color: particleColor,
         velocityX: (Math.random() - 0.5) * 2,
@@ -1987,8 +1987,9 @@ function disintegratePromo() {
   
   console.log('✅ Создано частиц:', particles.length);
   
+  
   // 🎯 ЗАПУСКАЕМ АНИМАЦИЮ
-  let startTime = Date.now();
+let startTime = Date.now();
   
   function animate() {
     const elapsed = Date.now() - startTime;
@@ -1996,7 +1997,7 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 МАСКА КРОШЕНИЯ ДЛЯ WRAPPER (не для promoCard!)
+    // 🎯 МАСКА КРОШЕНИЯ + ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ
     if (crumbleProgress < 1) {
       const crumbleY = crumbleProgress * wrapperRect.height;
       wrapper.style.maskImage = `linear-gradient(
@@ -2008,14 +2009,15 @@ function disintegratePromo() {
       )`;
       wrapper.style.webkitMaskImage = wrapper.style.maskImage;
     } else {
+      // 👈 ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ ВМЕСТО РЕЗКОГО
       wrapper.style.opacity = '0';
+      wrapper.style.transition = 'opacity 0.3s ease';
     }
     
     let allGone = true;
     let activeCount = 0;
     
     particles.forEach(p => {
-      // 🎯 АКТИВИРУЕМ ЧАСТИЦУ КОГДА ЕЁ СТРОКА "КРОШИТСЯ"
       if (!p.active && elapsed >= p.crumbleDelay) {
         p.active = true;
       }
@@ -2025,7 +2027,6 @@ function disintegratePromo() {
           allGone = false;
           activeCount++;
           
-          // Рисуем частицу
           ctx.save();
           ctx.globalAlpha = p.opacity;
           ctx.translate(p.x + p.size / 2, p.y + p.size / 2);
@@ -2034,13 +2035,11 @@ function disintegratePromo() {
           ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
           ctx.restore();
           
-          // Физика падения
           p.velocityY += p.gravity;
           p.x += p.velocityX;
           p.y += p.velocityY;
           p.rotation += p.rotationSpeed;
           
-          // Затухание внизу экрана
           if (p.y > canvas.height - 100) {
             p.opacity -= 0.02;
           }
@@ -2050,7 +2049,6 @@ function disintegratePromo() {
       }
     });
     
-    // Логирование каждые 500мс
     if (elapsed % 500 < 16) {
       console.log(`⏱️ ${elapsed}мс, прогресс: ${(crumbleProgress * 100).toFixed(0)}%, активных частиц: ${activeCount}`);
     }
@@ -2060,18 +2058,16 @@ function disintegratePromo() {
     } else {
       console.log('✅ Анимация завершена');
       
-      // Очистка
       canvas.style.display = 'none';
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Восстанавливаем состояние
-      wrapper.style.animation = originalAnimation;
-      wrapper.style.opacity = '1';
-      wrapper.style.maskImage = 'none';
-      wrapper.style.webkitMaskImage = 'none';
+   
+      
+    
       
       // Скрываем overlay
-      document.getElementById('promoOverlay').classList.remove('active');
+         document.getElementById('promoOverlay').classList.remove('active');
+     
       
       // Показываем финальный экран
       showFinalScreen();
@@ -2560,16 +2556,14 @@ function copyCouponFromList(code, color, element) {
     document.execCommand('copy');
     document.body.removeChild(textArea);
     
-    // 9. ИНВЕРСИЯ ЦВЕТОВ
+    // 👈 ИЗМЕНИЛИ: только инверсия цветов, БЕЗ изменения текста
     element.classList.add('copied');
-    element.style.setProperty('--coupon-color', color);
     element.style.background = color;
     element.style.borderColor = color;
     
     const codeSpan = element.querySelector('.my-coupon-code');
     if (codeSpan) {
-      codeSpan.textContent = '✓ Скопійовано';
-      codeSpan.style.color = '#17212b';
+      codeSpan.style.color = '#17212b'; // 👈 ТОЛЬКО МЕНЯЕМ ЦВЕТ
     }
     
     setTimeout(() => {
@@ -2577,7 +2571,6 @@ function copyCouponFromList(code, color, element) {
       element.style.background = 'transparent';
       element.style.borderColor = color;
       if (codeSpan) {
-        codeSpan.textContent = code;
         codeSpan.style.color = color;
       }
     }, 1000);
@@ -2587,7 +2580,6 @@ function copyCouponFromList(code, color, element) {
     console.error('Ошибка копирования:', err);
   }
 }
-
   
 let couponTimerInterval = null;
 
