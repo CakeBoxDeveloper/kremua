@@ -1960,118 +1960,109 @@ function disintegratePromo() {
   const particleColor = selectedCoupon.particleColor;
   
   const wrapper = document.querySelector('.promo-image-wrapper');
-  const wrapperRect = wrapper.getBoundingClientRect();
   
-  // 🎯 КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: используем clientX/clientY напрямую
-  // getBoundingClientRect() уже даёт координаты относительно viewport
-  // Canvas тоже position:fixed - координаты должны совпадать идеально
-  
-  console.log('📐 Wrapper:', {
-    left: wrapperRect.left,
-    top: wrapperRect.top,
-    width: wrapperRect.width,
-    height: wrapperRect.height
-  });
-  
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С ТОЧНЫМИ КООРДИНАТАМИ
-  for (let y = 0; y < wrapperRect.height; y += blockSize) {
-    for (let x = 0; x < wrapperRect.width; x += blockSize) {
-      const normalizedY = y / wrapperRect.height;
-      
-      particles.push({
-        // 👇 ПРОСТО БЕРЁМ КООРДИНАТЫ ИЗ getBoundingClientRect
-        x: wrapperRect.left + x,
-        y: wrapperRect.top + y,
-        initialY: y,
-        size: blockSize,
-        color: particleColor,
-        velocityX: (Math.random() - 0.5) * 2,
-        velocityY: 0,
-        rotation: 0,
-        rotationSpeed: (Math.random() - 0.5) * 5,
-        opacity: 1,
-        crumbleDelay: normalizedY * crumbleDuration,
-        active: false,
-        gravity: 0.3 + Math.random() * 0.2
-      });
-    }
-  }
-  
-  console.log('✅ Создано частиц:', particles.length);
-  console.log('🎯 Первая частица:', particles[0]);
-  
-  let startTime = Date.now();
-  
- function animate() {
-  const elapsed = Date.now() - startTime;
-  const crumbleProgress = Math.min(elapsed / crumbleDuration, 1);
-  
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  // 🎯 ВИЗУАЛЬНАЯ ОТЛАДКА - рисуем рамку вокруг области купона
-  ctx.strokeStyle = '#ff0000';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(wrapperRect.left, wrapperRect.top, wrapperRect.width, wrapperRect.height);
-  
-  // ... остальной код
+  // 🎯 КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: ждём следующего кадра перед получением координат
+  requestAnimationFrame(() => {
+    const wrapperRect = wrapper.getBoundingClientRect();
     
-    if (crumbleProgress >= 1) {
-      wrapper.style.opacity = '0';
-      wrapper.style.transition = 'opacity 0.3s ease';
-    }
-    
-    let allGone = true;
-    let activeCount = 0;
-    
-    particles.forEach(p => {
-      if (!p.active && elapsed >= p.crumbleDelay) {
-        p.active = true;
-      }
-      
-      if (p.active) {
-        if (p.y < canvas.height + 50 && p.opacity > 0) {
-          allGone = false;
-          activeCount++;
-          
-          ctx.save();
-          ctx.globalAlpha = p.opacity;
-          ctx.translate(p.x + p.size / 2, p.y + p.size / 2);
-          ctx.rotate(p.rotation * Math.PI / 180);
-          ctx.fillStyle = p.color;
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-          ctx.restore();
-          
-          p.velocityY += p.gravity;
-          p.x += p.velocityX;
-          p.y += p.velocityY;
-          p.rotation += p.rotationSpeed;
-          
-          if (p.y > canvas.height - 100) {
-            p.opacity -= 0.02;
-          }
-        }
-      } else {
-        allGone = false;
-      }
+    console.log('📐 Wrapper (после рендера):', {
+      left: wrapperRect.left,
+      top: wrapperRect.top,
+      width: wrapperRect.width,
+      height: wrapperRect.height
     });
     
-    if (!allGone || elapsed < totalDuration) {
-      requestAnimationFrame(animate);
-    } else {
-      console.log('✅ Анимация завершена');
-      canvas.style.display = 'none';
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      document.getElementById('promoOverlay').classList.remove('active');
-      
-      const finalScreen = document.getElementById('finalScreen');
-      if (!finalScreen.classList.contains('visible')) {
-        showFinalScreen();
+    // 🎯 СОЗДАЁМ ЧАСТИЦЫ ПОСЛЕ ПОЛУЧЕНИЯ ТОЧНЫХ КООРДИНАТ
+    for (let y = 0; y < wrapperRect.height; y += blockSize) {
+      for (let x = 0; x < wrapperRect.width; x += blockSize) {
+        const normalizedY = y / wrapperRect.height;
+        
+        particles.push({
+          x: wrapperRect.left + x,
+          y: wrapperRect.top + y,
+          initialY: y,
+          size: blockSize,
+          color: particleColor,
+          velocityX: (Math.random() - 0.5) * 2,
+          velocityY: 0,
+          rotation: 0,
+          rotationSpeed: (Math.random() - 0.5) * 5,
+          opacity: 1,
+          crumbleDelay: normalizedY * crumbleDuration,
+          active: false,
+          gravity: 0.3 + Math.random() * 0.2
+        });
       }
     }
-  }
-  
-  canvas.style.display = 'block';
-  animate();
+    
+    console.log('✅ Создано частиц:', particles.length);
+    
+    let startTime = Date.now();
+    
+    function animate() {
+      const elapsed = Date.now() - startTime;
+      const crumbleProgress = Math.min(elapsed / crumbleDuration, 1);
+      
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      if (crumbleProgress >= 1) {
+        wrapper.style.opacity = '0';
+        wrapper.style.transition = 'opacity 0.3s ease';
+      }
+      
+      let allGone = true;
+      let activeCount = 0;
+      
+      particles.forEach(p => {
+        if (!p.active && elapsed >= p.crumbleDelay) {
+          p.active = true;
+        }
+        
+        if (p.active) {
+          if (p.y < canvas.height + 50 && p.opacity > 0) {
+            allGone = false;
+            activeCount++;
+            
+            ctx.save();
+            ctx.globalAlpha = p.opacity;
+            ctx.translate(p.x + p.size / 2, p.y + p.size / 2);
+            ctx.rotate(p.rotation * Math.PI / 180);
+            ctx.fillStyle = p.color;
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+            
+            p.velocityY += p.gravity;
+            p.x += p.velocityX;
+            p.y += p.velocityY;
+            p.rotation += p.rotationSpeed;
+            
+            if (p.y > canvas.height - 100) {
+              p.opacity -= 0.02;
+            }
+          }
+        } else {
+          allGone = false;
+        }
+      });
+      
+      if (!allGone || elapsed < totalDuration) {
+        requestAnimationFrame(animate);
+      } else {
+        console.log('✅ Анимация завершена');
+        canvas.style.display = 'none';
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        document.getElementById('promoOverlay').classList.remove('active');
+        
+        const finalScreen = document.getElementById('finalScreen');
+        if (!finalScreen.classList.contains('visible')) {
+          showFinalScreen();
+        }
+      }
+    }
+    
+    canvas.style.display = 'block';
+    animate();
+  });
 }
   
   
