@@ -196,7 +196,46 @@ body {
   margin: 0 auto 20px;
   flex-shrink: 0;
   box-sizing: border-box; /* 👈 ДОБАВЬТЕ ЭТУ СТРОКУ */
+--burn-progress: 0%; /* Переменная прогресса сгорания */
+  position: relative;
+  background: 
+    linear-gradient(90deg, 
+      #1d2b3a 0%, 
+      #1d2b3a calc(100% - var(--burn-progress)), 
+      transparent calc(100% - var(--burn-progress))
+    );
+  border: 1px solid;
+  border-image: linear-gradient(
+    90deg,
+    #6ab2f2 0%,
+    #6ab2f2 calc(100% - var(--burn-progress)),
+    transparent calc(100% - var(--burn-progress))
+  ) 1;
 }
+  
+ .my-coupons-container::after {
+  content: '';
+  position: absolute;
+  right: calc(var(--burn-progress) - 2px);
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, 
+    #ff6b35 0%, 
+    #f7a632 50%, 
+    transparent 100%
+  );
+  filter: blur(2px);
+  opacity: 0.8;
+  animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+  
 
 .my-coupons-header {
   font-size: 14px;
@@ -2275,6 +2314,14 @@ window.addEventListener('load', async () => {
   // 🎯 РАНДОМНОЕ ПРЕДСКАЗАНИЕ
   preloaderText.textContent = getRandomPrediction();
   loaderText.textContent = getRandomPrediction();
+
+preloader.addEventListener('click', function initSound() {
+  if (preloaderSound && preloaderSound.paused) {
+    preloaderSound.play().catch(e => console.log('Preloader sound failed:', e));
+  }
+  preloader.removeEventListener('click', initSound); // Убираем обработчик после первого клика
+}, { once: true });
+  
   
   // 🎯 ШАГ 1: ПРЕЛОАД (минимум 2 секунды)
   const startTime = Date.now();
@@ -2494,10 +2541,10 @@ function animateLotteryCounter() {
 
 // ===== РАБОТА С КУПОНАМИ =====
 function saveCouponToStorage(code, discount) {
-  // 👈 ИЗМЕНИЛИ: теперь всегда только ОДИН купон
   const newCoupon = {
     code: code,
     discount: discount,
+    color: selectedCoupon.codeColor, // 👈 ДОБАВЬ ЭТУ СТРОКУ
     date: new Date().toISOString()
   };
   
@@ -2526,18 +2573,12 @@ function updateMyCouponsList() {
   myCouponsContainer.style.display = 'block';
   
   // 6. УБРАЛИ .reverse() и убрали discount из HTML
-  container.innerHTML = coupons
-    .map(coupon => {
-      const color = couponColors[coupon.discount] || '#6ab2f2';
-      return `
-        <div class="my-coupon-item" 
-             style="border-color: ${color}; --coupon-color: ${color};" 
-             onclick="copyCouponFromList('${coupon.code}', '${color}', this)">
-          <span class="my-coupon-code" style="color: ${color};">${coupon.code}</span>
-        </div>
-      `;
-    })
-    .join('');
+container.innerHTML = coupons
+  .map(coupon => {
+    const color = coupon.color || couponColors[coupon.discount] || '#6ab2f2'; // 👈 ИЗМЕНИЛИ: сначала берём сохранённый цвет
+    return `...`;
+  })
+  .join('');
   
   startCouponTimer();
 }
@@ -2599,11 +2640,15 @@ function startCouponTimer() {
   const createdAt = new Date(latestCoupon.date).getTime();
   const expiresAt = createdAt + (2 * 60 * 60 * 1000);
   
-  function updateTimer() {
-    const now = Date.now();
-    const remaining = expiresAt - now;
-    
-    if (remaining <= 0) {
+ function updateTimer() {
+  const now = Date.now();
+  const remaining = expiresAt - now;
+  const totalDuration = 2 * 60 * 60 * 1000; // 2 часа
+  const burnProgress = ((totalDuration - remaining) / totalDuration) * 100; // 👈 ДОБАВЬ
+  
+  myCouponsContainer.style.setProperty('--burn-progress', `${burnProgress}%`); // 👈 ДОБАВЬ
+  
+  if (remaining <= 0) {
       if (couponTimerInterval) {
         clearInterval(couponTimerInterval);
       }
