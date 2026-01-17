@@ -148,40 +148,110 @@ body {
 }
 
 /* Стили для строк разных купонов */
+/* 1. УБИРАЕМ ЗАЛИВКУ СТРОК В ТАБЛИЦЕ - замените существующие стили */
 .coupons-table tbody tr.green-coupon {
-  background: #1d3a22;
+  background: transparent;
   color: #6af27d;
 }
 
 .coupons-table tbody tr.green-coupon:hover {
-  background: #24502f;
+  background: rgba(29, 58, 34, 0.3);
 }
 
 .coupons-table tbody tr.yellow-coupon {
-  background: #443621;
+  background: transparent;
   color: #f7a632;
 }
 
 .coupons-table tbody tr.yellow-coupon:hover {
-  background: #554729;
+  background: rgba(68, 54, 33, 0.3);
 }
 
 .coupons-table tbody tr.blue-coupon {
-  background: #1d2b3a;
+  background: transparent;
   color: #6ab2f2;
 }
 
 .coupons-table tbody tr.blue-coupon:hover {
-  background: #22364a;
+  background: rgba(29, 43, 58, 0.3);
 }
 
 .coupons-table tbody tr.red-coupon {
-  background: #3a1d2b;
+  background: transparent;
   color: #f27db0;
 }
 
 .coupons-table tbody tr.red-coupon:hover {
-  background: #4a2236;
+  background: rgba(58, 29, 43, 0.3);
+}
+
+/* 3. СТИЛИ ДЛЯ "МОИ КУПОНЫ" */
+.my-coupons-container {
+  width: 90%;
+  max-width: 400px;
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 6px;
+  padding: 16px;
+  margin: 0 auto 20px;
+  flex-shrink: 0;
+}
+
+.my-coupons-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: #6ab2f2;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.my-coupons-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.my-coupon-item {
+  background: #0f1419;
+  border: 1px solid rgba(106, 178, 242, 0.3);
+  border-radius: 4px;
+  padding: 10px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.my-coupon-item:hover {
+  background: #1a2530;
+  border-color: #6ab2f2;
+  transform: scale(1.02);
+}
+
+.my-coupon-item:active {
+  transform: scale(0.98);
+}
+
+.my-coupon-code {
+  font-family: monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.my-coupon-discount {
+  font-size: 12px;
+  opacity: 0.8;
+  white-space: nowrap;
+  margin-left: 8px;
+}
+
+.my-coupons-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  padding: 20px;
 }
   
 
@@ -935,11 +1005,11 @@ mask-image: linear-gradient(
         <tr class="green-coupon">
           <td>
             <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#005330" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#1d3a22"/>
-                <circle cx="100" cy="25" r="8" fill="#1d3a22"/>
-              </svg>
+             <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="none" stroke="#6af27d" stroke-width="2" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="none" stroke="#6af27d" stroke-width="2"/>
+  <circle cx="100" cy="25" r="8" fill="none" stroke="#6af27d" stroke-width="2"/>
+</svg>
               <span>Зелений купон</span>
             </div>
           </td>
@@ -950,11 +1020,11 @@ mask-image: linear-gradient(
         <tr class="yellow-coupon">
           <td>
             <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#af8246" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#443621"/>
-                <circle cx="100" cy="25" r="8" fill="#443621"/>
-              </svg>
+            <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="none" stroke="#f7a632" stroke-width="2" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="none" stroke="#f7a632" stroke-width="2"/>
+  <circle cx="100" cy="25" r="8" fill="none" stroke="#f7a632" stroke-width="2"/>
+</svg>
               <span>Жовтий купон</span>
             </div>
           </td>
@@ -965,11 +1035,11 @@ mask-image: linear-gradient(
         <tr class="blue-coupon">
           <td>
             <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#5c94cc" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#1d2b3a"/>
-                <circle cx="100" cy="25" r="8" fill="#1d2b3a"/>
-              </svg>
+             <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="none" stroke="#6ab2f2" stroke-width="2" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="none" stroke="#6ab2f2" stroke-width="2"/>
+  <circle cx="100" cy="25" r="8" fill="none" stroke="#6ab2f2" stroke-width="2"/>
+</svg>
               <span>Синій купон</span>
             </div>
           </td>
@@ -980,11 +1050,11 @@ mask-image: linear-gradient(
         <tr class="red-coupon">
           <td>
             <div class="coupon-name">
-              <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
-                <rect width="100" height="50" fill="#6d2121" rx="4"/>
-                <circle cx="0" cy="25" r="8" fill="#3a1d1d"/>
-                <circle cx="100" cy="25" r="8" fill="#3a1d1d"/>
-              </svg>
+             <svg class="coupon-icon" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="50" fill="none" stroke="#f27db0" stroke-width="2" rx="4"/>
+  <circle cx="0" cy="25" r="8" fill="none" stroke="#f27db0" stroke-width="2"/>
+  <circle cx="100" cy="25" r="8" fill="none" stroke="#f27db0" stroke-width="2"/>
+</svg>
               <span>Червоний купон</span>
             </div>
           </td>
@@ -1089,7 +1159,14 @@ mask-image: linear-gradient(
   <div class="winners-widget">
     <ul id="winnersList"></ul>
   </div>
-  
+ <!-- МОИ КУПОНЫ -->
+  <div class="my-coupons-container" id="myCouponsContainer">
+  <div class="my-coupons-header">Мої купони</div>
+  <div class="my-coupons-list" id="myCouponsList">
+    <div class="my-coupons-empty">Тут з'являться твої купони</div>
+  </div>
+</div>
+   <!-- ТАЙМЕР -->
   <div class="countdown-container">
     <div class="countdown-text" id="countdownText">
       Наступна спроба через:
@@ -1104,6 +1181,9 @@ mask-image: linear-gradient(
     В магазин
   </a>
 </div>
+  <audio id="preloaderSound" loop preload="auto">
+  <source src="https://github.com/CakeBoxDeveloper/kremua/blob/main/Trig3.mp3" type="audio/mpeg">
+</audio>
 
 <audio id="rouletteSound" preload="auto">
   <source src="https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/main/RouletteLood.mp3" type="audio/mpeg">
@@ -1593,7 +1673,8 @@ function showFinalScreen() {
     document.getElementById('finalScreen').classList.add('visible');
     startCountdown();
     initWinnersWidget();
-    animateLotteryCounter();  // 👈 ДОБАВЬ ЭТУ СТРОКУ
+    animateLotteryCounter();
+    updateMyCouponsList(); // 👈 ДОБАВЬТЕ ЭТУ СТРОКУ
   }, 500);
 }
 
@@ -1817,8 +1898,15 @@ function promptManualCopy(text) {
   document.body.appendChild(modal);
   modal.querySelector('input').select();
 }
-  function showCopyFeedback() {
+function showCopyFeedback() {
   const promoCodeEl = document.getElementById("promoCode");
+  const code = finalPromoCode || promoCodeEl.textContent.trim();
+  
+  // 🎯 СОХРАНЯЕМ КУПОН
+  if (selectedCoupon && code && !code.includes('X')) {
+    saveCouponToStorage(code, selectedCoupon.discount);
+  }
+  
   promoCodeEl.textContent = "промокод скопійовано ✓";
   setTimeout(() => disintegratePromo(), 1200);
 }
@@ -2168,6 +2256,12 @@ window.addEventListener('load', async () => {
   const tapHint = loader.querySelector('.tap-hint');
   const promoOverlay = document.getElementById('promoOverlay');
   
+  // 🎵 ЗАПУСКАЕМ ЗВУК ПРЕЛОАДЕРА
+  const preloaderSound = document.getElementById('preloaderSound');
+  if (preloaderSound) {
+    preloaderSound.play().catch(e => console.log('Preloader sound failed:', e));
+  }
+  
   let rouletteTapped = false;
   
   // 🎯 РАНДОМНОЕ ПРЕДСКАЗАНИЕ
@@ -2182,6 +2276,12 @@ window.addEventListener('load', async () => {
   
   if (elapsed < minDuration) {
     await new Promise(resolve => setTimeout(resolve, minDuration - elapsed));
+  }
+  
+  // 🎵 ОСТАНАВЛИВАЕМ ЗВУК ПРЕЛОАДЕРА
+  if (preloaderSound) {
+    preloaderSound.pause();
+    preloaderSound.currentTime = 0;
   }
   
   // Скрываем прелоадер
@@ -2384,6 +2484,73 @@ function animateLotteryCounter() {
 // Запускаем анимацию при показе финального экрана
 // Найди функцию showFinalScreen() и добавь в неё вызов:
 
+// ===== РАБОТА С КУПОНАМИ =====
+function saveCouponToStorage(code, discount) {
+  const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
+  
+  // Проверяем, нет ли уже такого купона
+  if (!coupons.find(c => c.code === code)) {
+    coupons.push({
+      code: code,
+      discount: discount,
+      date: new Date().toISOString()
+    });
+    localStorage.setItem('my_coupons', JSON.stringify(coupons));
+  }
+  
+  updateMyCouponsList();
+}
+
+function updateMyCouponsList() {
+  const container = document.getElementById('myCouponsList');
+  if (!container) return;
+  
+  const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
+  
+  if (coupons.length === 0) {
+    container.innerHTML = '<div class="my-coupons-empty">Тут з\'являться твої купони</div>';
+    return;
+  }
+  
+  container.innerHTML = coupons
+    .reverse() // Новые сверху
+    .map(coupon => `
+      <div class="my-coupon-item" onclick="copyCouponFromList('${coupon.code}', this)">
+        <span class="my-coupon-code">${coupon.code}</span>
+        <span class="my-coupon-discount">${coupon.discount}</span>
+      </div>
+    `)
+    .join('');
+}
+
+function copyCouponFromList(code, element) {
+  const textArea = document.createElement("textarea");
+  textArea.value = code;
+  textArea.setAttribute('readonly', '');
+  textArea.style.position = 'absolute';
+  textArea.style.left = '-9999px';
+  
+  document.body.appendChild(textArea);
+  textArea.select();
+  
+  try {
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    
+    const originalHTML = element.innerHTML;
+    element.innerHTML = '<span style="color: #6af27d;">✓ Скопійовано</span>';
+    
+    setTimeout(() => {
+      element.innerHTML = originalHTML;
+    }, 1000);
+    
+  } catch (err) {
+    document.body.removeChild(textArea);
+    console.error('Ошибка копирования:', err);
+  }
+}
+
+  
   
 </script>
 
