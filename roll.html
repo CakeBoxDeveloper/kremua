@@ -1352,7 +1352,7 @@ function preloadImages() {
  
   
 let selectedCoupon = null;
-let promoegrated = false;
+let promoDisintegrated = false = false;
 let promoTimer = null; // 👈 Убедись что эта строка есть
 let countdownInterval = null;
   let rouletteSound = null;
@@ -1898,7 +1898,7 @@ function promptManualCopy(text) {
       "
     >
     <button 
-      onclick="var el = this.parentElement; el.remove(); egratePromo();"
+      onclick="var el = this.parentElement; el.remove(); disintegratePromo();"
       style="
         padding: 10px 20px;
         background: #1d3a22;
@@ -1952,7 +1952,7 @@ function disintegratePromo() {
   canvas.height = window.innerHeight;
   
   const particles = [];
-  const blockSize = 2; // 👈 УМЕНЬШИЛИ ВДВОЕ (было 4)
+  const blockSize = 2; // 👈 Маленькие частицы
   const totalDuration = 3000;
   const crumbleDuration = 1500;
   
@@ -1968,11 +1968,12 @@ function disintegratePromo() {
     height: wrapperRect.height
   });
   
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С ТУРБУЛЕНТНОСТЬЮ
   for (let y = 0; y < wrapperRect.height; y += blockSize) {
     for (let x = 0; x < wrapperRect.width; x += blockSize) {
       const normalizedY = y / wrapperRect.height;
       
-      // 🎯 ТУРБУЛЕНТНОСТЬ: случайное смещение для каждой частицы
+      // Турбулентность
       const turbulenceX = (Math.random() - 0.5) * blockSize * 2;
       const turbulenceY = (Math.random() - 0.5) * blockSize * 2;
       
@@ -1980,16 +1981,16 @@ function disintegratePromo() {
         x: wrapperRect.left + x + turbulenceX,
         y: wrapperRect.top + y + turbulenceY,
         initialY: y,
-        size: blockSize + Math.random() * blockSize, // 👈 СЛУЧАЙНЫЙ РАЗМЕР
+        size: blockSize + Math.random() * blockSize,
         color: particleColor,
-        velocityX: (Math.random() - 0.5) * 4, // 👈 УВЕЛИЧИЛИ ХАОС (было 2)
-        velocityY: (Math.random() - 0.5) * 2, // 👈 ДОБАВИЛИ ВЕРТИКАЛЬНЫЙ ХАОС
+        velocityX: (Math.random() - 0.5) * 4,
+        velocityY: (Math.random() - 0.5) * 2,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 10, // 👈 УВЕЛИЧИЛИ ВРАЩЕНИЕ
+        rotationSpeed: (Math.random() - 0.5) * 10,
         opacity: 1,
-        crumbleDelay: normalizedY * crumbleDuration + (Math.random() - 0.5) * 200, // 👈 ХАОС В ЗАДЕРЖКЕ
+        crumbleDelay: normalizedY * crumbleDuration + (Math.random() - 0.5) * 200,
         active: false,
-        gravity: 0.3 + Math.random() * 0.4 // 👈 УВЕЛИЧИЛИ РАЗБРОС ГРАВИТАЦИИ
+        gravity: 0.3 + Math.random() * 0.4
       });
     }
   }
@@ -2004,28 +2005,10 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 ВОЗВРАЩАЕМ МАСКУ КРОШЕНИЯ (сверху вниз)
+    // 🎯 МАСКА КРОШЕНИЯ (сверху вниз)
     const maskY = crumbleProgress * 100;
-    wrapper.style.maskImage = `
-      linear-gradient(
-        to bottom,
-        transparent 0%,
-        transparent ${maskY}%,
-        black ${maskY}%,
-        black 100%
-      )
-    `;
-    wrapper.style.webkitMaskImage = `
-      linear-gradient(
-        to bottom,
-        transparent 0%,
-        transparent ${maskY}%,
-        black ${maskY}%,
-        black 100%
-      )
-    `;
-    
-    // 👈 УБРАЛИ ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ opacity
+    wrapper.style.maskImage = `linear-gradient(to bottom, transparent 0%, transparent ${maskY}%, black ${maskY}%, black 100%)`;
+    wrapper.style.webkitMaskImage = `linear-gradient(to bottom, transparent 0%, transparent ${maskY}%, black ${maskY}%, black 100%)`;
     
     let allGone = true;
     
