@@ -243,17 +243,14 @@ body {
     0 0 20px #f7a632;
   animation: sparkle 0.3s infinite;
   
-  /* 🎯 ИСПРАВЛЕННОЕ ПОЗИЦИОНИРОВАНИЕ */
-  --angle: calc((var(--burn-progress, 0%) * 3.6deg) - 90deg);
-  --radius: calc(min(50%, 200px) + 4px); /* Радиус + половина толщины рамки */
-  
-  left: calc(50% + (var(--radius) * cos(var(--angle))));
-  top: calc(50% + (var(--radius) * sin(var(--angle))));
+  /* 🎯 ИСПОЛЬЗУЕМ ПЕРЕМЕННЫЕ ИЗ JS */
+  left: var(--spark-x, 50%);
+  top: var(--spark-y, 0%);
   transform: translate(-50%, -50%);
   pointer-events: none;
   
-  /* Скрываем до начала анимации */
-  opacity: var(--burn-progress, 0);
+  /* Показываем только когда есть прогресс */
+  opacity: calc(var(--burn-progress, 0%) / 100);
 }
   
 
@@ -1974,11 +1971,19 @@ function promptManualCopy(text) {
 }
 function showCopyFeedback() {
   const promoCodeEl = document.getElementById("promoCode");
-  const code = finalPromoCode || promoCodeEl.textContent.trim();
+  const code = promoCodeEl.textContent.trim();
   
-  // 🎯 СОХРАНЯЕМ КУПОН
-  if (selectedCoupon && code && !code.includes('X')) {
-    saveCouponToStorage(code, selectedCoupon.discount);
+  // 🎯 Убеждаемся что код полностью декодирован
+  if (!code.includes('X') && code !== 'промокод скопійовано ✓') {
+    finalPromoCode = code;
+  }
+  
+  // 🎯 СОХРАНЯЕМ КУПОН ТОЛЬКО ЕСЛИ ЕСТЬ ВАЛИДНЫЙ КОД
+  if (selectedCoupon && finalPromoCode && finalPromoCode.length > 0) {
+    console.log('💾 Сохраняем купон:', finalPromoCode, 'Скидка:', selectedCoupon.discount);
+    saveCouponToStorage(finalPromoCode, selectedCoupon.discount);
+  } else {
+    console.log('⚠️ Купон не сохранён. finalPromoCode:', finalPromoCode, 'selectedCoupon:', selectedCoupon);
   }
   
   promoCodeEl.textContent = "промокод скопійовано ✓";
@@ -2680,36 +2685,41 @@ function updateTimer() {
   
   myCouponsContainer.style.setProperty('--burn-progress', `${burnProgress}%`);
   
-  // 🎯 РАССЧИТЫВАЕМ ПОЗИЦИЮ ЗАПАЛА В JS
-  const angle = (burnProgress * 3.6 - 90) * (Math.PI / 180); // В радианы
-  const radius = 200; // Радиус контура
-  const x = 50 + (radius * Math.cos(angle) / 4); // Делим на 4 для процентов
-  const y = 50 + (radius * Math.sin(angle) / 4);
+  // 🎯 РАССЧИТЫВАЕМ ПОЗИЦИЮ ЗАПАЛА
+  const rect = myCouponsContainer.getBoundingClientRect();
+  const angle = (burnProgress * 3.6 - 90) * (Math.PI / 180);
+  
+  // Радиус = половина ширины/высоты контейнера (берём меньшее значение)
+  const radius = Math.min(rect.width, rect.height) / 2;
+  
+  // Позиция относительно центра контейнера
+  const x = 50 + (radius * Math.cos(angle) / rect.width * 100);
+  const y = 50 + (radius * Math.sin(angle) / rect.height * 100);
   
   myCouponsContainer.style.setProperty('--spark-x', `${x}%`);
   myCouponsContainer.style.setProperty('--spark-y', `${y}%`);
   
   if (remaining <= 0) {
-      if (couponTimerInterval) {
-        clearInterval(couponTimerInterval);
-      }
-      timerElement.textContent = '00:00:00';
-      localStorage.removeItem('my_coupons');
-      myCouponsContainer.style.display = 'none'; // 👈 СКРЫВАЕМ БЛОК
-      updateMyCouponsList();
-      return;
+    if (couponTimerInterval) {
+      clearInterval(couponTimerInterval);
     }
-    
-    const hours = Math.floor(remaining / (1000 * 60 * 60));
-    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
-    
-    timerElement.textContent = [
-      hours.toString().padStart(2, '0'),
-      minutes.toString().padStart(2, '0'),
-      seconds.toString().padStart(2, '0')
-    ].join(':');
+    timerElement.textContent = '00:00:00';
+    localStorage.removeItem('my_coupons');
+    myCouponsContainer.style.display = 'none';
+    updateMyCouponsList();
+    return;
   }
+  
+  const hours = Math.floor(remaining / (1000 * 60 * 60));
+  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+  
+  timerElement.textContent = [
+    hours.toString().padStart(2, '0'),
+    minutes.toString().padStart(2, '0'),
+    seconds.toString().padStart(2, '0')
+  ].join(':');
+}
   
   updateTimer();
   if (couponTimerInterval) clearInterval(couponTimerInterval);
