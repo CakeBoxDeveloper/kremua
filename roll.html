@@ -200,9 +200,9 @@ body {
 }
 
 .my-coupons-header {
-  font-size: clamp(12px, 3vw, 16px); /* 👈 УВЕЛИЧИЛИ: было 10-14px, стало 12-16px */
+  font-size: clamp(12px, 3vw, 16px);
   font-weight: 600;
-  color: #ffffff;
+  color: #6ab2f2; /* 👈 ИЗМЕНИЛИ: был #ffffff, стал голубой */
   margin-bottom: 12px;
   text-align: center;
   opacity: 0.9;
@@ -212,9 +212,9 @@ body {
 }
 
 .coupon-timer {
-  font-size: clamp(12px, 3vw, 16px); /* 👈 УВЕЛИЧИЛИ: было 10-14px, стало 12-16px */
+  font-size: clamp(12px, 3vw, 16px);
   font-weight: 700;
-  color: #ffffff;
+  color: #6ab2f2; /* 👈 ИЗМЕНИЛИ: был #ffffff, стал голубой */
   font-family: Arial, sans-serif;
   letter-spacing: 1px;
 }
@@ -253,8 +253,8 @@ body {
 
 .my-coupon-code {
   font-family: monospace;
-  font-size: 15px; /* 👈 ИЗМЕНИЛИ: было 13px, стало 15px */
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 900; /* 👈 ИЗМЕНИЛИ: было 600, стало 900 (максимальный) */
   letter-spacing: 0.5px;
   width: 100%;
   text-align: center;
@@ -792,7 +792,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding: 20px;
-  padding-top: 20px; /* 👈 ИЗМЕНИЛИ: было 40px, стало 20px (вдвое меньше) */
+  padding-top: 10px; /* 👈 ИЗМЕНИЛИ: было 20px, стало 10px (ещё вдвое меньше) */
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease;
@@ -808,7 +808,7 @@ body {
 .final-avatar {
   width: 75%;
   max-width: 384px;
-  margin-bottom: 10px; /* 👈 ИЗМЕНИЛИ: было 20px, стало 10px (вдвое меньше) */
+  margin-bottom: 5px; /* 👈 ИЗМЕНИЛИ: было 10px, стало 5px (ещё вдвое меньше) */
   position: relative;
   left: 20px;
   flex-shrink: 0;
@@ -1181,7 +1181,7 @@ mask-image: linear-gradient(
 
 <!-- 🎯 HEADER ПОД АВАТАРОМ -->
 <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 12px; margin-bottom: 5px;">
-  <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #ffffff; margin-bottom: 10px;">
+  <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d4af37; margin-bottom: 10px;"> <!-- 👈 ИЗМЕНИЛИ: color стал #d4af37 (золотой) -->
     <span class="lottery-participants-count" data-target="843" style="font-weight: 700;">0</span>
     <span>учасників лотереї сьогоднi</span>
   </div>
