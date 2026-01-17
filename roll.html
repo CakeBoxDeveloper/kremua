@@ -1942,7 +1942,6 @@ function showCopyFeedback() {
 
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
-// ИСПРАВЬТЕ disintegratePromo - СОХРАНЯЕМ МАСКУ ВО ВРЕМЯ РАСПАДА
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo');
@@ -1960,33 +1959,42 @@ function disintegratePromo() {
   const particleColor = selectedCoupon.particleColor;
   
   const wrapper = document.querySelector('.promo-image-wrapper');
+  const wrapperRect = wrapper.getBoundingClientRect();
   
-  // 🎯 КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: ждём 100мс перед получением координат
+  // 🎯 НОВОЕ РЕШЕНИЕ: создаём маркер для точных координат
+  const marker = document.createElement('div');
+  marker.style.cssText = `
+    position: fixed;
+    left: ${wrapperRect.left}px;
+    top: ${wrapperRect.top}px;
+    width: ${wrapperRect.width}px;
+    height: ${wrapperRect.height}px;
+    pointer-events: none;
+    z-index: 99999;
+    border: 2px solid lime;
+  `;
+  document.body.appendChild(marker);
+  
   setTimeout(() => {
-    const wrapperRect = wrapper.getBoundingClientRect();
+    const markerRect = marker.getBoundingClientRect();
     
-    // 🎯 ОТЛАДКА: выводим все возможные смещения
-    const promoCard = document.getElementById('promoCard');
-    const promoCardRect = promoCard.getBoundingClientRect();
-    const overlay = document.getElementById('promoOverlay');
-    const overlayRect = overlay.getBoundingClientRect();
-    
-    console.log('📐 Координаты элементов:', {
-      wrapper: { left: wrapperRect.left, top: wrapperRect.top, width: wrapperRect.width, height: wrapperRect.height },
-      promoCard: { left: promoCardRect.left, top: promoCardRect.top },
-      overlay: { left: overlayRect.left, top: overlayRect.top },
-      windowScroll: { x: window.scrollX, y: window.scrollY },
-      canvasSize: { width: canvas.width, height: canvas.height }
+    console.log('📐 Сравнение координат:', {
+      wrapper: { left: wrapperRect.left, top: wrapperRect.top },
+      marker: { left: markerRect.left, top: markerRect.top },
+      difference: { 
+        x: markerRect.left - wrapperRect.left, 
+        y: markerRect.top - wrapperRect.top 
+      }
     });
     
-    // 🎯 СОЗДАЁМ ЧАСТИЦЫ С ТОЧНЫМИ КООРДИНАТАМИ
-    for (let y = 0; y < wrapperRect.height; y += blockSize) {
-      for (let x = 0; x < wrapperRect.width; x += blockSize) {
-        const normalizedY = y / wrapperRect.height;
+    // 🎯 ИСПОЛЬЗУЕМ КООРДИНАТЫ МАРКЕРА
+    for (let y = 0; y < markerRect.height; y += blockSize) {
+      for (let x = 0; x < markerRect.width; x += blockSize) {
+        const normalizedY = y / markerRect.height;
         
         particles.push({
-          x: wrapperRect.left + x,
-          y: wrapperRect.top + y,
+          x: markerRect.left + x,
+          y: markerRect.top + y,
           initialY: y,
           size: blockSize,
           color: particleColor,
@@ -2003,7 +2011,9 @@ function disintegratePromo() {
     }
     
     console.log('✅ Создано частиц:', particles.length);
-    console.log('🎯 Первые 3 частицы:', particles.slice(0, 3));
+    
+    // Удаляем маркер
+    marker.remove();
     
     let startTime = Date.now();
     
@@ -2013,19 +2023,12 @@ function disintegratePromo() {
       
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // 🎯 ВИЗУАЛЬНАЯ ОТЛАДКА - рисуем рамку КАЖДЫЙ КАДР
-      const currentRect = wrapper.getBoundingClientRect();
-      ctx.strokeStyle = '#ff0000';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(currentRect.left, currentRect.top, currentRect.width, currentRect.height);
-      
       if (crumbleProgress >= 1) {
         wrapper.style.opacity = '0';
         wrapper.style.transition = 'opacity 0.3s ease';
       }
       
       let allGone = true;
-      let activeCount = 0;
       
       particles.forEach(p => {
         if (!p.active && elapsed >= p.crumbleDelay) {
@@ -2035,7 +2038,6 @@ function disintegratePromo() {
         if (p.active) {
           if (p.y < canvas.height + 50 && p.opacity > 0) {
             allGone = false;
-            activeCount++;
             
             ctx.save();
             ctx.globalAlpha = p.opacity;
@@ -2077,7 +2079,7 @@ function disintegratePromo() {
     canvas.style.display = 'block';
     animate();
     
-  }, 100); // 👈 Задержка 100мс
+  }, 50);
 }
   
   
