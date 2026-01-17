@@ -1960,26 +1960,21 @@ function disintegratePromo() {
   const particleColor = selectedCoupon.particleColor;
   
   const wrapper = document.querySelector('.promo-image-wrapper');
-  const promoCard = document.getElementById('promoCard');
-  
   const wrapperRect = wrapper.getBoundingClientRect();
   
-  const bodyStyle = window.getComputedStyle(document.body);
-  const zoom = parseFloat(bodyStyle.zoom || 1);
-  const transform = bodyStyle.transform;
+  // 🎯 КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: учитываем скролл
+  const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+  const scrollY = window.pageYOffset || document.documentElement.scrollTop;
   
-  let scale = zoom;
-  if (transform && transform !== 'none') {
-    const matrix = new DOMMatrix(transform);
-    scale = matrix.a;
-  }
+  // 🎯 НЕ НУЖНО учитывать zoom/scale - getBoundingClientRect уже учитывает их
   
   console.log('📐 Wrapper:', {
     left: wrapperRect.left,
     top: wrapperRect.top,
     width: wrapperRect.width,
     height: wrapperRect.height,
-    scale: scale
+    scrollX: scrollX,
+    scrollY: scrollY
   });
   
   for (let y = 0; y < wrapperRect.height; y += blockSize) {
@@ -1987,8 +1982,8 @@ function disintegratePromo() {
       const normalizedY = y / wrapperRect.height;
       
       particles.push({
-        x: wrapperRect.left + x,
-        y: wrapperRect.top + y,
+        x: wrapperRect.left + x, // 👈 getBoundingClientRect уже в viewport координатах
+        y: wrapperRect.top + y,  // 👈 не нужно добавлять scrollY
         initialY: y,
         size: blockSize,
         color: particleColor,
@@ -2014,9 +2009,7 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 УБИРАЕМ МАСКУ КРОШЕНИЯ - ОСТАВЛЯЕМ ТОЛЬКО ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ
     if (crumbleProgress >= 1) {
-      // 👈 ИЗМЕНИЛИ: убрали maskImage, оставили только opacity
       wrapper.style.opacity = '0';
       wrapper.style.transition = 'opacity 0.3s ease';
     }
