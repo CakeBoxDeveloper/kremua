@@ -2002,11 +2002,18 @@ function disintegratePromo() {
   
   let startTime = Date.now();
   
-  function animate() {
-    const elapsed = Date.now() - startTime;
-    const crumbleProgress = Math.min(elapsed / crumbleDuration, 1);
-    
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+ function animate() {
+  const elapsed = Date.now() - startTime;
+  const crumbleProgress = Math.min(elapsed / crumbleDuration, 1);
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  // 🎯 ВИЗУАЛЬНАЯ ОТЛАДКА - рисуем рамку вокруг области купона
+  ctx.strokeStyle = '#ff0000';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(wrapperRect.left, wrapperRect.top, wrapperRect.width, wrapperRect.height);
+  
+  // ... остальной код
     
     if (crumbleProgress >= 1) {
       wrapper.style.opacity = '0';
