@@ -231,7 +231,7 @@ body {
   pointer-events: none;
 }
 
- .my-coupons-container::after {
+.my-coupons-container::after {
   content: '';
   position: absolute;
   width: 8px;
@@ -251,6 +251,11 @@ body {
   
   /* Показываем только когда есть прогресс */
   opacity: calc(var(--burn-progress, 0%) / 100);
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.3); }
 }
   
 
@@ -2575,12 +2580,13 @@ function saveCouponToStorage(code, discount) {
   const newCoupon = {
     code: code,
     discount: discount,
-    color: selectedCoupon.codeColor, // 👈 ДОБАВЬ ЭТУ СТРОКУ
-    date: new Date().toISOString()
+    color: selectedCoupon.codeColor,
+    date: new Date().toISOString(), // 👈 Временная метка создания
+    displayDate: null // 👈 Метка показа на финальном экране (устанавливается позже)
   };
   
   localStorage.setItem('my_coupons', JSON.stringify([newCoupon]));
-  updateMyCouponsList();
+  console.log('💾 Купон сохранён:', newCoupon);
 }
 
 function updateMyCouponsList() {
@@ -2674,52 +2680,62 @@ function startCouponTimer() {
   }
   
   const latestCoupon = coupons[coupons.length - 1];
-  const createdAt = new Date(latestCoupon.date).getTime();
-  const expiresAt = createdAt + (30 * 1000); // 30 секунд для теста
   
-function updateTimer() {
-  const now = Date.now();
-  const remaining = expiresAt - now;
-  const totalDuration = 30 * 1000;
-  const burnProgress = ((totalDuration - remaining) / totalDuration) * 100;
-  
-  myCouponsContainer.style.setProperty('--burn-progress', `${burnProgress}%`);
-  
-  // 🎯 РАССЧИТЫВАЕМ ПОЗИЦИЮ ЗАПАЛА
-  const rect = myCouponsContainer.getBoundingClientRect();
-  const angle = (burnProgress * 3.6 - 90) * (Math.PI / 180);
-  
-  // Радиус = половина ширины/высоты контейнера (берём меньшее значение)
-  const radius = Math.min(rect.width, rect.height) / 2;
-  
-  // Позиция относительно центра контейнера
-  const x = 50 + (radius * Math.cos(angle) / rect.width * 100);
-  const y = 50 + (radius * Math.sin(angle) / rect.height * 100);
-  
-  myCouponsContainer.style.setProperty('--spark-x', `${x}%`);
-  myCouponsContainer.style.setProperty('--spark-y', `${y}%`);
-  
-  if (remaining <= 0) {
-    if (couponTimerInterval) {
-      clearInterval(couponTimerInterval);
-    }
-    timerElement.textContent = '00:00:00';
-    localStorage.removeItem('my_coupons');
-    myCouponsContainer.style.display = 'none';
-    updateMyCouponsList();
-    return;
+  // 🎯 УСТАНАВЛИВАЕМ displayDate ТОЛЬКО ЕСЛИ ЕГО ЕЩЁ НЕТ
+  if (!latestCoupon.displayDate) {
+    latestCoupon.displayDate = new Date().toISOString();
+    coupons[coupons.length - 1] = latestCoupon;
+    localStorage.setItem('my_coupons', JSON.stringify(coupons));
+    console.log('⏰ Таймер купона запущен:', latestCoupon.displayDate);
   }
   
-  const hours = Math.floor(remaining / (1000 * 60 * 60));
-  const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+  const displayTime = new Date(latestCoupon.displayDate).getTime();
+  const expiresAt = displayTime + (30 * 1000); // 30 секунд
   
-  timerElement.textContent = [
-    hours.toString().padStart(2, '0'),
-    minutes.toString().padStart(2, '0'),
-    seconds.toString().padStart(2, '0')
-  ].join(':');
-}
+  function updateTimer() {
+    const now = Date.now();
+    const remaining = expiresAt - now;
+    const totalDuration = 30 * 1000;
+    const burnProgress = Math.min(((totalDuration - remaining) / totalDuration) * 100, 100);
+    
+    myCouponsContainer.style.setProperty('--burn-progress', `${burnProgress}%`);
+    
+    // 🎯 РАССЧИТЫВАЕМ ПОЗИЦИЮ ЗАПАЛА
+    const rect = myCouponsContainer.getBoundingClientRect();
+    const angle = (burnProgress * 3.6 - 90) * (Math.PI / 180);
+    
+    // Радиус = половина меньшей стороны контейнера
+    const radius = Math.min(rect.width, rect.height) / 2;
+    
+    // Позиция в процентах от центра
+    const xOffset = (radius * Math.cos(angle) / rect.width) * 100;
+    const yOffset = (radius * Math.sin(angle) / rect.height) * 100;
+    
+    myCouponsContainer.style.setProperty('--spark-x', `${50 + xOffset}%`);
+    myCouponsContainer.style.setProperty('--spark-y', `${50 + yOffset}%`);
+    
+    if (remaining <= 0) {
+      if (couponTimerInterval) {
+        clearInterval(couponTimerInterval);
+      }
+      timerElement.textContent = '00:00:00';
+      localStorage.removeItem('my_coupons');
+      myCouponsContainer.style.display = 'none';
+      updateMyCouponsList();
+      console.log('⏰ Купон истёк и удалён');
+      return;
+    }
+    
+    const hours = Math.floor(remaining / (1000 * 60 * 60));
+    const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+    
+    timerElement.textContent = [
+      hours.toString().padStart(2, '0'),
+      minutes.toString().padStart(2, '0'),
+      seconds.toString().padStart(2, '0')
+    ].join(':');
+  }
   
   updateTimer();
   if (couponTimerInterval) clearInterval(couponTimerInterval);
