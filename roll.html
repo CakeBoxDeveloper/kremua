@@ -1657,7 +1657,7 @@ shopBtn.onclick = function(e) {
 function startRouletteSound() {
   rouletteSound = document.getElementById('rouletteSound');
   if (rouletteSound) {
-    rouletteSound.loop = false; // 👈 ОСТАВЛЯЕМ loop, но звук должен быть длиннее
+    rouletteSound.loop = true; // 👈 ОСТАВЛЯЕМ loop, но звук должен быть длиннее
     rouletteSound.currentTime = 0;
     rouletteSound.play().catch(e => console.log('Roulette sound play failed:', e));
     console.log('🔊 Звук рулетки запущен (loop)');
