@@ -1962,28 +1962,26 @@ function disintegratePromo() {
   const wrapper = document.querySelector('.promo-image-wrapper');
   const wrapperRect = wrapper.getBoundingClientRect();
   
-  // 🎯 КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: учитываем скролл
-  const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
-  const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-  
-  // 🎯 НЕ НУЖНО учитывать zoom/scale - getBoundingClientRect уже учитывает их
+  // 🎯 КЛЮЧЕВОЕ ИСПРАВЛЕНИЕ: используем clientX/clientY напрямую
+  // getBoundingClientRect() уже даёт координаты относительно viewport
+  // Canvas тоже position:fixed - координаты должны совпадать идеально
   
   console.log('📐 Wrapper:', {
     left: wrapperRect.left,
     top: wrapperRect.top,
     width: wrapperRect.width,
-    height: wrapperRect.height,
-    scrollX: scrollX,
-    scrollY: scrollY
+    height: wrapperRect.height
   });
   
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С ТОЧНЫМИ КООРДИНАТАМИ
   for (let y = 0; y < wrapperRect.height; y += blockSize) {
     for (let x = 0; x < wrapperRect.width; x += blockSize) {
       const normalizedY = y / wrapperRect.height;
       
       particles.push({
-        x: wrapperRect.left + x, // 👈 getBoundingClientRect уже в viewport координатах
-        y: wrapperRect.top + y,  // 👈 не нужно добавлять scrollY
+        // 👇 ПРОСТО БЕРЁМ КООРДИНАТЫ ИЗ getBoundingClientRect
+        x: wrapperRect.left + x,
+        y: wrapperRect.top + y,
         initialY: y,
         size: blockSize,
         color: particleColor,
@@ -2000,6 +1998,7 @@ function disintegratePromo() {
   }
   
   console.log('✅ Создано частиц:', particles.length);
+  console.log('🎯 Первая частица:', particles[0]);
   
   let startTime = Date.now();
   
