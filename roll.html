@@ -1630,7 +1630,7 @@ function updateCountdown() {
     document.getElementById('countdownText').textContent = 'Ви можете спробувати ще раз! Оновіть сторінку.';
     
  const shopBtn = document.getElementById('shopBtn');
-shopBtn.innerHTML = '🔄 Спробувати знову'; // 👈 ЗАМЕНИ textContent на innerHTML
+shopBtn.innerHTML = ' Спробувати знову'; // 👈 ЗАМЕНИ textContent на innerHTML
 shopBtn.onclick = function(e) {
   e.preventDefault();
   location.reload();
