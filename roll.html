@@ -236,11 +236,11 @@ body {
 
 .my-coupon-item {
   background: transparent;
-  border: 1px solid;
+  border: 2px solid; /* 👈 ИЗМЕНИЛИ: было 1px, стало 2px */
   border-radius: 4px;
   padding: 10px 12px;
   display: flex;
-  justify-content: center; /* 👈 ИЗМЕНИЛИ: центрируем промокод */
+  justify-content: center;
   align-items: center;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -253,11 +253,11 @@ body {
 
 .my-coupon-code {
   font-family: monospace;
-  font-size: 13px;
+  font-size: 15px; /* 👈 ИЗМЕНИЛИ: было 13px, стало 15px */
   font-weight: 600;
   letter-spacing: 0.5px;
-  width: 100%; /* 👈 ДОБАВИЛИ: на всю ширину */
-  text-align: center; /* 👈 ДОБАВИЛИ: по центру */
+  width: 100%;
+  text-align: center;
 }
 
 .my-coupon-discount {
@@ -1942,6 +1942,7 @@ function showCopyFeedback() {
 
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
+// ИСПРАВЬТЕ disintegratePromo - СОХРАНЯЕМ МАСКУ ВО ВРЕМЯ РАСПАДА
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo');
@@ -1952,7 +1953,7 @@ function disintegratePromo() {
   canvas.height = window.innerHeight;
   
   const particles = [];
-  const blockSize = 4; // 👈 УВЕЛИЧИЛИ: было 2, стало 4 (в 4 раза меньше частиц)
+  const blockSize = 4;
   const totalDuration = 3000;
   const crumbleDuration = 1500;
   
@@ -1961,10 +1962,8 @@ function disintegratePromo() {
   const wrapper = document.querySelector('.promo-image-wrapper');
   const promoCard = document.getElementById('promoCard');
   
-  // 🎯 ПОЛУЧАЕМ КООРДИНАТЫ БЕЗ УЧЁТА ZOOM/TRANSFORM
   const wrapperRect = wrapper.getBoundingClientRect();
   
-  // 🎯 КОМПЕНСИРУЕМ МАСШТАБИРОВАНИЕ BODY (zoom: 0.85 и т.д.)
   const bodyStyle = window.getComputedStyle(document.body);
   const zoom = parseFloat(bodyStyle.zoom || 1);
   const transform = bodyStyle.transform;
@@ -1972,7 +1971,7 @@ function disintegratePromo() {
   let scale = zoom;
   if (transform && transform !== 'none') {
     const matrix = new DOMMatrix(transform);
-    scale = matrix.a; // Получаем scale из матрицы
+    scale = matrix.a;
   }
   
   console.log('📐 Wrapper:', {
@@ -1983,7 +1982,6 @@ function disintegratePromo() {
     scale: scale
   });
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С УЧЁТОМ МАСШТАБА
   for (let y = 0; y < wrapperRect.height; y += blockSize) {
     for (let x = 0; x < wrapperRect.width; x += blockSize) {
       const normalizedY = y / wrapperRect.height;
@@ -2016,18 +2014,9 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 МАСКА КРОШЕНИЯ
-    if (crumbleProgress < 1) {
-      const crumbleY = crumbleProgress * wrapperRect.height;
-      wrapper.style.maskImage = `linear-gradient(
-        to bottom,
-        transparent 0%,
-        transparent ${crumbleY}px,
-        rgba(0,0,0,0.3) ${crumbleY + 10}px,
-        black ${crumbleY + 20}px
-      )`;
-      wrapper.style.webkitMaskImage = wrapper.style.maskImage;
-    } else {
+    // 🎯 УБИРАЕМ МАСКУ КРОШЕНИЯ - ОСТАВЛЯЕМ ТОЛЬКО ПЛАВНОЕ ИСЧЕЗНОВЕНИЕ
+    if (crumbleProgress >= 1) {
+      // 👈 ИЗМЕНИЛИ: убрали maskImage, оставили только opacity
       wrapper.style.opacity = '0';
       wrapper.style.transition = 'opacity 0.3s ease';
     }
