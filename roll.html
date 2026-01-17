@@ -198,11 +198,9 @@ body {
   box-sizing: border-box;
   position: relative;
 }
-  
-   
 
 .my-coupons-header {
-  font-size: clamp(10px, 2.5vw, 14px); /* 👈 АДАПТИВНЫЙ РАЗМЕР */
+  font-size: clamp(12px, 3vw, 16px); /* 👈 УВЕЛИЧИЛИ: было 10-14px, стало 12-16px */
   font-weight: 600;
   color: #ffffff;
   margin-bottom: 12px;
@@ -213,15 +211,13 @@ body {
   text-overflow: ellipsis;
 }
 
-
 .coupon-timer {
-  font-size: clamp(10px, 2.5vw, 14px); /* 👈 ИЗМЕНИЛИ: теперь такой же как у текста */
+  font-size: clamp(12px, 3vw, 16px); /* 👈 УВЕЛИЧИЛИ: было 10-14px, стало 12-16px */
   font-weight: 700;
   color: #ffffff;
   font-family: Arial, sans-serif;
   letter-spacing: 1px;
 }
-
 .my-coupons-list {
   display: flex;
   flex-direction: column;
@@ -826,33 +822,34 @@ body {
   text-align: center;
   max-width: 400px;
   width: 90%;
-  padding: 12px 16px; /* 👈 ДОБАВИЛИ: отступы внутри */
+  padding: 12px 16px;
+  box-sizing: border-box; /* 👈 ДОБАВИЛИ */
 }
 
 .countdown-text {
-  font-size: clamp(10px, 2.5vw, 14px); /* 👈 ТАКОЙ ЖЕ РАЗМЕР */
+  font-size: clamp(13px, 3.5vw, 16px); /* 👈 УВЕЛИЧИЛИ: было 10-14px, стало 13-16px */
   color: #6ab2f2;
   line-height: 1.6;
-  margin-bottom: 0; /* 👈 ИЗМЕНИЛИ: убрали отступ */
-  margin-top: 0; /* 👈 ИЗМЕНИЛИ: убрали отступ */
+  margin-bottom: 0;
+  margin-top: 0;
   font-weight: 600;
   font-family: Arial, sans-serif;
   letter-spacing: 1px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  display: inline; /* 👈 ДОБАВИЛИ: в одну строку с таймером */
+  display: inline;
 }
 
 .countdown-timer {
-  font-size: clamp(10px, 2.5vw, 14px); /* 👈 ИЗМЕНИЛИ: был 32px, теперь такой же */
-  font-weight: 600; /* 👈 ИЗМЕНИЛИ: было 700, теперь как у текста */
+  font-size: clamp(13px, 3.5vw, 16px); /* 👈 УВЕЛИЧИЛИ: было 10-14px, стало 13-16px */
+  font-weight: 600;
   color: #6ab2f2;
   font-family: Arial, sans-serif;
-  letter-spacing: 1px; /* 👈 ИЗМЕНИЛИ: было 2px */
-  margin: 0; /* 👈 ИЗМЕНИЛИ: убрали отступы */
-  display: inline; /* 👈 ДОБАВИЛИ: в одну строку с текстом */
-  margin-left: 6px; /* 👈 ДОБАВИЛИ: небольшой отступ от текста */
+  letter-spacing: 1px;
+  margin: 0;
+  display: inline;
+  margin-left: 6px;
 }
 
 .shop-btn {
