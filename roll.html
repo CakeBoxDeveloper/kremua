@@ -190,51 +190,46 @@ body {
   width: 90%;
   max-width: 400px;
   background: #1d2b3a;
-  border: 1px solid #6ab2f2;
   border-radius: 6px;
   padding: 16px;
   margin: 0 auto 20px;
   flex-shrink: 0;
-  box-sizing: border-box; /* 👈 ДОБАВЬТЕ ЭТУ СТРОКУ */
---burn-progress: 0%; /* Переменная прогресса сгорания */
+  box-sizing: border-box;
   position: relative;
-  background: 
-    linear-gradient(90deg, 
-      #1d2b3a 0%, 
-      #1d2b3a calc(100% - var(--burn-progress)), 
-      transparent calc(100% - var(--burn-progress))
-    );
-  border: 1px solid;
-  border-image: linear-gradient(
-    90deg,
-    #6ab2f2 0%,
-    #6ab2f2 calc(100% - var(--burn-progress)),
-    transparent calc(100% - var(--burn-progress))
-  ) 1;
+  
+  /* Маска с обрезанием контура */
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  
+  /* Толщина рамки */
+  --border-width: 2px;
+  padding: calc(16px + var(--border-width));
 }
   
- .my-coupons-container::after {
+ /* Анимированная рамка */
+.my-coupons-container::before {
   content: '';
   position: absolute;
-  right: calc(var(--burn-progress) - 2px);
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: linear-gradient(180deg, 
-    #ff6b35 0%, 
-    #f7a632 50%, 
+  inset: 0;
+  border-radius: 6px;
+  padding: var(--border-width);
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    #6ab2f2 0%,
+    #6ab2f2 calc(100% - var(--burn-progress, 0%)),
+    transparent calc(100% - var(--burn-progress, 0%)),
     transparent 100%
   );
-  filter: blur(2px);
-  opacity: 0.8;
-  animation: flicker 0.15s infinite;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
-
-@keyframes flicker {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 1; }
-}
-
   
 
 .my-coupons-header {
@@ -2576,7 +2571,13 @@ function updateMyCouponsList() {
 container.innerHTML = coupons
   .map(coupon => {
     const color = coupon.color || couponColors[coupon.discount] || '#6ab2f2'; // 👈 ИЗМЕНИЛИ: сначала берём сохранённый цвет
-    return `...`;
+    return `
+  <div class="my-coupon-item" 
+       style="border-color: ${color}; --coupon-color: ${color};" 
+       onclick="copyCouponFromList('${coupon.code}', '${color}', this)">
+    <span class="my-coupon-code" style="color: ${color};">${coupon.code}</span>
+  </div>
+`;
   })
   .join('');
   
