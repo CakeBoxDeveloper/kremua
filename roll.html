@@ -1958,9 +1958,6 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
-// ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
-// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
-// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
   promoDisintegrated = true;
@@ -1978,6 +1975,17 @@ function disintegratePromo() {
   const wrapperRect = wrapper.getBoundingClientRect();
   const svgRect = baseSvg.getBoundingClientRect();
   
+  // 🎯 ОПРЕДЕЛЯЕМ КОЭФФИЦИЕНТ ZOOM
+  let zoomFactor = 1;
+  if (window.innerWidth >= 1600) {
+    zoomFactor = 1;
+  } else if (window.innerWidth >= 1200) {
+    zoomFactor = 0.9;
+  } else if (window.innerWidth >= 769) {
+    zoomFactor = 0.85;
+  }
+  
+  console.log('🔍 Zoom factor:', zoomFactor);
   console.log('📐 WrapperRect:', wrapperRect);
   console.log('📐 SVG Rect:', svgRect);
   
@@ -1986,17 +1994,15 @@ function disintegratePromo() {
   const totalDuration = 2000;
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 КОМПЕНСАЦИЯ СМЕЩЕНИЯ МАСКИ (calc(50% - 1.5px))
-  const maskOffsetX = -1.5;
-  
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С УЧЁТОМ СМЕЩЕНИЯ МАСКИ
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С УЧЁТОМ ZOOM
   for (let y = 0; y < svgRect.height; y += blockSize) {
     for (let x = 0; x < svgRect.width; x += blockSize) {
       particles.push({
-        x: svgRect.left + x + maskOffsetX,  // 👈 ДОБАВИЛИ СМЕЩЕНИЕ
-        y: svgRect.top + y,
+        // 👇 КОМПЕНСИРУЕМ ZOOM
+        x: svgRect.left + (x * zoomFactor),
+        y: svgRect.top + (y * zoomFactor),
         relativeY: y,
-        size: blockSize,
+        size: blockSize * zoomFactor, // 👈 РАЗМЕР ЧАСТИЦ ТОЖЕ
         color: particleColor,
         velocityX: (Math.random() - 0.5) * 3,
         velocityY: Math.random() * 2 + 1,
@@ -2017,7 +2023,6 @@ function disintegratePromo() {
     const elapsed = Date.now() - startTime;
     const progress = Math.min(elapsed / totalDuration, 1);
     
-    // 🎯 ОБНОВЛЯЕМ МАСКУ (стирание сверху вниз)
     const erasedPercent = progress * 100;
     const erasedHeight = (progress * svgRect.height);
     
@@ -2037,14 +2042,12 @@ function disintegratePromo() {
       black 100%
     )`;
     
-    // 🎯 АКТИВИРУЕМ ЧАСТИЦЫ ПО МЕРЕ СТИРАНИЯ
     particles.forEach(p => {
       if (!p.active && p.relativeY <= erasedHeight) {
         p.active = true;
       }
     });
     
-    // 🎯 РИСУЕМ ЧАСТИЦЫ
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     let activeCount = 0;
@@ -2072,7 +2075,6 @@ function disintegratePromo() {
       }
     });
     
-    // 🎯 ПРОДОЛЖАЕМ АНИМАЦИЮ
     if (progress < 1 || activeCount > 0) {
       requestAnimationFrame(animate);
     } else {
