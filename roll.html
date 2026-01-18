@@ -421,7 +421,17 @@ body {
     transparent 100%
   );
 }
-
+.fuse-marker {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: red; /* 👈 Для отладки - потом сделаем transparent */
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 100;
+  transform: translate(-50%, -50%); /* 👈 Центрируем */
+  transition: none; /* 👈 БЕЗ плавности */
+}
 .loader-text {
   font-size: 18px;
   color: #d4af37;  /* 👈 изменили на золотой */
@@ -1238,6 +1248,8 @@ mask-image: linear-gradient(
   </div>
  <!-- МОИ КУПОНЫ -->
 <div class="my-coupons-container" id="myCouponsContainer">
+  <!-- 🔥 МАРКЕР "КОНЧИКА ФИТИЛЯ" -->
+  <div class="fuse-marker" id="fuseMarker"></div>
   <div class="my-coupons-header">
     Цей купон самознищиться через: <span class="coupon-timer" id="couponTimer">02:00:00</span>
   </div>
@@ -2738,8 +2750,40 @@ let couponTimerInterval = null;
 
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
+// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 let fuseAnimationId = null;
 let fuseParticles = [];
+
+function updateFuseMarkerPosition(containerElement, progress) {
+  const marker = document.getElementById('fuseMarker');
+  if (!marker) return null;
+  
+  const rect = containerElement.getBoundingClientRect();
+  const centerX = rect.width / 2;
+  const centerY = rect.height / 2;
+  const radiusX = rect.width / 2;
+  const radiusY = rect.height / 2;
+  
+  // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ НА КОНТУРЕ
+  const angle = (progress / 100) * 360 - 90;
+  const angleRad = (angle * Math.PI) / 180;
+  
+  const localX = centerX + Math.cos(angleRad) * radiusX;
+  const localY = centerY + Math.sin(angleRad) * radiusY;
+  
+  // 🎯 ПОЗИЦИОНИРУЕМ МАРКЕР (относительно контейнера)
+  marker.style.left = `${localX}px`;
+  marker.style.top = `${localY}px`;
+  
+  // 🔥 ВОЗВРАЩАЕМ АБСОЛЮТНЫЕ КООРДИНАТЫ (для canvas)
+  const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
+  const markerRect = marker.getBoundingClientRect();
+  
+  return {
+    x: markerRect.left / bodyZoom + (markerRect.width / bodyZoom) / 2,
+    y: markerRect.top / bodyZoom + (markerRect.height / bodyZoom) / 2
+  };
+}
 
 function animateFuse(containerElement, color) {
   const canvas = document.getElementById('fuseCanvas');
@@ -2755,45 +2799,27 @@ function animateFuse(containerElement, color) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   
-  // 🎯 ПОЛУЧАЕМ ZOOM-КОЭФФИЦИЕНТ
-  const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
-  
-  // 🎯 ПОЛУЧАЕМ КООРДИНАТЫ С УЧЁТОМ СКРОЛЛА
-  const rect = containerElement.getBoundingClientRect();
-  
-  // 🎯 ПЕРЕСЧИТЫВАЕМ КООРДИНАТЫ ДЛЯ CANVAS БЕЗ ZOOM
-  const canvasRect = {
-    left: rect.left / bodyZoom,
-    top: rect.top / bodyZoom,
-    width: rect.width / bodyZoom,
-    height: rect.height / bodyZoom
-  };
-  
-  const centerX = canvasRect.left + canvasRect.width / 2;
-  const centerY = canvasRect.top + canvasRect.height / 2;
-  const radiusX = canvasRect.width / 2;
-  const radiusY = canvasRect.height / 2;
-  
-  // 🔥 ПОЛУЧАЕМ АКТУАЛЬНЫЙ ПРОГРЕСС ИЗ CSS-ПЕРЕМЕННОЙ
+  // 🔥 ПОЛУЧАЕМ АКТУАЛЬНЫЙ ПРОГРЕСС
   const computedStyle = getComputedStyle(containerElement);
   const progress = parseFloat(computedStyle.getPropertyValue('--burn-progress')) || 0;
   
-  // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ "КОНЧИКА ФИТИЛЯ"
-  const angle = (progress / 100) * 360 - 90; // -90 = начало сверху
-  const angleRad = (angle * Math.PI) / 180;
+  // 🔥 ОБНОВЛЯЕМ ПОЗИЦИЮ МАРКЕРА И ПОЛУЧАЕМ КООРДИНАТЫ
+  const fusePos = updateFuseMarkerPosition(containerElement, progress);
   
-  const fuseX = centerX + Math.cos(angleRad) * radiusX;
-  const fuseY = centerY + Math.sin(angleRad) * radiusY;
+  if (!fusePos) {
+    console.log('❌ Не удалось получить позицию маркера');
+    fuseAnimationId = requestAnimationFrame(() => animateFuse(containerElement, color));
+    return;
+  }
   
-  // 🔥 СОЗДАЁМ НОВЫЕ ЧАСТИЦЫ (только если прогресс > 0)
+  // 🔥 СОЗДАЁМ ЧАСТИЦЫ (точно в позиции маркера)
   if (Math.random() > 0.3 && progress > 0 && progress < 100) {
     const particleCount = Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < particleCount; i++) {
       fuseParticles.push({
-        // 👇 ИЗМЕНИЛИ: сохраняем начальные координаты БЕЗ смещения
-        x: fuseX,
-        y: fuseY,
+        x: fusePos.x,
+        y: fusePos.y,
         vx: (Math.random() - 0.5) * 1,
         vy: (Math.random() - 0.5) * 1 - 0.5,
         life: 1,
@@ -2807,7 +2833,6 @@ function animateFuse(containerElement, color) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   fuseParticles = fuseParticles.filter(p => {
-    // 👇 ИЗМЕНИЛИ: частицы двигаются независимо от скролла
     p.x += p.vx;
     p.y += p.vy;
     p.vy += 0.05;
@@ -2847,6 +2872,10 @@ function stopFuseAnimation() {
   
   console.log('🛑 Анимация фитиля остановлена');
 }
+
+
+
+
   
 function startCouponTimer() {
   const timerElement = document.getElementById('couponTimer');
