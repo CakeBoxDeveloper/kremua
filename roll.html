@@ -218,16 +218,8 @@ css.my-coupons-container {
   pointer-events: none;
   z-index: 1;
   
-  /* 🔥 АНИМАЦИЯ СГОРАНИЯ ПО ЧАСОВОЙ СТРЕЛКЕ */
-  clip-path: polygon(
-    50% 50%,
-    50% 0%,
-    calc(50% + (50% * cos(calc(var(--burn-progress) * 3.6deg)))) calc(50% - (50% * sin(calc(var(--burn-progress) * 3.6deg)))),
-    100% 0%,
-    100% 100%,
-    0% 100%,
-    0% 0%
-  );
+  /* 🔥 ПРОСТАЯ АНИМАЦИЯ СГОРАНИЯ СПРАВА НАЛЕВО */
+  clip-path: inset(0 0 0 calc(var(--burn-progress) * 1%));
 }
 
 .my-coupons-header {
@@ -2749,21 +2741,23 @@ function startCouponTimer() {
   const burnStartTime = expiresAt - burnDuration;
   
   function updateTimer() {
-    const now = Date.now();
-    const remaining = expiresAt - now;
+  const now = Date.now();
+  const remaining = expiresAt - now;
+  
+  // 🔥 ОБНОВЛЯЕМ BURN PROGRESS (0-100 как число)
+  if (now >= burnStartTime) {
+    const burnElapsed = now - burnStartTime;
+    const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
     
-    // 🔥 ОБНОВЛЯЕМ BURN PROGRESS (0-100)
-    if (now >= burnStartTime) {
-      const burnElapsed = now - burnStartTime;
-      const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
-      myCouponsContainer.style.setProperty('--burn-progress', burnProgress);
-      
-      if (burnProgress % 10 < 0.5) { // Логируем каждые 10%
-        console.log(`🔥 Burn progress: ${burnProgress.toFixed(1)}%`);
-      }
-    } else {
-      myCouponsContainer.style.setProperty('--burn-progress', 0);
+    // 👇 ПЕРЕДАЁМ КАК ЧИСЛО, НЕ СТРОКУ
+    myCouponsContainer.style.setProperty('--burn-progress', burnProgress.toFixed(2));
+    
+    if (burnProgress % 10 < 1) {
+      console.log(`🔥 Burn progress: ${burnProgress.toFixed(1)}%`);
     }
+  } else {
+    myCouponsContainer.style.setProperty('--burn-progress', '0');
+  }
     
     if (remaining <= 0) {
       if (couponTimerInterval) {
