@@ -186,7 +186,7 @@ body {
 }
 
 /* 3. СТИЛИ ДЛЯ "МОИ КУПОНЫ" */
-css.my-coupons-container {
+.my-coupons-container {
   width: 90%;
   max-width: 400px;
   background: #1d2b3a;
@@ -198,10 +198,8 @@ css.my-coupons-container {
   box-sizing: border-box;
   position: relative;
   --coupon-border-color: #6ab2f2;
-  --burn-progress: 0%;
+  --burn-progress: 0;
 }
-
-
 
 .my-coupons-container::before {
   content: '';
@@ -218,14 +216,14 @@ css.my-coupons-container {
   pointer-events: none;
   z-index: 1;
   
-  /* 🔥 ПРОСТАЯ АНИМАЦИЯ СГОРАНИЯ СПРАВА НАЛЕВО */
+  /* 🔥 ПРОСТАЯ АНИМАЦИЯ СГОРАНИЯ СЛЕВА НАПРАВО */
   clip-path: inset(0 0 0 calc(var(--burn-progress) * 1%));
 }
 
 .my-coupons-header {
   font-size: clamp(12px, 3vw, 16px);
   font-weight: 600;
-  color: #6ab2f2; /* 👈 ИЗМЕНИЛИ: был #ffffff, стал голубой */
+  color: #6ab2f2;
   margin-bottom: 12px;
   text-align: center;
   opacity: 0.9;
@@ -237,29 +235,31 @@ css.my-coupons-container {
 .coupon-timer {
   font-size: clamp(12px, 3vw, 16px);
   font-weight: 700;
-  color: #6ab2f2; /* 👈 ИЗМЕНИЛИ: был #ffffff, стал голубой */
+  color: #6ab2f2;
   font-family: Arial, sans-serif;
   letter-spacing: 1px;
 }
+
 .my-coupons-list {
   display: flex;
   flex-direction: column;
   gap: 8px;
   position: relative;
-  z-index: 2; /* 👈 УВЕЛИЧИЛИ: было 1, стало 2 (выше ::before) */
+  z-index: 2;
 }
-  .my-coupon-item.copied {
-  background: var(--coupon-color); /* Цвет промокода становится фоном */
+
+.my-coupon-item.copied {
+  background: var(--coupon-color);
   border-color: var(--coupon-color);
 }
 
 .my-coupon-item.copied .my-coupon-code {
-  color: #17212b !important; /* Цвет текста = цвет фона страницы */
+  color: #17212b !important;
 }
 
 .my-coupon-item {
   background: transparent;
-  border: 2px solid; /* 👈 ИЗМЕНИЛИ: было 1px, стало 2px */
+  border: 2px solid;
   border-radius: 4px;
   padding: 10px 12px;
   display: flex;
@@ -269,22 +269,17 @@ css.my-coupons-container {
   transition: all 0.2s ease;
 }
 
- 
- 
-
- 
-
 .my-coupon-code {
   font-family: monospace;
   font-size: 15px;
-  font-weight: 900; /* 👈 ИЗМЕНИЛИ: было 600, стало 900 (максимальный) */
+  font-weight: 900;
   letter-spacing: 0.5px;
   width: 100%;
   text-align: center;
 }
 
 .my-coupon-discount {
-  display: none; /* 👈 СКРЫВАЕМ ПРОЦЕНТ СКИДКИ */
+  display: none;
 }
 
 .my-coupons-empty {
