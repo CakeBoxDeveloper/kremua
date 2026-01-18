@@ -956,6 +956,13 @@ mask-image: linear-gradient(
 );
 }
 
+  #fuseCanvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10002; /* 👈 ИЗМЕНИЛИ: было 1, стало 10002 (выше всех) */
+}
+
 .winners-widget ul {
   list-style: none;
   padding: 0;
@@ -2730,40 +2737,51 @@ function animateFuse(containerElement, progress, color) {
   if (!canvas) return;
   
   const ctx = canvas.getContext('2d');
+  
+  // 🎯 CANVAS БЕЗ ZOOM - размер = реальный размер viewport
+  canvas.style.zoom = '1';
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   
-  // 🎯 ПОЛУЧАЕМ АКТУАЛЬНЫЕ КООРДИНАТЫ С УЧЁТОМ СКРОЛЛА
-  const rect = containerElement.getBoundingClientRect();
-  
-  // 🎯 УЧИТЫВАЕМ ZOOM
+  // 🎯 ПОЛУЧАЕМ ZOOM-КОЭФФИЦИЕНТ
   const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
   
-  const centerX = rect.left;
-  const centerY = rect.top;
-  const radiusX = rect.width / 2;
-  const radiusY = rect.height / 2;
+  // 🎯 ПОЛУЧАЕМ КООРДИНАТЫ С УЧЁТОМ СКРОЛЛА
+  const rect = containerElement.getBoundingClientRect();
+  
+  // 🎯 ПЕРЕСЧИТЫВАЕМ КООРДИНАТЫ ДЛЯ CANVAS БЕЗ ZOOM
+  const canvasRect = {
+    left: rect.left / bodyZoom,
+    top: rect.top / bodyZoom,
+    width: rect.width / bodyZoom,
+    height: rect.height / bodyZoom
+  };
+  
+  const centerX = canvasRect.left + canvasRect.width / 2;
+  const centerY = canvasRect.top + canvasRect.height / 2;
+  const radiusX = canvasRect.width / 2;
+  const radiusY = canvasRect.height / 2;
   
   // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ "КОНЧИКА ФИТИЛЯ" (от 0° до 360°)
   const angle = (progress / 100) * 360 - 90; // -90 чтобы начать сверху
   const angleRad = (angle * Math.PI) / 180;
   
-  // Позиция на эллипсе (учитываем border-radius)
-  const fuseX = centerX + radiusX + Math.cos(angleRad) * radiusX;
-  const fuseY = centerY + radiusY + Math.sin(angleRad) * radiusY;
+  // Позиция на эллипсе
+  const fuseX = centerX + Math.cos(angleRad) * radiusX;
+  const fuseY = centerY + Math.sin(angleRad) * radiusY;
   
   // 🔥 СОЗДАЁМ НОВЫЕ ЧАСТИЦЫ КАЖДЫЙ КАДР (УМЕНЬШЕНЫ ВДВОЕ)
-  if (Math.random() > 0.3) { // 70% шанс создать частицу
-    const particleCount = Math.floor(Math.random() * 3) + 2; // 2-4 частицы за раз
+  if (Math.random() > 0.3) {
+    const particleCount = Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < particleCount; i++) {
       fuseParticles.push({
-        x: fuseX + (Math.random() - 0.5) * 4,  // 👈 БЫЛО 8, СТАЛО 4
-        y: fuseY + (Math.random() - 0.5) * 4,  // 👈 БЫЛО 8, СТАЛО 4
-        vx: (Math.random() - 0.5) * 1,         // 👈 БЫЛО 2, СТАЛО 1
-        vy: (Math.random() - 0.5) * 1 - 0.5,   // 👈 БЫЛО 2 и -1, СТАЛО 1 и -0.5
+        x: fuseX + (Math.random() - 0.5) * 4,
+        y: fuseY + (Math.random() - 0.5) * 4,
+        vx: (Math.random() - 0.5) * 1,
+        vy: (Math.random() - 0.5) * 1 - 0.5,
         life: 1,
-        size: Math.random() * 1 + 0.75,        // 👈 БЫЛО 2+1.5 (1.5-3.5px), СТАЛО 1+0.75 (0.75-1.75px)
+        size: Math.random() * 1 + 0.75,
         color: color
       });
     }
@@ -2775,8 +2793,8 @@ function animateFuse(containerElement, progress, color) {
   fuseParticles = fuseParticles.filter(p => {
     p.x += p.vx;
     p.y += p.vy;
-    p.vy += 0.05; // 👈 БЫЛО 0.1, СТАЛО 0.05 (гравитация уменьшена)
-    p.life -= 0.02; // Затухание
+    p.vy += 0.05;
+    p.life -= 0.02;
     
     if (p.life > 0) {
       ctx.save();
