@@ -1435,7 +1435,7 @@ async function checkAndUsePromoTicket() {
     return false;
   }
   
-  // 🎯 ТЕСТОВЫЕ БИЛЕТЫ - ПРОВЕРЯЕМ ПЕРВЫМ ДЕЛОМ (ДО ПРОВЕРКИ ФОРМАТА)
+  // 🎯 ТЕСТОВЫЕ БИЛЕТЫ - ПРОВЕРЯЕМ ПЕРВЫМ ДЕЛОМ (ДО ВСЕХ ОСТАЛЬНЫХ ПРОВЕРОК)
   const testTickets = {
     'TEST-FOREVER': null,  // Бесконечный билет без выбора купона
     'TEST-YELLOW': 0,      // Жёлтый купон (индекс 0 в массиве coupons)
@@ -1460,7 +1460,7 @@ async function checkAndUsePromoTicket() {
     return true;
   }
   
-  // 🎯 ПРОВЕРКА ОБЫЧНЫХ БИЛЕТОВ (только если это НЕ тестовый)
+  // 🎯 ПРОВЕРКА ФОРМАТА - только для обычных билетов
   try {
     console.log('🎫 Проверяем билет:', ticketCode);
     
