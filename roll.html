@@ -190,13 +190,35 @@ body {
   width: 90%;
   max-width: 400px;
   background: #1d2b3a;
-  border: 1px solid #6ab2f2;
+  border: 2px solid #6ab2f2; /* 👈 ИЗМЕНИЛИ: было 1px, стало 2px */
   border-radius: 6px;
   padding: 16px;
   margin: 0 auto 20px;
   flex-shrink: 0;
   box-sizing: border-box;
   position: relative;
+}
+  .my-coupons-container::before {
+  content: '';
+  position: absolute;
+  inset: -2px; /* Чуть больше чтобы перекрыть основную рамку */
+  border-radius: 6px;
+  padding: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent var(--burn-progress, 0%),
+    currentColor var(--burn-progress, 0%),
+    currentColor 100%
+  );
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+  color: inherit; /* Наследует цвет от родителя */
 }
 
 .my-coupons-header {
@@ -222,8 +244,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  position: relative; /* 👈 ДОБАВЬ */
-  z-index: 1; /* 👈 ДОБАВЬ */
+  position: relative;
+  z-index: 2; /* 👈 УВЕЛИЧИЛИ: было 1, стало 2 (выше ::before) */
 }
   .my-coupon-item.copied {
   background: var(--coupon-color); /* Цвет промокода становится фоном */
@@ -2684,7 +2706,6 @@ function copyCouponFromList(code, color, element) {
   
 let couponTimerInterval = null;
 
-// УПРОСТИТЕ startCouponTimer - УДАЛИТЕ ВСЁ ПРО burn-progress И spark
 function startCouponTimer() {
   const timerElement = document.getElementById('couponTimer');
   const myCouponsContainer = document.getElementById('myCouponsContainer');
@@ -2711,13 +2732,26 @@ function startCouponTimer() {
   }
   
   const displayTime = new Date(latestCoupon.displayDate).getTime();
-  const expiresAt = displayTime + (2 * 60 * 60 * 1000); // 2 часа
+  const totalDuration = 2 * 60 * 60 * 1000; // 2 часа
+  const expiresAt = displayTime + totalDuration;
+  
+  // 🔥 ДЛИТЕЛЬНОСТЬ СГОРАНИЯ РАМКИ (последние 10 секунд)
+  const burnDuration = 10 * 1000; // 10 секунд
+  const burnStartTime = expiresAt - burnDuration;
   
   function updateTimer() {
     const now = Date.now();
     const remaining = expiresAt - now;
     
-    // 👈 УДАЛИЛИ: всё про burn-progress и spark
+    // 🔥 ОБНОВЛЯЕМ BURN PROGRESS
+    if (now >= burnStartTime) {
+      const burnElapsed = now - burnStartTime;
+      const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
+      myCouponsContainer.style.setProperty('--burn-progress', `${burnProgress}%`);
+      console.log(`🔥 Burn progress: ${burnProgress.toFixed(1)}%`);
+    } else {
+      myCouponsContainer.style.setProperty('--burn-progress', '0%');
+    }
     
     if (remaining <= 0) {
       if (couponTimerInterval) {
@@ -2743,7 +2777,7 @@ function startCouponTimer() {
   
   updateTimer();
   if (couponTimerInterval) clearInterval(couponTimerInterval);
-  couponTimerInterval = setInterval(updateTimer, 1000);
+  couponTimerInterval = setInterval(updateTimer, 100); // 👈 ИЗМЕНИЛИ: было 1000ms, стало 100ms для плавности
 }
 
 // ===== ЦВЕТА КУПОНОВ =====
