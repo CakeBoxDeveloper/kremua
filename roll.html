@@ -1960,6 +1960,7 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
+// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo с маской и частицами');
@@ -1971,32 +1972,41 @@ function disintegratePromo() {
   canvas.style.display = 'block';
   
   const wrapper = document.querySelector('.promo-image-wrapper');
-  const baseSvg = document.querySelector('.promo-base-svg');
+  
+  // 🎯 ИСПОЛЬЗУЕМ PROMO-CODE-BOX КАК ОРИЕНТИР (он точно внутри видимого купона)
+  const promoCodeBox = document.getElementById('promoCode');
+  const codeRect = promoCodeBox.getBoundingClientRect();
   
   const wrapperRect = wrapper.getBoundingClientRect();
-  const svgRect = baseSvg.getBoundingClientRect();
   
-  // 🎯 ПОЛУЧАЕМ РЕАЛЬНЫЙ ZOOM ИЗ COMPUTED STYLE
-  const computedZoom = parseFloat(window.getComputedStyle(document.body).zoom || 1);
+  console.log('📐 WrapperRect:', wrapperRect);
+  console.log('📐 CodeBox Rect:', codeRect);
   
-  console.log('🔍 Computed zoom:', computedZoom);
-  console.log('📐 WrapperRect (raw):', wrapperRect);
-  console.log('📐 SVG Rect (raw):', svgRect);
+  // 🎯 ВЫЧИСЛЯЕМ ОБЛАСТЬ КУПОНА НА ОСНОВЕ ПРОМОКОДА
+  // Промокод находится на 85% высоты и 15% ширины (из CSS)
+  const couponWidth = wrapperRect.width * 0.7; // примерно 70% ширины wrapper
+  const couponHeight = wrapperRect.height * 0.9; // примерно 90% высоты
+  const couponLeft = wrapperRect.left + (wrapperRect.width - couponWidth) / 2;
+  const couponTop = wrapperRect.top + (wrapperRect.height - couponHeight) / 2;
   
-  // 🎯 getBoundingClientRect уже учитывает zoom, НО canvas - нет!
-  // Поэтому координаты уже правильные, просто рисуем частицы напрямую
+  console.log('🎯 Вычисленная область купона:', {
+    left: couponLeft,
+    top: couponTop,
+    width: couponWidth,
+    height: couponHeight
+  });
   
   const particles = [];
   const blockSize = 4;
   const totalDuration = 2000;
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ БЕЗ КОМПЕНСАЦИИ - getBoundingClientRect УЖЕ ПРАВИЛЬНЫЙ
-  for (let y = 0; y < svgRect.height; y += blockSize) {
-    for (let x = 0; x < svgRect.width; x += blockSize) {
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ В ВЫЧИСЛЕННОЙ ОБЛАСТИ
+  for (let y = 0; y < couponHeight; y += blockSize) {
+    for (let x = 0; x < couponWidth; x += blockSize) {
       particles.push({
-        x: svgRect.left + x,
-        y: svgRect.top + y,
+        x: couponLeft + x,
+        y: couponTop + y,
         relativeY: y,
         size: blockSize,
         color: particleColor,
@@ -2014,10 +2024,9 @@ function disintegratePromo() {
   console.log('✅ Создано частиц:', particles.length);
   
   // 🎯 ВИЗУАЛЬНАЯ ОТЛАДКА
-  ctx.strokeStyle = 'lime';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(svgRect.left, svgRect.top, svgRect.width, svgRect.height);
-  console.log('🟢 Зелёная рамка:', svgRect.left, svgRect.top, svgRect.width, svgRect.height);
+  ctx.strokeStyle = 'cyan';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(couponLeft, couponTop, couponWidth, couponHeight);
   
   const startTime = Date.now();
   
@@ -2026,7 +2035,7 @@ function disintegratePromo() {
     const progress = Math.min(elapsed / totalDuration, 1);
     
     const erasedPercent = progress * 100;
-    const erasedHeight = (progress * svgRect.height);
+    const erasedHeight = (progress * couponHeight);
     
     wrapper.style.maskImage = `linear-gradient(
       to bottom,
@@ -2052,10 +2061,10 @@ function disintegratePromo() {
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // 🎯 РИСУЕМ ЗЕЛЁНУЮ РАМКУ НА КАЖДОМ КАДРЕ
-    ctx.strokeStyle = 'lime';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(svgRect.left, svgRect.top, svgRect.width, svgRect.height);
+    // 🎯 CYAN РАМКА
+    ctx.strokeStyle = 'cyan';
+    ctx.lineWidth = 3;
+    ctx.strokeRect(couponLeft, couponTop, couponWidth, couponHeight);
     
     let activeCount = 0;
     
