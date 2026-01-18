@@ -1181,8 +1181,8 @@ mask-image: linear-gradient(
 
 <!-- 🎯 HEADER ПОД АВАТАРОМ -->
 <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 12px; margin-bottom: 5px;">
-  <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d4af37; margin-bottom: 10px;">
-  <span class="lottery-participants-count" data-target="843" style="font-weight: 700; font-size: 19.5px;">0</span>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 19.5px; color: #d4af37; margin-bottom: 10px;">
+  <span class="lottery-participants-count" data-target="843" style="font-weight: 700;">0</span>
   <span>учасників лотереї сьогоднi</span>
 </div>
 </div>
@@ -2030,28 +2030,37 @@ function disintegratePromo() {
   
   const startTime = Date.now();
   
-  function animate() {
-    const elapsed = Date.now() - startTime;
-    const progress = Math.min(elapsed / totalDuration, 1);
+ function animate() {
+  const elapsed = Date.now() - startTime;
+  const progress = Math.min(elapsed / totalDuration, 1);
+  
+  const erasedPercent = progress * 110; // 👈 ИЗМЕНИЛИ: было progress * 100, стало * 110
+  const erasedHeight = (progress * canvasSvgRect.height);
     
-    const erasedPercent = progress * 100;
-    const erasedHeight = (progress * canvasSvgRect.height);
-    
-   wrapper.style.maskImage = `linear-gradient(
-  to bottom,
-  transparent 0%,
-  transparent ${Math.max(0, erasedPercent - 3)}%,
-  black ${Math.min(105, erasedPercent + 8)}%,
-  black 100%
-)`;
+wrapper.style.maskImage = `
+  url('https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/5793408ec6209b2e840db457f59ebd2e38c43c19/CPNSVG11.svg'),
+  linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent ${Math.max(0, erasedPercent - 3)}%,
+    black ${Math.min(105, erasedPercent + 8)}%,
+    black 100%
+  )
+`;
 
-wrapper.style.webkitMaskImage = `linear-gradient(
-  to bottom,
-  transparent 0%,
-  transparent ${Math.max(0, erasedPercent - 3)}%,
-  black ${Math.min(105, erasedPercent + 8)}%,
-  black 100%
-)`;
+wrapper.style.webkitMaskImage = `
+  url('https://raw.githubusercontent.com/CakeBoxDeveloper/kremua/5793408ec6209b2e840db457f59ebd2e38c43c19/CPNSVG11.svg'),
+  linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent ${Math.max(0, erasedPercent - 3)}%,
+    black ${Math.min(105, erasedPercent + 8)}%,
+    black 100%
+  )
+`;
+
+wrapper.style.maskComposite = 'intersect';
+wrapper.style.webkitMaskComposite = 'source-in';
     
     particles.forEach(p => {
       if (!p.active && p.relativeY <= erasedHeight) {
