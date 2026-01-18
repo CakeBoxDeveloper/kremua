@@ -206,14 +206,26 @@ body {
   content: '';
   position: absolute;
   inset: -2px;
-  border-radius: 8px; /* 👈 6px + 2px = 8px для компенсации */
-  border: 2px solid var(--coupon-border-color);
+  border-radius: 8px;
   pointer-events: none;
   z-index: 0;
   
-  /* 🔥 АНИМАЦИЯ СГОРАНИЯ СПРАВА НАЛЕВО */
-  clip-path: inset(0 calc(var(--burn-progress) * 1%) 0 0);
-  transition: clip-path 0.1s linear; /* 👈 ДОБАВИЛИ для плавности */
+  /* 🔥 КРУГОВОЕ СГОРАНИЕ ПО ЧАСОВОЙ СТРЕЛКЕ (НАЧИНАЯ СВЕРХУ) */
+  background: conic-gradient(
+    from -90deg,
+    transparent 0deg,
+    transparent calc(var(--burn-progress) * 3.6deg),
+    var(--coupon-border-color) calc(var(--burn-progress) * 3.6deg),
+    var(--coupon-border-color) 360deg
+  );
+  
+  /* Маска для создания эффекта рамки */
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px;
 }
 
 .my-coupons-header {
@@ -2730,9 +2742,9 @@ function startCouponTimer() {
   const totalDuration = 2 * 60 * 60 * 1000; // 2 часа
   const expiresAt = displayTime + totalDuration;
   
-  // 🔥 АНИМАЦИЯ СГОРАНИЯ - СРАЗУ ПОСЛЕ ПОЯВЛЕНИЯ
-  const burnDuration = 10 * 1000; // 10 секунд
-  const burnStartTime = displayTime; // 👈 ИЗМЕНИЛИ: начинается СРАЗУ
+  // 🔥 АНИМАЦИЯ СГОРАНИЯ - 30 СЕКУНД СРАЗУ ПОСЛЕ ПОЯВЛЕНИЯ
+  const burnDuration = 30 * 1000; // 👈 30 СЕКУНД
+  const burnStartTime = displayTime;
   const burnEndTime = displayTime + burnDuration;
   
   function updateTimer() {
@@ -2750,7 +2762,6 @@ function startCouponTimer() {
         console.log(`🔥 Burn progress: ${burnProgress.toFixed(1)}%`);
       }
     } else if (now > burnEndTime) {
-      // После окончания анимации - оставляем полностью сгоревшим
       myCouponsContainer.style.setProperty('--burn-progress', '100');
     } else {
       myCouponsContainer.style.setProperty('--burn-progress', '0');
@@ -2780,7 +2791,7 @@ function startCouponTimer() {
   
   updateTimer();
   if (couponTimerInterval) clearInterval(couponTimerInterval);
-  couponTimerInterval = setInterval(updateTimer, 50); // 50ms для плавности
+  couponTimerInterval = setInterval(updateTimer, 50);
 }
 
 // ===== ЦВЕТА КУПОНОВ =====
