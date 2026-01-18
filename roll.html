@@ -1961,6 +1961,7 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
+// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo с маской и частицами');
@@ -1974,30 +1975,27 @@ function disintegratePromo() {
   const wrapper = document.querySelector('.promo-image-wrapper');
   const baseSvg = document.querySelector('.promo-base-svg');
   
-  // 🎯 ИСПОЛЬЗУЕМ КООРДИНАТЫ SVG ВМЕСТО WRAPPER
   const wrapperRect = wrapper.getBoundingClientRect();
   const svgRect = baseSvg.getBoundingClientRect();
   
-  // 👇 ДОБАВЬТЕ ЛОГИ СЮДА
   console.log('📐 WrapperRect:', wrapperRect);
   console.log('📐 SVG Rect:', svgRect);
-  console.log('📍 Позиция wrapper:', wrapperRect.left, wrapperRect.top);
-  console.log('📍 Позиция SVG:', svgRect.left, svgRect.top);
-  console.log('📍 Разница:', svgRect.left - wrapperRect.left, svgRect.top - wrapperRect.top);
-  // 👆 ДО ЭТОГО МЕСТА
   
   const particles = [];
   const blockSize = 4;
   const totalDuration = 2000;
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ НА ОСНОВЕ SVG (ВИДИМОЙ ЧАСТИ)
+  // 🎯 КОМПЕНСАЦИЯ СМЕЩЕНИЯ МАСКИ (calc(50% - 1.5px))
+  const maskOffsetX = -1.5;
+  
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ С УЧЁТОМ СМЕЩЕНИЯ МАСКИ
   for (let y = 0; y < svgRect.height; y += blockSize) {
     for (let x = 0; x < svgRect.width; x += blockSize) {
       particles.push({
-        x: svgRect.left + x,
+        x: svgRect.left + x + maskOffsetX,  // 👈 ДОБАВИЛИ СМЕЩЕНИЕ
         y: svgRect.top + y,
-        relativeY: y, // Относительная позиция
+        relativeY: y,
         size: blockSize,
         color: particleColor,
         velocityX: (Math.random() - 0.5) * 3,
@@ -2021,7 +2019,7 @@ function disintegratePromo() {
     
     // 🎯 ОБНОВЛЯЕМ МАСКУ (стирание сверху вниз)
     const erasedPercent = progress * 100;
-    const erasedHeight = (progress * svgRect.height); // 👈 ИСПОЛЬЗУЕМ SVG HEIGHT
+    const erasedHeight = (progress * svgRect.height);
     
     wrapper.style.maskImage = `linear-gradient(
       to bottom,
@@ -2055,7 +2053,6 @@ function disintegratePromo() {
       if (p.active && p.y < canvas.height + 50 && p.opacity > 0) {
         activeCount++;
         
-        // Рисуем частицу
         ctx.save();
         ctx.globalAlpha = p.opacity;
         ctx.translate(p.x + p.size / 2, p.y + p.size / 2);
@@ -2064,13 +2061,11 @@ function disintegratePromo() {
         ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
         ctx.restore();
         
-        // Обновляем физику
         p.velocityY += p.gravity;
         p.x += p.velocityX;
         p.y += p.velocityY;
         p.rotation += p.rotationSpeed;
         
-        // Затухание внизу экрана
         if (p.y > canvas.height - 100) {
           p.opacity -= 0.02;
         }
@@ -2099,7 +2094,6 @@ function disintegratePromo() {
   
   animate();
 }
-  
   
   
 
