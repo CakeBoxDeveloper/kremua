@@ -41,6 +41,14 @@ body {
   opacity: 1;
 }
 
+
+  #fuseCanvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10002; /* 👈 Выше всех */
+}
+
 .tap-hint img {
   width: 100%;
   height: 100%;
@@ -2732,13 +2740,16 @@ let couponTimerInterval = null;
 let fuseAnimationId = null;
 let fuseParticles = [];
 
-function animateFuse(containerElement, progress, color) {
+function animateFuse(containerElement, color) {
   const canvas = document.getElementById('fuseCanvas');
-  if (!canvas) return;
+  if (!canvas) {
+    console.log('❌ Canvas для фитиля не найден');
+    return;
+  }
   
   const ctx = canvas.getContext('2d');
   
-  // 🎯 CANVAS БЕЗ ZOOM - размер = реальный размер viewport
+  // 🎯 CANVAS БЕЗ ZOOM
   canvas.style.zoom = '1';
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -2762,26 +2773,29 @@ function animateFuse(containerElement, progress, color) {
   const radiusX = canvasRect.width / 2;
   const radiusY = canvasRect.height / 2;
   
-  // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ "КОНЧИКА ФИТИЛЯ" (от 0° до 360°)
-  const angle = (progress / 100) * 360 - 90; // -90 чтобы начать сверху
+  // 🔥 ПОЛУЧАЕМ АКТУАЛЬНЫЙ ПРОГРЕСС ИЗ CSS-ПЕРЕМЕННОЙ
+  const computedStyle = getComputedStyle(containerElement);
+  const progress = parseFloat(computedStyle.getPropertyValue('--burn-progress')) || 0;
+  
+  // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ "КОНЧИКА ФИТИЛЯ"
+  const angle = (progress / 100) * 360 - 90; // -90 = начало сверху
   const angleRad = (angle * Math.PI) / 180;
   
-  // Позиция на эллипсе
   const fuseX = centerX + Math.cos(angleRad) * radiusX;
   const fuseY = centerY + Math.sin(angleRad) * radiusY;
   
-  // 🔥 СОЗДАЁМ НОВЫЕ ЧАСТИЦЫ КАЖДЫЙ КАДР (УМЕНЬШЕНЫ ВДВОЕ)
-  if (Math.random() > 0.3) {
+  // 🔥 СОЗДАЁМ ЧАСТИЦЫ (УМЕНЬШЕНЫ ВДВОЕ)
+  if (Math.random() > 0.3 && progress > 0) {
     const particleCount = Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < particleCount; i++) {
       fuseParticles.push({
-        x: fuseX + (Math.random() - 0.5) * 4,
-        y: fuseY + (Math.random() - 0.5) * 4,
-        vx: (Math.random() - 0.5) * 1,
-        vy: (Math.random() - 0.5) * 1 - 0.5,
+        x: fuseX + (Math.random() - 0.5) * 4,  // было 8
+        y: fuseY + (Math.random() - 0.5) * 4,  // было 8
+        vx: (Math.random() - 0.5) * 1,         // было 2
+        vy: (Math.random() - 0.5) * 1 - 0.5,   // было 2 и -1
         life: 1,
-        size: Math.random() * 1 + 0.75,
+        size: Math.random() * 1 + 0.75,        // было 2 + 1.5 (1.5-3.5px)
         color: color
       });
     }
@@ -2793,7 +2807,7 @@ function animateFuse(containerElement, progress, color) {
   fuseParticles = fuseParticles.filter(p => {
     p.x += p.vx;
     p.y += p.vy;
-    p.vy += 0.05;
+    p.vy += 0.05;  // было 0.1 (гравитация уменьшена)
     p.life -= 0.02;
     
     if (p.life > 0) {
@@ -2809,9 +2823,9 @@ function animateFuse(containerElement, progress, color) {
     return false;
   });
   
-  // 🔄 ПРОДОЛЖАЕМ АНИМАЦИЮ
+  // 🔄 ПРОДОЛЖАЕМ АНИМАЦИЮ (БЕЗ передачи progress - берём из CSS)
   fuseAnimationId = requestAnimationFrame(() => {
-    animateFuse(containerElement, progress, color);
+    animateFuse(containerElement, color);
   });
 }
 
@@ -2827,6 +2841,8 @@ function stopFuseAnimation() {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
+  
+  console.log('🛑 Анимация фитиля остановлена');
 }
 
   
@@ -2842,12 +2858,12 @@ function startCouponTimer() {
   const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
   if (coupons.length === 0) {
     myCouponsContainer.style.display = 'none';
-    stopFuseAnimation(); // 👈 ДОБАВИЛИ
+    stopFuseAnimation();
     return;
   }
   
   const latestCoupon = coupons[coupons.length - 1];
-  const couponColor = latestCoupon.color || '#6ab2f2'; // 👈 ДОБАВИЛИ
+  const couponColor = latestCoupon.color || '#6ab2f2';
   
   if (!latestCoupon.displayDate) {
     latestCoupon.displayDate = new Date().toISOString();
@@ -2860,7 +2876,7 @@ function startCouponTimer() {
   const totalDuration = 2 * 60 * 60 * 1000;
   const expiresAt = displayTime + totalDuration;
   
-  const burnDuration = 30 * 1000; // 30 секунд
+  const burnDuration = 30 * 1000;
   const burnStartTime = displayTime;
   const burnEndTime = displayTime + burnDuration;
   
@@ -2868,28 +2884,25 @@ function startCouponTimer() {
     const now = Date.now();
     const remaining = expiresAt - now;
     
-    // 🔥 ОБНОВЛЯЕМ BURN PROGRESS И АНИМАЦИЮ ЧАСТИЦ
-  if (now >= burnStartTime && now <= burnEndTime) {
-  const burnElapsed = now - burnStartTime;
-  const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
-  
-  myCouponsContainer.style.setProperty('--burn-progress', burnProgress.toFixed(2));
-  
-  // 🔥 ЗАПУСКАЕМ АНИМАЦИЮ (только если ещё не запущена)
-  if (!fuseAnimationId) {
-    animateFuse(myCouponsContainer, burnProgress, couponColor);
-  }
-  
-  if (burnProgress % 10 < 1) {
-    console.log(`🔥 Burn progress: ${burnProgress.toFixed(1)}%`);
-  }
-} else if (now > burnEndTime) {
-  myCouponsContainer.style.setProperty('--burn-progress', '100');
-  stopFuseAnimation();
-} else {
-  myCouponsContainer.style.setProperty('--burn-progress', '0');
-  stopFuseAnimation();
-}
+    // 🔥 ОБНОВЛЯЕМ BURN PROGRESS
+    if (now >= burnStartTime && now <= burnEndTime) {
+      const burnElapsed = now - burnStartTime;
+      const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
+      
+      myCouponsContainer.style.setProperty('--burn-progress', burnProgress.toFixed(2));
+      
+      // 🔥 ЗАПУСКАЕМ АНИМАЦИЮ (только если ещё не запущена)
+      if (!fuseAnimationId) {
+        console.log('🔥 Запускаем анимацию фитиля');
+        animateFuse(myCouponsContainer, couponColor);
+      }
+    } else if (now > burnEndTime) {
+      myCouponsContainer.style.setProperty('--burn-progress', '100');
+      stopFuseAnimation();
+    } else {
+      myCouponsContainer.style.setProperty('--burn-progress', '0');
+    }
+    
     if (remaining <= 0) {
       if (couponTimerInterval) {
         clearInterval(couponTimerInterval);
@@ -2897,7 +2910,7 @@ function startCouponTimer() {
       timerElement.textContent = '00:00:00';
       localStorage.removeItem('my_coupons');
       myCouponsContainer.style.display = 'none';
-      stopFuseAnimation(); // 👈 ДОБАВИЛИ
+      stopFuseAnimation();
       console.log('⏰ Купон истёк и удалён');
       return;
     }
