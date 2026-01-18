@@ -1961,52 +1961,43 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
+// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo с маской и частицами');
   
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
+  
+  // 🎯 ПРИМЕНЯЕМ ТОТ ЖЕ ZOOM ЧТО И К BODY
+  const bodyZoom = window.getComputedStyle(document.body).zoom || '1';
+  canvas.style.zoom = bodyZoom;
+  console.log('🔍 Применён zoom к canvas:', bodyZoom);
+  
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   canvas.style.display = 'block';
   
   const wrapper = document.querySelector('.promo-image-wrapper');
-  
-  // 🎯 ИСПОЛЬЗУЕМ PROMO-CODE-BOX КАК ОРИЕНТИР (он точно внутри видимого купона)
-  const promoCodeBox = document.getElementById('promoCode');
-  const codeRect = promoCodeBox.getBoundingClientRect();
+  const baseSvg = document.querySelector('.promo-base-svg');
   
   const wrapperRect = wrapper.getBoundingClientRect();
+  const svgRect = baseSvg.getBoundingClientRect();
   
   console.log('📐 WrapperRect:', wrapperRect);
-  console.log('📐 CodeBox Rect:', codeRect);
-  
-  // 🎯 ВЫЧИСЛЯЕМ ОБЛАСТЬ КУПОНА НА ОСНОВЕ ПРОМОКОДА
-  // Промокод находится на 85% высоты и 15% ширины (из CSS)
-  const couponWidth = wrapperRect.width * 0.7; // примерно 70% ширины wrapper
-  const couponHeight = wrapperRect.height * 0.9; // примерно 90% высоты
-  const couponLeft = wrapperRect.left + (wrapperRect.width - couponWidth) / 2;
-  const couponTop = wrapperRect.top + (wrapperRect.height - couponHeight) / 2;
-  
-  console.log('🎯 Вычисленная область купона:', {
-    left: couponLeft,
-    top: couponTop,
-    width: couponWidth,
-    height: couponHeight
-  });
+  console.log('📐 SVG Rect:', svgRect);
   
   const particles = [];
   const blockSize = 4;
   const totalDuration = 2000;
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ В ВЫЧИСЛЕННОЙ ОБЛАСТИ
-  for (let y = 0; y < couponHeight; y += blockSize) {
-    for (let x = 0; x < couponWidth; x += blockSize) {
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ НА ОСНОВЕ SVG (БЕЗ ДОПОЛНИТЕЛЬНЫХ КОРРЕКЦИЙ)
+  for (let y = 0; y < svgRect.height; y += blockSize) {
+    for (let x = 0; x < svgRect.width; x += blockSize) {
       particles.push({
-        x: couponLeft + x,
-        y: couponTop + y,
+        x: svgRect.left + x,
+        y: svgRect.top + y,
         relativeY: y,
         size: blockSize,
         color: particleColor,
@@ -2023,11 +2014,6 @@ function disintegratePromo() {
   
   console.log('✅ Создано частиц:', particles.length);
   
-  // 🎯 ВИЗУАЛЬНАЯ ОТЛАДКА
-  ctx.strokeStyle = 'cyan';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(couponLeft, couponTop, couponWidth, couponHeight);
-  
   const startTime = Date.now();
   
   function animate() {
@@ -2035,7 +2021,7 @@ function disintegratePromo() {
     const progress = Math.min(elapsed / totalDuration, 1);
     
     const erasedPercent = progress * 100;
-    const erasedHeight = (progress * couponHeight);
+    const erasedHeight = (progress * svgRect.height);
     
     wrapper.style.maskImage = `linear-gradient(
       to bottom,
@@ -2060,11 +2046,6 @@ function disintegratePromo() {
     });
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // 🎯 CYAN РАМКА
-    ctx.strokeStyle = 'cyan';
-    ctx.lineWidth = 3;
-    ctx.strokeRect(couponLeft, couponTop, couponWidth, couponHeight);
     
     let activeCount = 0;
     
@@ -2096,6 +2077,7 @@ function disintegratePromo() {
     } else {
       console.log('✅ Анимация завершена');
       canvas.style.display = 'none';
+      canvas.style.zoom = '1'; // 👈 СБРОС ZOOM
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       wrapper.style.opacity = '0';
       
