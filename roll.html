@@ -1962,9 +1962,6 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
-  console.log('📍 Позиция wrapper:', wrapperRect.left, wrapperRect.top);
-console.log('📍 Позиция SVG:', svgRect.left, svgRect.top);
-console.log('📍 Разница:', svgRect.left - wrapperRect.left, svgRect.top - wrapperRect.top);
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo с маской и частицами');
   
@@ -1981,8 +1978,13 @@ console.log('📍 Разница:', svgRect.left - wrapperRect.left, svgRect.top
   const wrapperRect = wrapper.getBoundingClientRect();
   const svgRect = baseSvg.getBoundingClientRect();
   
+  // 👇 ДОБАВЬТЕ ЛОГИ СЮДА
   console.log('📐 WrapperRect:', wrapperRect);
   console.log('📐 SVG Rect:', svgRect);
+  console.log('📍 Позиция wrapper:', wrapperRect.left, wrapperRect.top);
+  console.log('📍 Позиция SVG:', svgRect.left, svgRect.top);
+  console.log('📍 Разница:', svgRect.left - wrapperRect.left, svgRect.top - wrapperRect.top);
+  // 👆 ДО ЭТОГО МЕСТА
   
   const particles = [];
   const blockSize = 4;
