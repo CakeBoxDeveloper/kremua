@@ -2733,9 +2733,14 @@ function animateFuse(containerElement, progress, color) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   
+  // 🎯 ПОЛУЧАЕМ АКТУАЛЬНЫЕ КООРДИНАТЫ С УЧЁТОМ СКРОЛЛА
   const rect = containerElement.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
+  
+  // 🎯 УЧИТЫВАЕМ ZOOM
+  const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
+  
+  const centerX = rect.left;
+  const centerY = rect.top;
   const radiusX = rect.width / 2;
   const radiusY = rect.height / 2;
   
@@ -2744,21 +2749,21 @@ function animateFuse(containerElement, progress, color) {
   const angleRad = (angle * Math.PI) / 180;
   
   // Позиция на эллипсе (учитываем border-radius)
-  const fuseX = centerX + Math.cos(angleRad) * radiusX;
-  const fuseY = centerY + Math.sin(angleRad) * radiusY;
+  const fuseX = centerX + radiusX + Math.cos(angleRad) * radiusX;
+  const fuseY = centerY + radiusY + Math.sin(angleRad) * radiusY;
   
-  // 🔥 СОЗДАЁМ НОВЫЕ ЧАСТИЦЫ КАЖДЫЙ КАДР
+  // 🔥 СОЗДАЁМ НОВЫЕ ЧАСТИЦЫ КАЖДЫЙ КАДР (УМЕНЬШЕНЫ ВДВОЕ)
   if (Math.random() > 0.3) { // 70% шанс создать частицу
     const particleCount = Math.floor(Math.random() * 3) + 2; // 2-4 частицы за раз
     
     for (let i = 0; i < particleCount; i++) {
       fuseParticles.push({
-        x: fuseX + (Math.random() - 0.5) * 8,
-        y: fuseY + (Math.random() - 0.5) * 8,
-        vx: (Math.random() - 0.5) * 2,
-        vy: (Math.random() - 0.5) * 2 - 1, // Немного вверх
+        x: fuseX + (Math.random() - 0.5) * 4,  // 👈 БЫЛО 8, СТАЛО 4
+        y: fuseY + (Math.random() - 0.5) * 4,  // 👈 БЫЛО 8, СТАЛО 4
+        vx: (Math.random() - 0.5) * 1,         // 👈 БЫЛО 2, СТАЛО 1
+        vy: (Math.random() - 0.5) * 1 - 0.5,   // 👈 БЫЛО 2 и -1, СТАЛО 1 и -0.5
         life: 1,
-        size: Math.random() * 2 + 1.5, // 1.5-3.5px
+        size: Math.random() * 1 + 0.75,        // 👈 БЫЛО 2+1.5 (1.5-3.5px), СТАЛО 1+0.75 (0.75-1.75px)
         color: color
       });
     }
@@ -2770,7 +2775,7 @@ function animateFuse(containerElement, progress, color) {
   fuseParticles = fuseParticles.filter(p => {
     p.x += p.vx;
     p.y += p.vy;
-    p.vy += 0.1; // Гравитация
+    p.vy += 0.05; // 👈 БЫЛО 0.1, СТАЛО 0.05 (гравитация уменьшена)
     p.life -= 0.02; // Затухание
     
     if (p.life > 0) {
@@ -2784,6 +2789,11 @@ function animateFuse(containerElement, progress, color) {
       return true;
     }
     return false;
+  });
+  
+  // 🔄 ПРОДОЛЖАЕМ АНИМАЦИЮ
+  fuseAnimationId = requestAnimationFrame(() => {
+    animateFuse(containerElement, progress, color);
   });
 }
 
@@ -2841,27 +2851,27 @@ function startCouponTimer() {
     const remaining = expiresAt - now;
     
     // 🔥 ОБНОВЛЯЕМ BURN PROGRESS И АНИМАЦИЮ ЧАСТИЦ
-    if (now >= burnStartTime && now <= burnEndTime) {
-      const burnElapsed = now - burnStartTime;
-      const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
-      
-      myCouponsContainer.style.setProperty('--burn-progress', burnProgress.toFixed(2));
-      
-      // 🔥 ЗАПУСКАЕМ АНИМАЦИЮ ЧАСТИЦ
-      fuseAnimationId = requestAnimationFrame(() => {
-        animateFuse(myCouponsContainer, burnProgress, couponColor);
-      });
-      
-      if (burnProgress % 10 < 1) {
-        console.log(`🔥 Burn progress: ${burnProgress.toFixed(1)}%`);
-      }
-    } else if (now > burnEndTime) {
-      myCouponsContainer.style.setProperty('--burn-progress', '100');
-      stopFuseAnimation(); // 👈 ОСТАНАВЛИВАЕМ ЧАСТИЦЫ
-    } else {
-      myCouponsContainer.style.setProperty('--burn-progress', '0');
-    }
-    
+  if (now >= burnStartTime && now <= burnEndTime) {
+  const burnElapsed = now - burnStartTime;
+  const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
+  
+  myCouponsContainer.style.setProperty('--burn-progress', burnProgress.toFixed(2));
+  
+  // 🔥 ЗАПУСКАЕМ АНИМАЦИЮ (только если ещё не запущена)
+  if (!fuseAnimationId) {
+    animateFuse(myCouponsContainer, burnProgress, couponColor);
+  }
+  
+  if (burnProgress % 10 < 1) {
+    console.log(`🔥 Burn progress: ${burnProgress.toFixed(1)}%`);
+  }
+} else if (now > burnEndTime) {
+  myCouponsContainer.style.setProperty('--burn-progress', '100');
+  stopFuseAnimation();
+} else {
+  myCouponsContainer.style.setProperty('--burn-progress', '0');
+  stopFuseAnimation();
+}
     if (remaining <= 0) {
       if (couponTimerInterval) {
         clearInterval(couponTimerInterval);
