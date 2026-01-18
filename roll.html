@@ -2759,13 +2759,18 @@ function updateFuseMarkerPosition(containerElement, progress) {
   if (!marker) return null;
   
   const rect = containerElement.getBoundingClientRect();
+  
+  // 🎯 ПОЛУЧАЕМ ZOOM-КОЭФФИЦИЕНТ (как в disintegratePromo)
+  const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
+  
   const borderRadius = 6;
   const borderWidth = 2;
   
-  const left = rect.left + borderWidth / 2;
-  const top = rect.top + borderWidth / 2;
-  const width = rect.width - borderWidth;
-  const height = rect.height - borderWidth;
+  // 🔥 ПЕРЕСЧИТЫВАЕМ КООРДИНАТЫ С УЧЁТОМ ZOOM
+  const left = rect.left / bodyZoom + borderWidth / 2;
+  const top = rect.top / bodyZoom + borderWidth / 2;
+  const width = rect.width / bodyZoom - borderWidth;
+  const height = rect.height / bodyZoom - borderWidth;
   const right = left + width;
   const bottom = top + height;
   
@@ -2842,6 +2847,10 @@ function updateFuseMarkerPosition(containerElement, progress) {
   return { x, y };
 }
 
+
+
+
+  
 function animateFuse(containerElement, color) {
   const canvas = document.getElementById('fuseCanvas');
   if (!canvas) {
