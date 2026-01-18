@@ -2757,32 +2757,100 @@ let couponTimerInterval = null;
 let fuseAnimationId = null;
 let fuseParticles = [];
 
-function updateFuseMarkerPosition(containerElement, progress) {
+Но если хотите точное совпадение со скруглёнными углами, используйте эту улучшенную версию:
+javascriptfunction updateFuseMarkerPosition(containerElement, progress) {
   const marker = document.getElementById('fuseMarker');
   if (!marker) return null;
   
   const rect = containerElement.getBoundingClientRect();
+  const borderRadius = 6;
+  const borderWidth = 2;
   
-  // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ НА КОНТУРЕ (эллипс)
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-  const radiusX = rect.width / 2;
-  const radiusY = rect.height / 2;
+  const left = rect.left + borderWidth / 2;
+  const top = rect.top + borderWidth / 2;
+  const width = rect.width - borderWidth;
+  const height = rect.height - borderWidth;
+  const right = left + width;
+  const bottom = top + height;
   
-  // Прогресс идёт по часовой стрелке, начиная сверху
-  const angle = (progress / 100) * 360 - 90; // -90 чтобы начать сверху
-  const angleRad = (angle * Math.PI) / 180;
+  // 🔥 ПЕРИМЕТР С УЧЁТОМ СКРУГЛЕНИЙ
+  const cornerArcLength = (Math.PI / 2) * borderRadius; // длина одной дуги угла
+  const straightTop = width - 2 * borderRadius;
+  const straightRight = height - 2 * borderRadius;
+  const straightBottom = width - 2 * borderRadius;
+  const straightLeft = height - 2 * borderRadius;
   
-  const x = centerX + Math.cos(angleRad) * radiusX;
-  const y = centerY + Math.sin(angleRad) * radiusY;
+  const perimeter = 
+    cornerArcLength + straightTop + 
+    cornerArcLength + straightRight + 
+    cornerArcLength + straightBottom + 
+    cornerArcLength + straightLeft;
   
-  // 🎯 ПОЗИЦИОНИРУЕМ МАРКЕР (FIXED)
+  let currentDistance = (progress / 100) * perimeter;
+  let x, y;
+  
+  // 🎯 ИДЁМ ПО КОНТУРУ С УЧЁТОМ СКРУГЛЕНИЙ
+  
+  // 1️⃣ ВЕРХНИЙ ЛЕВЫЙ УГОЛ (дуга)
+  if (currentDistance <= cornerArcLength) {
+    const angle = -180 + (currentDistance / cornerArcLength) * 90;
+    const angleRad = (angle * Math.PI) / 180;
+    x = left + borderRadius + Math.cos(angleRad) * borderRadius;
+    y = top + borderRadius + Math.sin(angleRad) * borderRadius;
+  }
+  // 2️⃣ ВЕРХНЯЯ СТОРОНА (прямая)
+  else if (currentDistance <= cornerArcLength + straightTop) {
+    x = left + borderRadius + (currentDistance - cornerArcLength);
+    y = top;
+  }
+  // 3️⃣ ВЕРХНИЙ ПРАВЫЙ УГОЛ (дуга)
+  else if (currentDistance <= 2 * cornerArcLength + straightTop) {
+    const angle = -90 + ((currentDistance - cornerArcLength - straightTop) / cornerArcLength) * 90;
+    const angleRad = (angle * Math.PI) / 180;
+    x = right - borderRadius + Math.cos(angleRad) * borderRadius;
+    y = top + borderRadius + Math.sin(angleRad) * borderRadius;
+  }
+  // 4️⃣ ПРАВАЯ СТОРОНА (прямая)
+  else if (currentDistance <= 2 * cornerArcLength + straightTop + straightRight) {
+    x = right;
+    y = top + borderRadius + (currentDistance - 2 * cornerArcLength - straightTop);
+  }
+  // 5️⃣ НИЖНИЙ ПРАВЫЙ УГОЛ (дуга)
+  else if (currentDistance <= 3 * cornerArcLength + straightTop + straightRight) {
+    const angle = 0 + ((currentDistance - 2 * cornerArcLength - straightTop - straightRight) / cornerArcLength) * 90;
+    const angleRad = (angle * Math.PI) / 180;
+    x = right - borderRadius + Math.cos(angleRad) * borderRadius;
+    y = bottom - borderRadius + Math.sin(angleRad) * borderRadius;
+  }
+  // 6️⃣ НИЖНЯЯ СТОРОНА (прямая)
+  else if (currentDistance <= 3 * cornerArcLength + straightTop + straightRight + straightBottom) {
+    x = right - borderRadius - (currentDistance - 3 * cornerArcLength - straightTop - straightRight);
+    y = bottom;
+  }
+  // 7️⃣ НИЖНИЙ ЛЕВЫЙ УГОЛ (дуга)
+  else if (currentDistance <= 4 * cornerArcLength + straightTop + straightRight + straightBottom) {
+    const angle = 90 + ((currentDistance - 3 * cornerArcLength - straightTop - straightRight - straightBottom) / cornerArcLength) * 90;
+    const angleRad = (angle * Math.PI) / 180;
+    x = left + borderRadius + Math.cos(angleRad) * borderRadius;
+    y = bottom - borderRadius + Math.sin(angleRad) * borderRadius;
+  }
+  // 8️⃣ ЛЕВАЯ СТОРОНА (прямая)
+  else {
+    x = left;
+    y = bottom - borderRadius - (currentDistance - 4 * cornerArcLength - straightTop - straightRight - straightBottom);
+  }
+  
   marker.style.position = 'fixed';
   marker.style.left = `${x}px`;
   marker.style.top = `${y}px`;
+  marker.style.display = 'block';
   
   return { x, y };
 }
+
+
+
+  
 
 function animateFuse(containerElement, color) {
   const canvas = document.getElementById('fuseCanvas');
