@@ -2836,8 +2836,32 @@ function animateFuse(containerElement, color) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   
-  // 🔥 ИСПОЛЬЗУЕМ ГЛОБАЛЬНЫЙ ПРОГРЕСС (тот же что и в CSS)
-  const progress = currentBurnProgress;
+  // 🔥 ВЫЧИСЛЯЕМ ПРОГРЕСС ЗДЕСЬ (КАЖДЫЙ КАДР)
+  const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
+  let progress = 0;
+  
+  if (coupons.length > 0) {
+    const latestCoupon = coupons[coupons.length - 1];
+    if (latestCoupon.displayDate) {
+      const displayTime = new Date(latestCoupon.displayDate).getTime();
+      const burnDuration = 30 * 1000;
+      const now = Date.now();
+      const burnElapsed = now - displayTime;
+      
+      if (burnElapsed >= 0 && burnElapsed <= burnDuration) {
+        progress = (burnElapsed / burnDuration) * 100;
+        
+        // 🔥 ОБНОВЛЯЕМ И ГЛОБАЛЬНУЮ ПЕРЕМЕННУЮ, И CSS
+        currentBurnProgress = progress;
+        containerElement.style.setProperty('--burn-progress', progress.toFixed(2));
+      } else if (burnElapsed > burnDuration) {
+        progress = 100;
+        currentBurnProgress = 100;
+        containerElement.style.setProperty('--burn-progress', '100');
+      }
+    }
+  }
+  
   
   const fusePos = updateFuseMarkerPosition(containerElement, progress);
   
@@ -2954,25 +2978,14 @@ function startCouponTimer() {
     
     // 🔥 ОБНОВЛЯЕМ BURN PROGRESS
    // 🔥 ОБНОВЛЯЕМ ГЛОБАЛЬНЫЙ ПРОГРЕСС
-if (now >= burnStartTime && now <= burnEndTime) {
-  const burnElapsed = now - burnStartTime;
-  currentBurnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
-  
-  myCouponsContainer.style.setProperty('--burn-progress', currentBurnProgress.toFixed(2));
-      
-      // 🔥 ЗАПУСКАЕМ АНИМАЦИЮ (только если ещё не запущена)
+   if (now >= burnStartTime && now <= burnEndTime) {
       if (!fuseAnimationId) {
         console.log('🔥 Запускаем анимацию фитиля');
         animateFuse(myCouponsContainer, couponColor);
       }
     } else if (now > burnEndTime) {
-  currentBurnProgress = 100;
-  myCouponsContainer.style.setProperty('--burn-progress', '100');
-  stopFuseAnimation();
-} else {
-  currentBurnProgress = 0;
-  myCouponsContainer.style.setProperty('--burn-progress', '0');
-}
+      stopFuseAnimation();
+    }
     
     if (remaining <= 0) {
       if (couponTimerInterval) {
