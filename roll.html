@@ -2037,21 +2037,21 @@ function disintegratePromo() {
     const erasedPercent = progress * 100;
     const erasedHeight = (progress * canvasSvgRect.height);
     
-    wrapper.style.maskImage = `linear-gradient(
-      to bottom,
-      transparent 0%,
-      transparent ${Math.max(0, erasedPercent - 3)}%,
-      black ${Math.min(100, erasedPercent + 3)}%,
-      black 100%
-    )`;
-    
-    wrapper.style.webkitMaskImage = `linear-gradient(
-      to bottom,
-      transparent 0%,
-      transparent ${Math.max(0, erasedPercent - 3)}%,
-      black ${Math.min(100, erasedPercent + 3)}%,
-      black 100%
-    )`;
+   wrapper.style.maskImage = `linear-gradient(
+  to bottom,
+  transparent 0%,
+  transparent ${Math.max(0, erasedPercent - 3)}%,
+  black ${Math.min(105, erasedPercent + 8)}%,
+  black 100%
+)`;
+
+wrapper.style.webkitMaskImage = `linear-gradient(
+  to bottom,
+  transparent 0%,
+  transparent ${Math.max(0, erasedPercent - 3)}%,
+  black ${Math.min(105, erasedPercent + 8)}%,
+  black 100%
+)`;
     
     particles.forEach(p => {
       if (!p.active && p.relativeY <= erasedHeight) {
