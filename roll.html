@@ -200,45 +200,25 @@ body {
   --coupon-border-color: #6ab2f2;
 }
 
-/* 🔥 SVG-РАМКА С ОБРАТНЫМ STROKE */
+
 .my-coupons-container::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -2px;
   border-radius: 6px;
-  pointer-events: none;
-  z-index: 1;
-  
-  /* Создаём эффект обрезки справа налево */
-  background: 
-    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%)),
-    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%)),
-    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%)),
-    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%));
-  
-  background-size: 
-    100% 2px,  /* Верх */
-    2px 100%,  /* Право */
-    100% 2px,  /* Низ */
-    2px 100%;  /* Лево */
-  
-  background-position: 
-    0 0,           /* Верх */
-    100% 0,        /* Право */
-    0 100%,        /* Низ */
-    0 0;           /* Лево */
-  
-  background-repeat: no-repeat;
-  
-  /* Маска для создания рамки */
+  padding: 2px;
+  background: var(--coupon-border-color, #6ab2f2);
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  padding: 2px;
+  pointer-events: none;
+  z-index: 1;
+  
+  /* 🔥 ОБРЕЗКА СПРАВА НАЛЕВО (ОБРАТНЫЙ STROKE) */
+  clip-path: inset(0 var(--burn-progress, 0%) 0 0);
 }
-
 
 .my-coupons-header {
   font-size: clamp(12px, 3vw, 16px);
