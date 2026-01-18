@@ -1436,13 +1436,30 @@ async function checkAndUsePromoTicket() {
   }
   
   // 🎯 ТЕСТОВЫЙ БИЛЕТ - ПРОВЕРЯЕМ ПЕРВЫМ ДЕЛОМ (ДО ПРОВЕРКИ ФОРМАТА)
-  if (ticketCode === 'TEST-FOREVER') {
-    localStorage.removeItem('lottery_last_spin');
-    console.log('✅ Тестовый билет активирован!');
-    showTicketModal('success', '🎮 Тестовий білет! Можна крутити безкінечно!');
-    window.history.replaceState({}, document.title, window.location.pathname);
-    return true;
+// 🎯 ТЕСТОВЫЕ БИЛЕТЫ
+const testTickets = {
+  'TEST-FOREVER': null,  // Бесконечный билет без выбора купона
+  'TEST-YELLOW': 0,      // Жёлтый купон (индекс 0 в массиве coupons)
+  'TEST-RED': 1,         // Красный купон (индекс 1)
+  'TEST-BLUE': 2,        // Синий купон (индекс 2)
+  'TEST-GREEN': 3        // Зелёный купон (индекс 3)
+};
+
+if (testTickets.hasOwnProperty(ticketCode)) {
+  localStorage.removeItem('lottery_last_spin');
+  
+  // Если это билет с выбором купона - сохраняем индекс
+  if (testTickets[ticketCode] !== null) {
+    sessionStorage.setItem('force_coupon_index', testTickets[ticketCode]);
+    console.log(`✅ Тестовый билет активирован! Выпадет: ${coupons[testTickets[ticketCode]].displayName}`);
+  } else {
+    console.log('✅ Бесконечный тестовый билет активирован!');
   }
+  
+  showTicketModal('success', '🎮 Тестовий білет! Крути барабан!');
+  window.history.replaceState({}, document.title, window.location.pathname);
+  return true;
+}
   
   try {
     console.log('🎫 Проверяем билет:', ticketCode);
@@ -2122,12 +2139,23 @@ wrapper.style.webkitMaskComposite = 'source-in';
   
 
 // ===== ВЫБОР СЛУЧАЙНОГО КУПОНА =====
+// ===== ВЫБОР СЛУЧАЙНОГО КУПОНА =====
 function selectRandomCoupon() {
+  // 🎯 ПРОВЕРЯЕМ ПРИНУДИТЕЛЬНЫЙ ВЫБОР КУПОНА
+  const forcedIndex = sessionStorage.getItem('force_coupon_index');
+  if (forcedIndex !== null) {
+    sessionStorage.removeItem('force_coupon_index');
+    const index = parseInt(forcedIndex);
+    console.log('🎯 Принудительный выбор купона:', coupons[index].displayName);
+    return coupons[index];
+  }
+  
+  // Обычная рандомная логика
   const probabilities = [
-    { coupon: coupons[0], weight: 70 },
-    { coupon: coupons[1], weight: 1 },
-    { coupon: coupons[2], weight: 9 },
-    { coupon: coupons[3], weight: 20 }
+    { coupon: coupons[0], weight: 70 },  // Жёлтый
+    { coupon: coupons[1], weight: 1 },   // Красный
+    { coupon: coupons[2], weight: 9 },   // Синий
+    { coupon: coupons[3], weight: 20 }   // Зелёный
   ];
   
   const random = Math.random() * 100;
