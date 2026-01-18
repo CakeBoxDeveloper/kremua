@@ -216,8 +216,9 @@ body {
   pointer-events: none;
   z-index: 1;
   
-  /* 🔥 ОБРЕЗКА СПРАВА НАЛЕВО (ОБРАТНЫЙ STROKE) */
+  /* 🔥 ОБРЕЗКА СПРАВА НАЛЕВО (clip-path) */
   clip-path: inset(0 var(--burn-progress, 0%) 0 0);
+  transition: clip-path 0.1s linear; /* 👈 ДОБАВЬТЕ для плавности */
 }
 
 .my-coupons-header {
