@@ -190,7 +190,6 @@ body {
   width: 90%;
   max-width: 400px;
   background: #1d2b3a;
-  border: none; /* 👈 УБРАЛИ border */
   border-radius: 6px;
   padding: 16px;
   margin: 0 auto 20px;
@@ -199,20 +198,21 @@ body {
   position: relative;
   --coupon-border-color: #6ab2f2;
   --burn-progress: 0;
+  
+  /* 🔥 ВРЕМЕННАЯ РАМКА (пока анимация не началась) */
+  border: 2px solid var(--coupon-border-color);
 }
 
 .my-coupons-container::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -2px; /* 👈 ВЫХОДИТ ЗА ГРАНИЦЫ на 2px */
   border-radius: 6px;
-  pointer-events: none;
-  z-index: -1; /* 👈 ПОД содержимым */
-  
-  /* 🔥 РАМКА С АНИМАЦИЕЙ СГОРАНИЯ СПРАВА НАЛЕВО */
   border: 2px solid var(--coupon-border-color);
+  pointer-events: none;
+  z-index: 0; /* 👈 НАД фоном, но ПОД содержимым */
   
-  /* Обрезаем справа налево */
+  /* 🔥 ОБРЕЗАЕМ СПРАВА НАЛЕВО */
   clip-path: inset(0 calc(var(--burn-progress) * 1%) 0 0);
 }
 
