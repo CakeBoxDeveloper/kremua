@@ -1962,6 +1962,7 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
+// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo с маской и частицами');
@@ -1969,11 +1970,8 @@ function disintegratePromo() {
   const canvas = document.getElementById('particleCanvas');
   const ctx = canvas.getContext('2d');
   
-  // 🎯 ПРИМЕНЯЕМ ТОТ ЖЕ ZOOM ЧТО И К BODY
-  const bodyZoom = window.getComputedStyle(document.body).zoom || '1';
-  canvas.style.zoom = bodyZoom;
-  console.log('🔍 Применён zoom к canvas:', bodyZoom);
-  
+  // 🎯 CANVAS БЕЗ ZOOM - размер = реальный размер viewport
+  canvas.style.zoom = '1';
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   canvas.style.display = 'block';
@@ -1981,23 +1979,37 @@ function disintegratePromo() {
   const wrapper = document.querySelector('.promo-image-wrapper');
   const baseSvg = document.querySelector('.promo-base-svg');
   
+  // 🎯 ПОЛУЧАЕМ ZOOM-КОЭФФИЦИЕНТ
+  const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
+  console.log('🔍 Body zoom:', bodyZoom);
+  
   const wrapperRect = wrapper.getBoundingClientRect();
   const svgRect = baseSvg.getBoundingClientRect();
   
-  console.log('📐 WrapperRect:', wrapperRect);
-  console.log('📐 SVG Rect:', svgRect);
+  console.log('📐 SVG Rect (с учётом zoom):', svgRect);
+  
+  // 🎯 ПЕРЕСЧИТЫВАЕМ КООРДИНАТЫ ДЛЯ CANVAS БЕЗ ZOOM
+  // getBoundingClientRect уже учитывает zoom, но canvas работает в "чистых" пикселях
+  const canvasSvgRect = {
+    left: svgRect.left / bodyZoom,
+    top: svgRect.top / bodyZoom,
+    width: svgRect.width / bodyZoom,
+    height: svgRect.height / bodyZoom
+  };
+  
+  console.log('📐 SVG Rect для canvas (без zoom):', canvasSvgRect);
   
   const particles = [];
   const blockSize = 4;
   const totalDuration = 2000;
   const particleColor = selectedCoupon.particleColor;
   
-  // 🎯 СОЗДАЁМ ЧАСТИЦЫ НА ОСНОВЕ SVG (БЕЗ ДОПОЛНИТЕЛЬНЫХ КОРРЕКЦИЙ)
-  for (let y = 0; y < svgRect.height; y += blockSize) {
-    for (let x = 0; x < svgRect.width; x += blockSize) {
+  // 🎯 СОЗДАЁМ ЧАСТИЦЫ НА ОСНОВЕ ПЕРЕСЧИТАННЫХ КООРДИНАТ
+  for (let y = 0; y < canvasSvgRect.height; y += blockSize) {
+    for (let x = 0; x < canvasSvgRect.width; x += blockSize) {
       particles.push({
-        x: svgRect.left + x,
-        y: svgRect.top + y,
+        x: canvasSvgRect.left + x,
+        y: canvasSvgRect.top + y,
         relativeY: y,
         size: blockSize,
         color: particleColor,
@@ -2014,6 +2026,12 @@ function disintegratePromo() {
   
   console.log('✅ Создано частиц:', particles.length);
   
+  // 🎯 ВИЗУАЛЬНАЯ ОТЛАДКА - КРАСНАЯ РАМКА
+  ctx.strokeStyle = 'red';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(canvasSvgRect.left, canvasSvgRect.top, canvasSvgRect.width, canvasSvgRect.height);
+  console.log('🔴 Красная рамка:', canvasSvgRect);
+  
   const startTime = Date.now();
   
   function animate() {
@@ -2021,7 +2039,7 @@ function disintegratePromo() {
     const progress = Math.min(elapsed / totalDuration, 1);
     
     const erasedPercent = progress * 100;
-    const erasedHeight = (progress * svgRect.height);
+    const erasedHeight = (progress * canvasSvgRect.height);
     
     wrapper.style.maskImage = `linear-gradient(
       to bottom,
@@ -2046,6 +2064,11 @@ function disintegratePromo() {
     });
     
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // 🎯 ПЕРЕРИСОВЫВАЕМ КРАСНУЮ РАМКУ
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(canvasSvgRect.left, canvasSvgRect.top, canvasSvgRect.width, canvasSvgRect.height);
     
     let activeCount = 0;
     
@@ -2077,7 +2100,6 @@ function disintegratePromo() {
     } else {
       console.log('✅ Анимация завершена');
       canvas.style.display = 'none';
-      canvas.style.zoom = '1'; // 👈 СБРОС ZOOM
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       wrapper.style.opacity = '0';
       
