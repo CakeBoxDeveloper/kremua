@@ -1181,10 +1181,10 @@ mask-image: linear-gradient(
 
 <!-- 🎯 HEADER ПОД АВАТАРОМ -->
 <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 12px; margin-bottom: 5px;">
-  <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d4af37; margin-bottom: 10px;"> <!-- 👈 ИЗМЕНИЛИ: color стал #d4af37 (золотой) -->
-    <span class="lottery-participants-count" data-target="843" style="font-weight: 700;">0</span>
-    <span>учасників лотереї сьогоднi</span>
-  </div>
+  <div style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #d4af37; margin-bottom: 10px;">
+  <span class="lottery-participants-count" data-target="843" style="font-weight: 700; font-size: 19.5px;">0</span>
+  <span>учасників лотереї сьогоднi</span>
+</div>
 </div>
  
 
@@ -2533,12 +2533,20 @@ function animateLotteryCounter() {
 
 // ===== РАБОТА С КУПОНАМИ =====
 function saveCouponToStorage(code, discount) {
+  // 🎨 Маппинг цветов для блока "Мои промокоды"
+  const myCouponColors = {
+    '15%': '#d4af37',   // Жёлтый → Золотой
+    '10%': '#f27db0',   // Красный
+    '20%': '#6ab2f2',   // Синий
+    '50%': '#6af27d'    // Зелёный
+  };
+  
   const newCoupon = {
     code: code,
     discount: discount,
-    color: selectedCoupon.codeColor,
-    date: new Date().toISOString(), // 👈 Временная метка создания
-    displayDate: null // 👈 Метка показа на финальном экране (устанавливается позже)
+    color: myCouponColors[discount] || selectedCoupon.codeColor, // 👈 Используем новые цвета
+    date: new Date().toISOString(),
+    displayDate: null
   };
   
   localStorage.setItem('my_coupons', JSON.stringify([newCoupon]));
