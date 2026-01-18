@@ -422,15 +422,16 @@ body {
   );
 }
 .fuse-marker {
-  position: absolute;
+  position: fixed; /* 👈 ИЗМЕНИЛИ с absolute на fixed */
   width: 6px;
   height: 6px;
-  background: red; /* 👈 Для отладки - потом сделаем transparent */
+  background: red;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 100;
-  transform: translate(-50%, -50%); /* 👈 Центрируем */
-  transition: none; /* 👈 БЕЗ плавности */
+  z-index: 10003; /* 👈 Выше canvas */
+  transform: translate(-50%, -50%);
+  transition: none;
+  display: block; /* 👈 ДОБАВИЛИ */
 }
 .loader-text {
   font-size: 18px;
@@ -1248,8 +1249,7 @@ mask-image: linear-gradient(
   </div>
  <!-- МОИ КУПОНЫ -->
 <div class="my-coupons-container" id="myCouponsContainer">
-  <!-- 🔥 МАРКЕР "КОНЧИКА ФИТИЛЯ" -->
-  <div class="fuse-marker" id="fuseMarker"></div>
+  
   <div class="my-coupons-header">
     Цей купон самознищиться через: <span class="coupon-timer" id="couponTimer">02:00:00</span>
   </div>
@@ -1260,6 +1260,8 @@ mask-image: linear-gradient(
 
   <!-- 🔥 CANVAS ДЛЯ ЧАСТИЦ ФИТИЛЯ -->
 <canvas id="fuseCanvas" style="position: fixed; inset: 0; pointer-events: none; z-index: 1;"></canvas>
+   <!-- 🔥 МАРКЕР "КОНЧИКА ФИТИЛЯ" -->
+  <div class="fuse-marker" id="fuseMarker"></div>
    <!-- ТАЙМЕР -->
  <div class="countdown-container">
   <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -2751,6 +2753,7 @@ let couponTimerInterval = null;
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
+// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 let fuseAnimationId = null;
 let fuseParticles = [];
 
@@ -2759,30 +2762,26 @@ function updateFuseMarkerPosition(containerElement, progress) {
   if (!marker) return null;
   
   const rect = containerElement.getBoundingClientRect();
-  const centerX = rect.width / 2;
-  const centerY = rect.height / 2;
+  
+  // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ НА КОНТУРЕ (эллипс)
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
   const radiusX = rect.width / 2;
   const radiusY = rect.height / 2;
   
-  // 🔥 ВЫЧИСЛЯЕМ ПОЗИЦИЮ НА КОНТУРЕ
-  const angle = (progress / 100) * 360 - 90;
+  // Прогресс идёт по часовой стрелке, начиная сверху
+  const angle = (progress / 100) * 360 - 90; // -90 чтобы начать сверху
   const angleRad = (angle * Math.PI) / 180;
   
-  const localX = centerX + Math.cos(angleRad) * radiusX;
-  const localY = centerY + Math.sin(angleRad) * radiusY;
+  const x = centerX + Math.cos(angleRad) * radiusX;
+  const y = centerY + Math.sin(angleRad) * radiusY;
   
-  // 🎯 ПОЗИЦИОНИРУЕМ МАРКЕР (относительно контейнера)
-  marker.style.left = `${localX}px`;
-  marker.style.top = `${localY}px`;
+  // 🎯 ПОЗИЦИОНИРУЕМ МАРКЕР (FIXED)
+  marker.style.position = 'fixed';
+  marker.style.left = `${x}px`;
+  marker.style.top = `${y}px`;
   
-  // 🔥 ВОЗВРАЩАЕМ АБСОЛЮТНЫЕ КООРДИНАТЫ (для canvas)
-  const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
-  const markerRect = marker.getBoundingClientRect();
-  
-  return {
-    x: markerRect.left / bodyZoom + (markerRect.width / bodyZoom) / 2,
-    y: markerRect.top / bodyZoom + (markerRect.height / bodyZoom) / 2
-  };
+  return { x, y };
 }
 
 function animateFuse(containerElement, color) {
@@ -2794,8 +2793,7 @@ function animateFuse(containerElement, color) {
   
   const ctx = canvas.getContext('2d');
   
-  // 🎯 CANVAS БЕЗ ZOOM
-  canvas.style.zoom = '1';
+  // 🎯 CANVAS FIXED БЕЗ ZOOM
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   
@@ -2807,7 +2805,6 @@ function animateFuse(containerElement, color) {
   const fusePos = updateFuseMarkerPosition(containerElement, progress);
   
   if (!fusePos) {
-    console.log('❌ Не удалось получить позицию маркера');
     fuseAnimationId = requestAnimationFrame(() => animateFuse(containerElement, color));
     return;
   }
@@ -2870,9 +2867,13 @@ function stopFuseAnimation() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
   
+  const marker = document.getElementById('fuseMarker');
+  if (marker) {
+    marker.style.display = 'none';
+  }
+  
   console.log('🛑 Анимация фитиля остановлена');
 }
-
 
 
 
