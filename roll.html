@@ -2745,7 +2745,7 @@ function copyCouponFromList(code, color, element) {
 }
   
 let couponTimerInterval = null;
-
+let currentBurnProgress = 0; // 👈 ДОБАВЬ ЭТУ СТРОКУ
 
 
 
@@ -2835,6 +2835,58 @@ function animateFuse(containerElement, color) {
   const ctx = canvas.getContext('2d');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  
+  // 🔥 ИСПОЛЬЗУЕМ ГЛОБАЛЬНЫЙ ПРОГРЕСС (тот же что и в CSS)
+  const progress = currentBurnProgress;
+  
+  const fusePos = updateFuseMarkerPosition(containerElement, progress);
+  
+  if (!fusePos) {
+    fuseAnimationId = requestAnimationFrame(() => animateFuse(containerElement, color));
+    return;
+  }
+  
+  if (Math.random() > 0.3 && progress > 0 && progress < 100) {
+    const particleCount = Math.floor(Math.random() * 3) + 2;
+    
+    for (let i = 0; i < particleCount; i++) {
+      fuseParticles.push({
+        x: fusePos.x,
+        y: fusePos.y,
+        vx: (Math.random() - 0.5) * 1,
+        vy: (Math.random() - 0.5) * 1 - 0.5,
+        life: 1,
+        size: Math.random() * 1 + 0.75,
+        color: color
+      });
+    }
+  }
+  
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+  fuseParticles = fuseParticles.filter(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.05;
+    p.life -= 0.02;
+    
+    if (p.life > 0) {
+      ctx.save();
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+      return true;
+    }
+    return false;
+  });
+  
+  fuseAnimationId = requestAnimationFrame(() => {
+    animateFuse(containerElement, color);
+  });
+}
   
   // 🔥 ОБНОВЛЯЕМ ПРОГРЕСС ЗДЕСЬ ЖЕ
   const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
@@ -2972,11 +3024,12 @@ function startCouponTimer() {
     const remaining = expiresAt - now;
     
     // 🔥 ОБНОВЛЯЕМ BURN PROGRESS
-    if (now >= burnStartTime && now <= burnEndTime) {
-      const burnElapsed = now - burnStartTime;
-      const burnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
-      
-      myCouponsContainer.style.setProperty('--burn-progress', burnProgress.toFixed(2));
+   // 🔥 ОБНОВЛЯЕМ ГЛОБАЛЬНЫЙ ПРОГРЕСС
+if (now >= burnStartTime && now <= burnEndTime) {
+  const burnElapsed = now - burnStartTime;
+  currentBurnProgress = Math.min((burnElapsed / burnDuration) * 100, 100);
+  
+  myCouponsContainer.style.setProperty('--burn-progress', currentBurnProgress.toFixed(2));
       
       // 🔥 ЗАПУСКАЕМ АНИМАЦИЮ (только если ещё не запущена)
       if (!fuseAnimationId) {
@@ -2984,11 +3037,13 @@ function startCouponTimer() {
         animateFuse(myCouponsContainer, couponColor);
       }
     } else if (now > burnEndTime) {
-      myCouponsContainer.style.setProperty('--burn-progress', '100');
-      stopFuseAnimation();
-    } else {
-      myCouponsContainer.style.setProperty('--burn-progress', '0');
-    }
+  currentBurnProgress = 100;
+  myCouponsContainer.style.setProperty('--burn-progress', '100');
+  stopFuseAnimation();
+} else {
+  currentBurnProgress = 0;
+  myCouponsContainer.style.setProperty('--burn-progress', '0');
+}
     
     if (remaining <= 0) {
       if (couponTimerInterval) {
