@@ -2750,11 +2750,7 @@ let couponTimerInterval = null;
 
 
 
-// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
-// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
-// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
-// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
-// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
+ 
 let fuseAnimationId = null;
 let fuseParticles = [];
 
@@ -2788,8 +2784,6 @@ function updateFuseMarkerPosition(containerElement, progress) {
   
   let currentDistance = (progress / 100) * perimeter;
   let x, y;
-  
-  // 🎯 ИДЁМ ПО КОНТУРУ С УЧЁТОМ СКРУГЛЕНИЙ
   
   // 1️⃣ ВЕРХНИЙ ЛЕВЫЙ УГОЛ (дуга)
   if (currentDistance <= cornerArcLength) {
@@ -2856,16 +2850,12 @@ function animateFuse(containerElement, color) {
   }
   
   const ctx = canvas.getContext('2d');
-  
-  // 🎯 CANVAS FIXED БЕЗ ZOOM
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   
-  // 🔥 ПОЛУЧАЕМ АКТУАЛЬНЫЙ ПРОГРЕСС
   const computedStyle = getComputedStyle(containerElement);
   const progress = parseFloat(computedStyle.getPropertyValue('--burn-progress')) || 0;
   
-  // 🔥 ОБНОВЛЯЕМ ПОЗИЦИЮ МАРКЕРА И ПОЛУЧАЕМ КООРДИНАТЫ
   const fusePos = updateFuseMarkerPosition(containerElement, progress);
   
   if (!fusePos) {
@@ -2873,7 +2863,6 @@ function animateFuse(containerElement, color) {
     return;
   }
   
-  // 🔥 СОЗДАЁМ ЧАСТИЦЫ (точно в позиции маркера)
   if (Math.random() > 0.3 && progress > 0 && progress < 100) {
     const particleCount = Math.floor(Math.random() * 3) + 2;
     
@@ -2890,7 +2879,6 @@ function animateFuse(containerElement, color) {
     }
   }
   
-  // 🔥 ОБНОВЛЯЕМ И РИСУЕМ ЧАСТИЦЫ
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   fuseParticles = fuseParticles.filter(p => {
@@ -2912,7 +2900,6 @@ function animateFuse(containerElement, color) {
     return false;
   });
   
-  // 🔄 ПРОДОЛЖАЕМ АНИМАЦИЮ
   fuseAnimationId = requestAnimationFrame(() => {
     animateFuse(containerElement, color);
   });
