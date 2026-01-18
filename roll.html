@@ -2754,11 +2754,11 @@ let couponTimerInterval = null;
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
+// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 let fuseAnimationId = null;
 let fuseParticles = [];
 
-Но если хотите точное совпадение со скруглёнными углами, используйте эту улучшенную версию:
-javascriptfunction updateFuseMarkerPosition(containerElement, progress) {
+function updateFuseMarkerPosition(containerElement, progress) {
   const marker = document.getElementById('fuseMarker');
   if (!marker) return null;
   
@@ -2774,7 +2774,7 @@ javascriptfunction updateFuseMarkerPosition(containerElement, progress) {
   const bottom = top + height;
   
   // 🔥 ПЕРИМЕТР С УЧЁТОМ СКРУГЛЕНИЙ
-  const cornerArcLength = (Math.PI / 2) * borderRadius; // длина одной дуги угла
+  const cornerArcLength = (Math.PI / 2) * borderRadius;
   const straightTop = width - 2 * borderRadius;
   const straightRight = height - 2 * borderRadius;
   const straightBottom = width - 2 * borderRadius;
@@ -2847,10 +2847,6 @@ javascriptfunction updateFuseMarkerPosition(containerElement, progress) {
   
   return { x, y };
 }
-
-
-
-  
 
 function animateFuse(containerElement, color) {
   const canvas = document.getElementById('fuseCanvas');
