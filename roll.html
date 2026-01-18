@@ -1435,32 +1435,32 @@ async function checkAndUsePromoTicket() {
     return false;
   }
   
-  // 🎯 ТЕСТОВЫЙ БИЛЕТ - ПРОВЕРЯЕМ ПЕРВЫМ ДЕЛОМ (ДО ПРОВЕРКИ ФОРМАТА)
-// 🎯 ТЕСТОВЫЕ БИЛЕТЫ
-const testTickets = {
-  'TEST-FOREVER': null,  // Бесконечный билет без выбора купона
-  'TEST-YELLOW': 0,      // Жёлтый купон (индекс 0 в массиве coupons)
-  'TEST-RED': 1,         // Красный купон (индекс 1)
-  'TEST-BLUE': 2,        // Синий купон (индекс 2)
-  'TEST-GREEN': 3        // Зелёный купон (индекс 3)
-};
+  // 🎯 ТЕСТОВЫЕ БИЛЕТЫ - ПРОВЕРЯЕМ ПЕРВЫМ ДЕЛОМ (ДО ПРОВЕРКИ ФОРМАТА)
+  const testTickets = {
+    'TEST-FOREVER': null,  // Бесконечный билет без выбора купона
+    'TEST-YELLOW': 0,      // Жёлтый купон (индекс 0 в массиве coupons)
+    'TEST-RED': 1,         // Красный купон (индекс 1)
+    'TEST-BLUE': 2,        // Синий купон (индекс 2)
+    'TEST-GREEN': 3        // Зелёный купон (индекс 3)
+  };
 
-if (testTickets.hasOwnProperty(ticketCode)) {
-  localStorage.removeItem('lottery_last_spin');
-  
-  // Если это билет с выбором купона - сохраняем индекс
-  if (testTickets[ticketCode] !== null) {
-    sessionStorage.setItem('force_coupon_index', testTickets[ticketCode]);
-    console.log(`✅ Тестовый билет активирован! Выпадет: ${coupons[testTickets[ticketCode]].displayName}`);
-  } else {
-    console.log('✅ Бесконечный тестовый билет активирован!');
+  if (testTickets.hasOwnProperty(ticketCode)) {
+    localStorage.removeItem('lottery_last_spin');
+    
+    // Если это билет с выбором купона - сохраняем индекс
+    if (testTickets[ticketCode] !== null) {
+      sessionStorage.setItem('force_coupon_index', testTickets[ticketCode]);
+      console.log(`✅ Тестовый билет активирован! Выпадет: ${coupons[testTickets[ticketCode]].displayName}`);
+    } else {
+      console.log('✅ Бесконечный тестовый билет активирован!');
+    }
+    
+    showTicketModal('success', '🎮 Тестовий білет! Крути барабан!');
+    window.history.replaceState({}, document.title, window.location.pathname);
+    return true;
   }
   
-  showTicketModal('success', '🎮 Тестовий білет! Крути барабан!');
-  window.history.replaceState({}, document.title, window.location.pathname);
-  return true;
-}
-  
+  // 🎯 ПРОВЕРКА ОБЫЧНЫХ БИЛЕТОВ (только если это НЕ тестовый)
   try {
     console.log('🎫 Проверяем билет:', ticketCode);
     
