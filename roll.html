@@ -2737,6 +2737,7 @@ let couponTimerInterval = null;
 
 
 // ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
+// ===== АНИМАЦИЯ ЧАСТИЦ ФИТИЛЯ =====
 let fuseAnimationId = null;
 let fuseParticles = [];
 
@@ -2784,18 +2785,19 @@ function animateFuse(containerElement, color) {
   const fuseX = centerX + Math.cos(angleRad) * radiusX;
   const fuseY = centerY + Math.sin(angleRad) * radiusY;
   
-  // 🔥 СОЗДАЁМ ЧАСТИЦЫ (УМЕНЬШЕНЫ ВДВОЕ)
-  if (Math.random() > 0.3 && progress > 0) {
+  // 🔥 СОЗДАЁМ НОВЫЕ ЧАСТИЦЫ (только если прогресс > 0)
+  if (Math.random() > 0.3 && progress > 0 && progress < 100) {
     const particleCount = Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < particleCount; i++) {
       fuseParticles.push({
-        x: fuseX + (Math.random() - 0.5) * 4,  // было 8
-        y: fuseY + (Math.random() - 0.5) * 4,  // было 8
-        vx: (Math.random() - 0.5) * 1,         // было 2
-        vy: (Math.random() - 0.5) * 1 - 0.5,   // было 2 и -1
+        // 👇 ИЗМЕНИЛИ: сохраняем начальные координаты БЕЗ смещения
+        x: fuseX,
+        y: fuseY,
+        vx: (Math.random() - 0.5) * 1,
+        vy: (Math.random() - 0.5) * 1 - 0.5,
         life: 1,
-        size: Math.random() * 1 + 0.75,        // было 2 + 1.5 (1.5-3.5px)
+        size: Math.random() * 1 + 0.75,
         color: color
       });
     }
@@ -2805,9 +2807,10 @@ function animateFuse(containerElement, color) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   fuseParticles = fuseParticles.filter(p => {
+    // 👇 ИЗМЕНИЛИ: частицы двигаются независимо от скролла
     p.x += p.vx;
     p.y += p.vy;
-    p.vy += 0.05;  // было 0.1 (гравитация уменьшена)
+    p.vy += 0.05;
     p.life -= 0.02;
     
     if (p.life > 0) {
@@ -2823,7 +2826,7 @@ function animateFuse(containerElement, color) {
     return false;
   });
   
-  // 🔄 ПРОДОЛЖАЕМ АНИМАЦИЮ (БЕЗ передачи progress - берём из CSS)
+  // 🔄 ПРОДОЛЖАЕМ АНИМАЦИЮ
   fuseAnimationId = requestAnimationFrame(() => {
     animateFuse(containerElement, color);
   });
@@ -2844,7 +2847,6 @@ function stopFuseAnimation() {
   
   console.log('🛑 Анимация фитиля остановлена');
 }
-
   
 function startCouponTimer() {
   const timerElement = document.getElementById('couponTimer');
