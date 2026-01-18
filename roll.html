@@ -190,37 +190,55 @@ body {
   width: 90%;
   max-width: 400px;
   background: #1d2b3a;
-  border: 2px solid #6ab2f2; /* 👈 Основная рамка (будет перекрыта ::before) */
+  border: 2px solid transparent; /* 👈 ИЗМЕНИЛИ: прозрачная рамка */
   border-radius: 6px;
   padding: 16px;
   margin: 0 auto 20px;
   flex-shrink: 0;
   box-sizing: border-box;
   position: relative;
-  --coupon-border-color: #6ab2f2; /* 👈 ДОБАВИЛИ: CSS-переменная для цвета */
+  --coupon-border-color: #6ab2f2;
 }
 
- .my-coupons-container::before {
+/* 🔥 SVG-РАМКА С ОБРАТНЫМ STROKE */
+.my-coupons-container::before {
   content: '';
   position: absolute;
-  inset: -2px;
+  inset: 0;
   border-radius: 6px;
-  padding: 2px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    transparent var(--burn-progress, 0%),
-    var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%),
-    var(--coupon-border-color, #6ab2f2) 100%
-  );
+  pointer-events: none;
+  z-index: 1;
+  
+  /* Создаём эффект обрезки справа налево */
+  background: 
+    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%)),
+    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%)),
+    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%)),
+    linear-gradient(to left, transparent var(--burn-progress, 0%), var(--coupon-border-color, #6ab2f2) var(--burn-progress, 0%));
+  
+  background-size: 
+    100% 2px,  /* Верх */
+    2px 100%,  /* Право */
+    100% 2px,  /* Низ */
+    2px 100%;  /* Лево */
+  
+  background-position: 
+    0 0,           /* Верх */
+    100% 0,        /* Право */
+    0 100%,        /* Низ */
+    0 0;           /* Лево */
+  
+  background-repeat: no-repeat;
+  
+  /* Маска для создания рамки */
   -webkit-mask: 
     linear-gradient(#fff 0 0) content-box, 
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  pointer-events: none;
-  z-index: 1;
+  padding: 2px;
 }
+
 
 .my-coupons-header {
   font-size: clamp(12px, 3vw, 16px);
