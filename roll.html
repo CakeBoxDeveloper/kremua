@@ -220,7 +220,7 @@ body {
   
   /* 🔥 ВЕРНУЛИ: начинается СВЕРХУ (-90deg) и идёт по часовой */
   background: conic-gradient(
-    from -90deg,
+    from 0deg,
     transparent 0deg,
     transparent calc(var(--burn-progress) * 3.6deg),
     var(--coupon-border-color) calc(var(--burn-progress) * 3.6deg),
@@ -2768,7 +2768,7 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const centerY = (rect.top + rect.height / 2) / bodyZoom;
   
   // 🔥 УГОЛ ПО ФОРМУЛЕ ГРАДИЕНТА
-  const angle = 180 + progress * 3.6; // 👈 from 0deg (справа)
+  const angle = 270 + progress * 3.6; // 👈 from 0deg (справа)
   const angleRad = (angle * Math.PI) / 180;
   
   // 🎯 РАЗМЕРЫ ПРЯМОУГОЛЬНИКА
@@ -2879,7 +2879,7 @@ function animateFuse(containerElement, color) {
         vx: (Math.random() - 0.5) * 1,
         vy: (Math.random() - 0.5) * 1 - 0.5,
         life: 1,
-        size: Math.random() * 0.5 + 0.25,
+        size: Math.random() * 1 + 0.75,
         color: color
       });
     }
