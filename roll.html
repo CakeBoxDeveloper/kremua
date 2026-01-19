@@ -2770,7 +2770,6 @@ let fuseParticles = [];
 
 function updateFuseMarkerPosition(containerElement, progress) {
   const marker = document.getElementById('fuseMarker');
-  if (!marker) return null;
   
   const rect = containerElement.getBoundingClientRect();
   const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
@@ -2779,22 +2778,8 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const centerX = (rect.left + rect.width / 2) / bodyZoom;
   const centerY = (rect.top + rect.height / 2) / bodyZoom;
   
-  // 🔥 Давайте попробуем все возможные варианты:
-  
-  // Вариант 1: Конец "сгоревшей" части (верхняя граница transparent)
-  const angle1 = -90 + progress * 3.6;
-  
-  // Вариант 2: Начало "несгоревшей" части (нижняя граница transparent)
-  const angle2 = -90 + progress * 3.6;
-  
-  // Вариант 3: Может быть наоборот?
-  const angle3 = -90 - progress * 3.6;
-  
-  console.log(`Progress: ${progress.toFixed(2)}%`);
-  console.log(`Angle (gradient formula): ${angle1.toFixed(2)}°`);
-  
-  // Используем первый вариант
-  const angle = angle1;
+  // 🔥 УГОЛ ПО ФОРМУЛЕ ГРАДИЕНТА
+  const angle = 0 + progress * 3.6; // 👈 from 0deg (справа)
   const angleRad = (angle * Math.PI) / 180;
   
   // 🎯 РАЗМЕРЫ ПРЯМОУГОЛЬНИКА
@@ -2807,7 +2792,6 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const dx = Math.cos(angleRad);
   const dy = Math.sin(angleRad);
   
-  // Проверяем все 4 стороны прямоугольника
   let t = Infinity;
   
   // Правая сторона (x = halfW)
@@ -2841,12 +2825,10 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const x = centerX + dx * t;
   const y = centerY + dy * t;
   
-  console.log(`Marker position: (${x.toFixed(2)}, ${y.toFixed(2)})`);
-  
-  marker.style.position = 'fixed';
-  marker.style.left = `${x}px`;
-  marker.style.top = `${y}px`;
-  marker.style.display = 'block';
+  // 🎯 МАРКЕР СКРЫТ, НО ПОЗИЦИЯ ВОЗВРАЩАЕТСЯ ДЛЯ ЧАСТИЦ
+  if (marker) {
+    marker.style.display = 'none';
+  }
   
   return { x, y };
 }
