@@ -218,9 +218,9 @@ body {
   pointer-events: none;
   z-index: 0;
   
-  /* 🔥 КРУГОВОЕ СГОРАНИЕ ПО ЧАСОВОЙ СТРЕЛКЕ (НАЧИНАЯ СВЕРХУ) */
+  /* 🔥 ИЗМЕНИЛИ: теперь начинается СПРАВА (0deg) и идёт по часовой */
   background: conic-gradient(
-    from -90deg,
+    from 0deg,
     transparent 0deg,
     transparent calc(var(--burn-progress) * 3.6deg),
     var(--coupon-border-color) calc(var(--burn-progress) * 3.6deg),
@@ -2779,8 +2779,8 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const centerX = (rect.left + rect.width / 2) / bodyZoom;
   const centerY = (rect.top + rect.height / 2) / bodyZoom;
   
-  // 🎯 УГОЛ КОНИЧЕСКОГО ГРАДИЕНТА (from -90deg, по часовой)
-  const angle = -90 + (progress / 100) * 360;
+  // 🔥 ИЗМЕНИЛИ: угол теперь начинается с 0deg (справа) и идёт по часовой
+  const angle = 0 + (progress / 100) * 360;
   const angleRad = (angle * Math.PI) / 180;
   
   // 🎯 РАЗМЕРЫ ПРЯМОУГОЛЬНИКА
@@ -2834,7 +2834,6 @@ function updateFuseMarkerPosition(containerElement, progress) {
   
   return { x, y };
 }
-
 
 
 
