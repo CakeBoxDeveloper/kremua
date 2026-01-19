@@ -2854,7 +2854,7 @@ function animateFuse(containerElement, color) {
     const latestCoupon = coupons[coupons.length - 1];
     if (latestCoupon.displayDate) {
       const displayTime = new Date(latestCoupon.displayDate).getTime();
-      const burnDuration = 2 * 60 * 60 * 1000; // 👈 2 ЧАСА
+      const burnDuration = 2 * 60 * 60 * 1000; // 👈 ИЗМЕНИЛИ: было 7200*1000, стало 30*1000
       const now = Date.now();
       const burnElapsed = now - displayTime;
       
@@ -2872,7 +2872,6 @@ function animateFuse(containerElement, color) {
     }
   }
   
-  // 🔥 ПОЛУЧАЕМ ПОЗИЦИЮ МАРКЕРА (НО НЕ ОТОБРАЖАЕМ ЕГО)
   const fusePos = updateFuseMarkerPosition(containerElement, progress);
   
   if (!fusePos) {
@@ -2899,7 +2898,6 @@ function animateFuse(containerElement, color) {
   
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  // 🎯 ОБНОВЛЯЕМ И РИСУЕМ ЧАСТИЦЫ
   fuseParticles = fuseParticles.filter(p => {
     p.x += p.vx;
     p.y += p.vy;
