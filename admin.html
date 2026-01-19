@@ -196,6 +196,18 @@
       width: 100%;
       margin-top: 10px;
     }
+    .btn-color {
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  opacity: 0.6;
+}
+.btn-color.selected {
+  opacity: 1;
+  transform: scale(1.05);
+  box-shadow: 0 0 15px currentColor;
+}
   </style>
 </head>
 <body>
@@ -217,18 +229,37 @@
     </div>
     
     <!-- Панель управления -->
-    <div class="control-panel">
-      <div class="button-row">
-        <button class="btn btn-primary" onclick="generateTicket()">
-          <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/New%20Button.webp?raw=true" class="icon"> Сгенерировать билет
-        </button>
-        <button class="btn btn-danger" onclick="clearAll()">
-          <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cup%20With%20Straw.webp?raw=true" class="icon"> Удалить все билеты
-        </button>
-      </div>
-      
-      <div id="output"></div>
+   <div class="control-panel">
+  <div style="margin-bottom: 15px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Выберите цвет билета:</label>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+      <button class="btn btn-color" onclick="selectColor('red')" id="color-red" style="background: #3a1d1d; border: 2px solid #f25c5c; color: #f25c5c;">
+        🔴 Красный
+      </button>
+      <button class="btn btn-color" onclick="selectColor('blue')" id="color-blue" style="background: #1d2b3a; border: 2px solid #6ab2f2; color: #6ab2f2;">
+        🔵 Синий
+      </button>
+      <button class="btn btn-color" onclick="selectColor('green')" id="color-green" style="background: #1d3a22; border: 2px solid #6af27d; color: #6af27d;">
+        🟢 Зелёный
+      </button>
+      <button class="btn btn-color" onclick="selectColor('yellow')" id="color-yellow" style="background: #3a351d; border: 2px solid #f2d16a; color: #f2d16a;">
+        🟡 Жёлтый
+      </button>
     </div>
+  </div>
+  
+  <div class="button-row">
+    <button class="btn btn-primary" onclick="generateTicket()">
+      <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/New%20Button.webp?raw=true" class="icon"> Сгенерировать билет
+    </button>
+    <button class="btn btn-danger" onclick="clearAll()">
+      <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cup%20With%20Straw.webp?raw=true" class="icon"> Удалить все билеты
+    </button>
+  </div>
+  
+  <div id="output"></div>
+</div>
+    
     
     <!-- Дашборд билетов -->
     <div class="dashboard">
@@ -245,6 +276,20 @@
 const SECRET_KEY = "your-super-secret-key-change-this-12345";
 
 let lastTicket = '';
+let selectedColor = 'red'; // По умолчанию красный
+
+// Функция выбора цвета
+function selectColor(color) {
+  selectedColor = color;
+  
+  // Убираем выделение со всех кнопок
+  document.querySelectorAll('.btn-color').forEach(btn => {
+    btn.classList.remove('selected');
+  });
+  
+  // Выделяем выбранную кнопку
+  document.getElementById('color-' + color).classList.add('selected');
+}
 
 // Функция генерации HMAC-SHA256
 async function generateHMAC(secret, message) {
@@ -265,7 +310,7 @@ async function generateHMAC(secret, message) {
   return Array.from(new Uint8Array(signature))
     .map(b => b.toString(16).padStart(2, '0'))
     .join('')
-    .substring(0, 16); // Первые 16 символов для компактности
+    .substring(0, 16);
 }
 
 function generateTicketCode() {
@@ -278,40 +323,50 @@ function generateTicketCode() {
 }
 
 async function generateTicket() {
-  // Генерируем данные билета
   const timestamp = Date.now();
   const randomData = generateTicketCode();
   const ticketData = `${timestamp}-${randomData}`;
   
-  // Создаём подпись
   const signature = await generateHMAC(SECRET_KEY, ticketData);
-  
-  // Финальный код: TIMESTAMP-RANDOM-SIGNATURE
   const ticketCode = `${ticketData}-${signature}`;
   const created = new Date().toISOString();
   
-  // Сохраняем в список сгенерированных билетов (для статистики)
   const generatedTickets = JSON.parse(localStorage.getItem('generated_tickets') || '[]');
   generatedTickets.push({
     code: ticketCode,
     created: created,
-    shortCode: randomData
+    shortCode: randomData,
+    color: selectedColor // Сохраняем цвет
   });
   localStorage.setItem('generated_tickets', JSON.stringify(generatedTickets));
   
-  // ✅ ИСПРАВЛЕННАЯ ГЕНЕРАЦИЯ URL
   const currentUrl = window.location.href;
   const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-  const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}`;
+  // Добавляем параметр color в URL
+  const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}&color=${selectedColor}`;
   
   lastTicket = ticketUrl;
   
-  // Показываем результат
+  const colorEmoji = {
+    'red': '🔴',
+    'blue': '🔵',
+    'green': '🟢',
+    'yellow': '🟡'
+  };
+  
+  const colorName = {
+    'red': 'Красный',
+    'blue': 'Синий',
+    'green': 'Зелёный',
+    'yellow': 'Жёлтый'
+  };
+  
   const output = document.getElementById('output');
   output.innerHTML = `
     <div class="ticket-output">
       <strong><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Новый билет сгенерирован!</strong><br><br>
-      <strong>Короткий код:</strong> ${randomData}<br><br>
+      <strong>Короткий код:</strong> ${randomData}<br>
+      <strong>Цвет:</strong> ${colorEmoji[selectedColor]} ${colorName[selectedColor]}<br><br>
       <a href="${ticketUrl}" target="_blank" class="ticket-link">${ticketUrl}</a><br>
       <button class="btn btn-secondary btn-full" onclick="copyToClipboard('${ticketUrl}')">
         <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Memo.webp?raw=true" class="icon"> Скопировать ссылку
@@ -334,7 +389,6 @@ function deleteTicket(ticketCode) {
     const filtered = generatedTickets.filter(t => t.code !== ticketCode);
     localStorage.setItem('generated_tickets', JSON.stringify(filtered));
     
-    // Также удаляем из использованных, если там есть
     const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
     const filteredUsed = usedTickets.filter(code => code !== ticketCode);
     localStorage.setItem('used_tickets', JSON.stringify(filteredUsed));
@@ -348,13 +402,11 @@ function refreshDashboard() {
   const generatedTickets = JSON.parse(localStorage.getItem('generated_tickets') || '[]');
   const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
   
-  // Обновляем статистику
   const activeCount = generatedTickets.filter(t => !usedTickets.includes(t.code)).length;
   document.getElementById('totalTickets').textContent = generatedTickets.length;
   document.getElementById('activeTickets').textContent = activeCount;
   document.getElementById('usedTicketsCount').textContent = usedTickets.length;
   
-  // Создаем таблицу билетов
   const dashboard = document.getElementById('ticketsDashboard');
   
   if (generatedTickets.length === 0) {
@@ -362,14 +414,22 @@ function refreshDashboard() {
     return;
   }
   
- const currentUrl = window.location.href;
+  const currentUrl = window.location.href;
   const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+  
+  const colorEmoji = {
+    'red': '🔴',
+    'blue': '🔵',
+    'green': '🟢',
+    'yellow': '🟡'
+  };
   
   let tableHTML = `
     <table class="tickets-table">
       <thead>
         <tr>
           <th>Код</th>
+          <th>Цвет</th>
           <th>Статус</th>
           <th>Создано</th>
           <th>Действия</th>
@@ -378,7 +438,6 @@ function refreshDashboard() {
       <tbody>
   `;
   
-  // Сортируем: сначала активные, потом использованные
   const sortedTickets = [...generatedTickets].sort((a, b) => {
     const aUsed = usedTickets.includes(a.code);
     const bUsed = usedTickets.includes(b.code);
@@ -388,7 +447,8 @@ function refreshDashboard() {
   
   sortedTickets.forEach(ticket => {
     const isUsed = usedTickets.includes(ticket.code);
-    const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}`;
+    const ticketColor = ticket.color || 'red';
+    const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}&color=${ticketColor}`;
     const date = new Date(ticket.created).toLocaleString('ru-RU', {
       day: '2-digit',
       month: '2-digit',
@@ -400,6 +460,7 @@ function refreshDashboard() {
     tableHTML += `
       <tr>
         <td><span class="ticket-code">${ticket.shortCode || ticket.code.substring(0, 8)}</span></td>
+        <td>${colorEmoji[ticketColor]}</td>
         <td>
           <span class="status-badge ${isUsed ? 'status-used' : 'status-active'}">
             ${isUsed ? '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Использован' : '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Активный'}
@@ -445,6 +506,8 @@ function clearAll() {
 
 // Обновляем дашборд при загрузке
 refreshDashboard();
+// Выбираем красный цвет по умолчанию
+selectColor('red');
 
 // Автообновление каждые 5 секунд
 setInterval(refreshDashboard, 5000);
