@@ -1475,8 +1475,32 @@ function initWinnersWidget() {
   setInterval(scrollUp, 6000);
 }
 
+ 
+
 // ⚠️ ТОТ ЖЕ СЕКРЕТНЫЙ КЛЮЧ (должен совпадать с admin.html)
 const SECRET_KEY = "your-super-secret-key-change-this-12345";
+
+// Функция генерации HMAC
+async function generateHMAC(secret, message) {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const messageData = encoder.encode(message);
+  
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+  
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('')
+    .substring(0, 16);
+}
 
 async function checkAndUsePromoTicket() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -1586,91 +1610,6 @@ async function checkAndUsePromoTicket() {
     
   } catch (error) {
     console.error('Помилка перевірки білета:', error);
-    showTicketModal('error', 'Помилка перевірки білета!');
-    return false;
-  }
-}
-  
-  // 🎯 ТЕСТОВЫЕ БИЛЕТЫ - ПРОВЕРЯЕМ ПЕРВЫМ ДЕЛОМ (ДО ВСЕХ ОСТАЛЬНЫХ ПРОВЕРОК)
-  const testTickets = {
-    'TEST-FOREVER': null,  // Бесконечный билет без выбора купона
-    'TEST-YELLOW': 0,      // Жёлтый купон (индекс 0 в массиве coupons)
-    'TEST-RED': 1,         // Красный купон (индекс 1)
-    'TEST-BLUE': 2,        // Синий купон (индекс 2)
-    'TEST-GREEN': 3        // Зелёный купон (индекс 3)
-  };
-
-  if (testTickets.hasOwnProperty(ticketCode)) {
-    localStorage.removeItem('lottery_last_spin');
-    
-    // Если это билет с выбором купона - сохраняем индекс
-    if (testTickets[ticketCode] !== null) {
-      sessionStorage.setItem('force_coupon_index', testTickets[ticketCode]);
-      console.log(`✅ Тестовый билет активирован! Выпадет: ${coupons[testTickets[ticketCode]].displayName}`);
-    } else {
-      console.log('✅ Бесконечный тестовый билет активирован!');
-    }
-    
-    showTicketModal('success', '🎮 Тестовий білет! Крути барабан!');
-    window.history.replaceState({}, document.title, window.location.pathname);
-    return true;
-  }
-  
-  // 🎯 ПРОВЕРКА ФОРМАТА - только для обычных билетов
-  try {
-    console.log('🎫 Проверяем билет:', ticketCode);
-    
-    const parts = ticketCode.split('-');
-    if (parts.length < 3) {
-      console.log('❌ Неверный формат билета');
-      showTicketModal('error', 'Недійсний формат білета!');
-      window.history.replaceState({}, document.title, window.location.pathname);
-      return false;
-    }
-    
-    const signature = parts[parts.length - 1];
-    const ticketData = parts.slice(0, -1).join('-');
-    const expectedSignature = await generateHMAC(SECRET_KEY, ticketData);
-    
-    if (signature !== expectedSignature) {
-      console.log('❌ Неверная подпись билета');
-      showTicketModal('error', 'Недійсний білет! Підпис не збігається.');
-      window.history.replaceState({}, document.title, window.location.pathname);
-      return false;
-    }
-    
-    const timestamp = parseInt(parts[0]);
-    const age = Date.now() - timestamp;
-    const maxAge = 30 * 24 * 60 * 60 * 1000;
-    
-    if (age > maxAge) {
-      console.log('❌ Билет истёк');
-      showTicketModal('error', 'Білет прострочено! Термін дії минув.');
-      window.history.replaceState({}, document.title, window.location.pathname);
-      return false;
-    }
-    
-    const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
-    if (usedTickets.includes(ticketCode)) {
-      console.log('❌ Этот билет уже использован');
-      showTicketModal('error', 'Цей білет вже використано!');
-      window.history.replaceState({}, document.title, window.location.pathname);
-      return false;
-    }
-    
-    usedTickets.push(ticketCode);
-    localStorage.setItem('used_tickets', JSON.stringify(usedTickets));
-    localStorage.removeItem('lottery_last_spin');
-    
-    console.log('✅ Білет активовано!');
-    showTicketModal('success', 'Ти отримуєш один лотерейний білет! Нумо, швидше, крути барабан!');
-    
-    window.history.replaceState({}, document.title, window.location.pathname);
-    
-    return true;
-    
-  } catch (error) {
-    console.error('Ошибка проверки билета:', error);
     showTicketModal('error', 'Помилка перевірки білета!');
     return false;
   }
