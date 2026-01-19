@@ -1783,15 +1783,26 @@ function startCountdown() {
 // ===== ПОКАЗ ФИНАЛЬНОГО ЭКРАНА =====
 function showFinalScreen() {
   setTimeout(() => {
+    // 🔥 УСТАНАВЛИВАЕМ displayDate ПРЯМО СЕЙЧАС (в момент показа финального экрана)
+    const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
+    if (coupons.length > 0) {
+      const latestCoupon = coupons[coupons.length - 1];
+      
+      // 👇 ВСЕГДА ПЕРЕЗАПИСЫВАЕМ displayDate (даже если она была установлена ранее)
+      latestCoupon.displayDate = new Date().toISOString();
+      coupons[coupons.length - 1] = latestCoupon;
+      localStorage.setItem('my_coupons', JSON.stringify(coupons));
+      console.log('⏰ Время старта купона установлено СЕЙЧАС:', latestCoupon.displayDate);
+    }
+    
+    // 🔥 ПОТОМ ПОКАЗЫВАЕМ ФИНАЛЬНЫЙ ЭКРАН
     document.getElementById('finalScreen').classList.add('visible');
     startCountdown();
     initWinnersWidget();
     animateLotteryCounter();
-    updateMyCouponsList();
-    startCouponTimer(); // 👈 ДОБАВЬТЕ ЭТУ СТРОКУ
+    updateMyCouponsList(); // 👈 Это запустит startCouponTimer() и animateFuse()
   }, 500);
 }
-
 // ===== ГЕНЕРАЦИЯ ПРОМОКОДА =====
 function generatePromoCode() {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -2640,13 +2651,7 @@ function saveCouponToStorage(code, discount) {
     '50%': '#6af27d'    // Зелёный
   };
   
-const newCoupon = {
-  code: code,
-  discount: discount,
-  color: myCouponColors[discount] || selectedCoupon.codeColor,
-  date: new Date().toISOString(),
-  displayDate: new Date().toISOString()  // 👈 УСТАНАВЛИВАЕМ СРАЗУ!
-};
+ 
   
   localStorage.setItem('my_coupons', JSON.stringify([newCoupon]));
   console.log('💾 Купон сохранён:', newCoupon);
