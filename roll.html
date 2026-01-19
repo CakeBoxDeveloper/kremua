@@ -2639,6 +2639,12 @@ function saveCouponToStorage(code, discount) {
     '20%': '#6ab2f2',   // Синий
     '50%': '#6af27d'    // Зелёный
   };
+  const myCouponBackgrounds = {
+  '15%': '#2a2418', // Жёлтый купон - тёмно-жёлтый фон
+  '10%': '#2a1820', // Красный купон - тёмно-красный фон
+  '20%': '#1d2b3a', // Синий купон - тёмно-синий фон (уже есть)
+  '50%': '#1d2a1f'  // Зелёный купон - тёмно-зелёный фон
+};
     // 👇 ВЕРНИТЕ ЭТУ СТРОКУ (она была удалена!)
   const newCoupon = {
     code: code,
@@ -2662,7 +2668,6 @@ function updateMyCouponsList() {
   
   const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
   
-  // СКРЫВАЕМ БЛОК ЕСЛИ НЕТ КУПОНОВ
   if (coupons.length === 0) {
     myCouponsContainer.style.display = 'none';
     if (couponTimerInterval) {
@@ -2671,16 +2676,16 @@ function updateMyCouponsList() {
     return;
   }
   
-  // Показываем блок если есть купоны
   myCouponsContainer.style.display = 'block';
   
-  // 🎨 ПОЛУЧАЕМ ЦВЕТ ПОСЛЕДНЕГО КУПОНА
   const latestCoupon = coupons[coupons.length - 1];
   const couponColor = latestCoupon.color || '#6ab2f2';
+  const couponDiscount = latestCoupon.discount; // 👈 ДОБАВИЛИ
   
-  // 🎨 ПРИМЕНЯЕМ ЦВЕТ К БЛОКУ И CSS-ПЕРЕМЕННЫМ
+  // 🎨 ПРИМЕНЯЕМ ЦВЕТ И ФОН
   myCouponsContainer.style.borderColor = couponColor;
-  myCouponsContainer.style.setProperty('--coupon-border-color', couponColor); // 👈 ДОБАВИЛИ
+  myCouponsContainer.style.setProperty('--coupon-border-color', couponColor);
+  myCouponsContainer.style.background = myCouponBackgrounds[couponDiscount] || '#1d2b3a'; // 👈 ДОБАВИЛИ
   
   const header = myCouponsContainer.querySelector('.my-coupons-header');
   if (header) {
