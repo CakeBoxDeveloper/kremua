@@ -229,21 +229,26 @@
     </div>
     
     <!-- Панель управления -->
-   <div class="control-panel">
+  <div class="control-panel">
   <div style="margin-bottom: 15px;">
-    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Выберите цвет билета:</label>
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Выберите тип билета:</label>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
+      <button class="btn btn-color" onclick="selectColor('random')" id="color-random" style="background: #2b2b2b; border: 2px solid #9d9d9d; color: #9d9d9d;">
+        Обычный
+      </button>
       <button class="btn btn-color" onclick="selectColor('red')" id="color-red" style="background: #3a1d1d; border: 2px solid #f25c5c; color: #f25c5c;">
-        🔴 Красный
+        Красный
       </button>
       <button class="btn btn-color" onclick="selectColor('blue')" id="color-blue" style="background: #1d2b3a; border: 2px solid #6ab2f2; color: #6ab2f2;">
-        🔵 Синий
+        Синий
       </button>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
       <button class="btn btn-color" onclick="selectColor('green')" id="color-green" style="background: #1d3a22; border: 2px solid #6af27d; color: #6af27d;">
-        🟢 Зелёный
+        Зелёный
       </button>
       <button class="btn btn-color" onclick="selectColor('yellow')" id="color-yellow" style="background: #3a351d; border: 2px solid #f2d16a; color: #f2d16a;">
-        🟡 Жёлтый
+        Жёлтый
       </button>
     </div>
   </div>
@@ -273,21 +278,20 @@
 
  <script>
 // ⚠️ СЕКРЕТНЫЙ КЛЮЧ - ХРАНИ В СЕКРЕТЕ! СМЕНИ НА СВОЙ!
+// ⚠️ СЕКРЕТНЫЙ КЛЮЧ - ХРАНИ В СЕКРЕТЕ! СМЕНИ НА СВОЙ!
 const SECRET_KEY = "your-super-secret-key-change-this-12345";
 
 let lastTicket = '';
-let selectedColor = 'red'; // По умолчанию красный
+let selectedColor = 'random'; // По умолчанию обычный
 
 // Функция выбора цвета
 function selectColor(color) {
   selectedColor = color;
   
-  // Убираем выделение со всех кнопок
   document.querySelectorAll('.btn-color').forEach(btn => {
     btn.classList.remove('selected');
   });
   
-  // Выделяем выбранную кнопку
   document.getElementById('color-' + color).classList.add('selected');
 }
 
@@ -322,10 +326,25 @@ function generateTicketCode() {
   return code;
 }
 
+// Функция кодирования цвета
+function encodeColor(color) {
+  const colorMap = {
+    'random': '0',
+    'red': '1',
+    'blue': '2',
+    'green': '3',
+    'yellow': '4'
+  };
+  return colorMap[color] || '0';
+}
+
 async function generateTicket() {
   const timestamp = Date.now();
   const randomData = generateTicketCode();
-  const ticketData = `${timestamp}-${randomData}`;
+  const colorCode = encodeColor(selectedColor);
+  
+  // Встраиваем цвет в данные билета
+  const ticketData = `${timestamp}-${randomData}-${colorCode}`;
   
   const signature = await generateHMAC(SECRET_KEY, ticketData);
   const ticketCode = `${ticketData}-${signature}`;
@@ -336,18 +355,19 @@ async function generateTicket() {
     code: ticketCode,
     created: created,
     shortCode: randomData,
-    color: selectedColor // Сохраняем цвет
+    color: selectedColor
   });
   localStorage.setItem('generated_tickets', JSON.stringify(generatedTickets));
   
   const currentUrl = window.location.href;
   const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-  // Добавляем параметр color в URL
-  const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}&color=${selectedColor}`;
+  // Теперь URL без параметра color - цвет закодирован в самом билете
+  const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}`;
   
   lastTicket = ticketUrl;
   
   const colorEmoji = {
+    'random': '🎲',
     'red': '🔴',
     'blue': '🔵',
     'green': '🟢',
@@ -355,6 +375,7 @@ async function generateTicket() {
   };
   
   const colorName = {
+    'random': 'Обычный (рандом)',
     'red': 'Красный',
     'blue': 'Синий',
     'green': 'Зелёный',
@@ -366,7 +387,7 @@ async function generateTicket() {
     <div class="ticket-output">
       <strong><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Новый билет сгенерирован!</strong><br><br>
       <strong>Короткий код:</strong> ${randomData}<br>
-      <strong>Цвет:</strong> ${colorEmoji[selectedColor]} ${colorName[selectedColor]}<br><br>
+      <strong>Тип:</strong> ${colorEmoji[selectedColor]} ${colorName[selectedColor]}<br><br>
       <a href="${ticketUrl}" target="_blank" class="ticket-link">${ticketUrl}</a><br>
       <button class="btn btn-secondary btn-full" onclick="copyToClipboard('${ticketUrl}')">
         <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Memo.webp?raw=true" class="icon"> Скопировать ссылку
@@ -418,6 +439,7 @@ function refreshDashboard() {
   const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
   
   const colorEmoji = {
+    'random': '🎲',
     'red': '🔴',
     'blue': '🔵',
     'green': '🟢',
@@ -429,7 +451,7 @@ function refreshDashboard() {
       <thead>
         <tr>
           <th>Код</th>
-          <th>Цвет</th>
+          <th>Тип</th>
           <th>Статус</th>
           <th>Создано</th>
           <th>Действия</th>
@@ -447,8 +469,8 @@ function refreshDashboard() {
   
   sortedTickets.forEach(ticket => {
     const isUsed = usedTickets.includes(ticket.code);
-    const ticketColor = ticket.color || 'red';
-    const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}&color=${ticketColor}`;
+    const ticketColor = ticket.color || 'random';
+    const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}`;
     const date = new Date(ticket.created).toLocaleString('ru-RU', {
       day: '2-digit',
       month: '2-digit',
@@ -504,12 +526,8 @@ function clearAll() {
   }
 }
 
-// Обновляем дашборд при загрузке
 refreshDashboard();
-// Выбираем красный цвет по умолчанию
-selectColor('red');
-
-// Автообновление каждые 5 секунд
+selectColor('random');
 setInterval(refreshDashboard, 5000);
 </script>
 </body>
