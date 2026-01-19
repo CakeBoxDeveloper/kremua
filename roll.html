@@ -2768,7 +2768,7 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const centerY = (rect.top + rect.height / 2) / bodyZoom;
   
   // 🔥 УГОЛ ПО ФОРМУЛЕ ГРАДИЕНТА
-  const angle = -90 + progress * 3.6; // 👈 from 0deg (справа)
+  const angle = 90 + progress * 3.6; // 👈 from 0deg (справа)
   const angleRad = (angle * Math.PI) / 180;
   
   // 🎯 РАЗМЕРЫ ПРЯМОУГОЛЬНИКА
