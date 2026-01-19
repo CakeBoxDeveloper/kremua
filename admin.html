@@ -23,34 +23,6 @@
       vertical-align: middle;
       display: inline-block;
     }
-    .icon-lg {
-      width: 32px;
-      height: 32px;
-      vertical-align: middle;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-    .stat-card {
-      background: #1d2b3a;
-      border: none;
-      border-radius: 8px;
-      padding: 20px;
-      text-align: center;
-    }
-    .stat-number {
-      font-size: 36px;
-      font-weight: 700;
-      color: #6ab2f2;
-      margin: 10px 0;
-    }
-    .stat-label {
-      font-size: 14px;
-      opacity: 0.85;
-    }
     .control-panel {
       background: #1d2b3a;
       border: 1px solid #6ab2f2;
@@ -58,18 +30,12 @@
       padding: 20px;
       margin-bottom: 20px;
     }
-    .button-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      margin-bottom: 15px;
-    }
     .btn {
       padding: 14px 24px;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
-      transition: transform 0.15s ease;
+      transition: all 0.2s ease;
       font-size: 15px;
       border: none;
       display: inline-flex;
@@ -96,6 +62,16 @@
       border: 1px solid #6ab2f2;
       color: #6ab2f2;
     }
+    .btn-color {
+      padding: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .btn-color.selected {
+      background: var(--btn-border-color) !important;
+      color: #17212b !important;
+    }
     .ticket-output {
       background: transparent;
       border: none;
@@ -108,11 +84,11 @@
       line-height: 1.6;
     }
     .ticket-link {
-      color: #6ab2f2;
       text-decoration: none;
       display: block;
       margin: 5px 0;
       word-break: break-all;
+      font-weight: 600;
     }
     .dashboard {
       background: transparent;
@@ -124,7 +100,7 @@
       width: 100%;
       border-collapse: collapse;
       margin-top: 0;
-      border: 1px solid #6ab2f2;
+      border: 2px solid #6ab2f2;
       border-radius: 8px;
       overflow: hidden;
     }
@@ -167,7 +143,6 @@
     .ticket-code {
       font-family: monospace;
       font-weight: 600;
-      color: #6ab2f2;
     }
     .empty-state {
       text-align: center;
@@ -196,75 +171,50 @@
       width: 100%;
       margin-top: 10px;
     }
-    .btn-color {
-  padding: 12px;
-  font-size: 14px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  opacity: 0.6;
-}
-.btn-color.selected {
-  opacity: 1;
-  transform: scale(1.05);
-  box-shadow: 0 0 15px currentColor;
-}
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
   <div class="admin-container">
-    <!-- Статистика -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Всего билетов</div>
-        <div class="stat-number" id="totalTickets">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Активные</div>
-        <div class="stat-number" style="color: #6af27d;" id="activeTickets">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label"><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Использованные</div>
-        <div class="stat-number" style="color: #8b0000;" id="usedTicketsCount">0</div>
-      </div>
-    </div>
-    
     <!-- Панель управления -->
-  <div class="control-panel">
-  <div style="margin-bottom: 15px;">
-    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Выберите тип билета:</label>
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 10px;">
-      <button class="btn btn-color" onclick="selectColor('random')" id="color-random" style="background: #2b2b2b; border: 2px solid #9d9d9d; color: #9d9d9d;">
-        Обычный
-      </button>
-      <button class="btn btn-color" onclick="selectColor('red')" id="color-red" style="background: #3a1d1d; border: 2px solid #f25c5c; color: #f25c5c;">
-        Красный
-      </button>
-      <button class="btn btn-color" onclick="selectColor('blue')" id="color-blue" style="background: #1d2b3a; border: 2px solid #6ab2f2; color: #6ab2f2;">
-        Синий
-      </button>
+    <div class="control-panel">
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Выберите тип билета:</label>
+        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+          <button class="btn btn-color" onclick="selectColor('random')" id="color-random" style="background: #2b2b2b; border: 2px solid #9d9d9d; color: #9d9d9d; --btn-border-color: #9d9d9d;">
+            Обычный
+          </button>
+          <button class="btn btn-color" onclick="selectColor('yellow')" id="color-yellow" style="background: #3a351d; border: 2px solid #f2d16a; color: #f2d16a; --btn-border-color: #f2d16a;">
+            Жёлтый
+          </button>
+          <button class="btn btn-color" onclick="selectColor('red')" id="color-red" style="background: #3a1d1d; border: 2px solid #f25c5c; color: #f25c5c; --btn-border-color: #f25c5c;">
+            Красный
+          </button>
+          <button class="btn btn-color" onclick="selectColor('blue')" id="color-blue" style="background: #1d2b3a; border: 2px solid #6ab2f2; color: #6ab2f2; --btn-border-color: #6ab2f2;">
+            Синий
+          </button>
+          <button class="btn btn-color" onclick="selectColor('green')" id="color-green" style="background: #1d3a22; border: 2px solid #6af27d; color: #6af27d; --btn-border-color: #6af27d;">
+            Зелёный
+          </button>
+        </div>
+      </div>
+      
+      <div class="button-row">
+        <button class="btn btn-primary" onclick="generateTicket()">
+          <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/New%20Button.webp?raw=true" class="icon"> Сгенерировать билет
+        </button>
+        <button class="btn btn-danger" onclick="clearAll()">
+          <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cup%20With%20Straw.webp?raw=true" class="icon"> Удалить все билеты
+        </button>
+      </div>
+      
+      <div id="output"></div>
     </div>
-    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-      <button class="btn btn-color" onclick="selectColor('green')" id="color-green" style="background: #1d3a22; border: 2px solid #6af27d; color: #6af27d;">
-        Зелёный
-      </button>
-      <button class="btn btn-color" onclick="selectColor('yellow')" id="color-yellow" style="background: #3a351d; border: 2px solid #f2d16a; color: #f2d16a;">
-        Жёлтый
-      </button>
-    </div>
-  </div>
-  
-  <div class="button-row">
-    <button class="btn btn-primary" onclick="generateTicket()">
-      <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/New%20Button.webp?raw=true" class="icon"> Сгенерировать билет
-    </button>
-    <button class="btn btn-danger" onclick="clearAll()">
-      <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cup%20With%20Straw.webp?raw=true" class="icon"> Удалить все билеты
-    </button>
-  </div>
-  
-  <div id="output"></div>
-</div>
-    
     
     <!-- Дашборд билетов -->
     <div class="dashboard">
@@ -276,13 +226,21 @@
     </div>
   </div>
 
- <script>
-// ⚠️ СЕКРЕТНЫЙ КЛЮЧ - ХРАНИ В СЕКРЕТЕ! СМЕНИ НА СВОЙ!
+  <script>
 // ⚠️ СЕКРЕТНЫЙ КЛЮЧ - ХРАНИ В СЕКРЕТЕ! СМЕНИ НА СВОЙ!
 const SECRET_KEY = "your-super-secret-key-change-this-12345";
 
 let lastTicket = '';
-let selectedColor = 'random'; // По умолчанию обычный
+let selectedColor = 'random';
+
+// Маппинг цветов
+const colorHex = {
+  'random': '#9d9d9d',
+  'yellow': '#f2d16a',
+  'red': '#f25c5c',
+  'blue': '#6ab2f2',
+  'green': '#6af27d'
+};
 
 // Функция выбора цвета
 function selectColor(color) {
@@ -343,7 +301,6 @@ async function generateTicket() {
   const randomData = generateTicketCode();
   const colorCode = encodeColor(selectedColor);
   
-  // Встраиваем цвет в данные билета
   const ticketData = `${timestamp}-${randomData}-${colorCode}`;
   
   const signature = await generateHMAC(SECRET_KEY, ticketData);
@@ -361,34 +318,16 @@ async function generateTicket() {
   
   const currentUrl = window.location.href;
   const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-  // Теперь URL без параметра color - цвет закодирован в самом билете
   const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}`;
   
   lastTicket = ticketUrl;
   
-  const colorEmoji = {
-    'random': '🎲',
-    'red': '🔴',
-    'blue': '🔵',
-    'green': '🟢',
-    'yellow': '🟡'
-  };
-  
-  const colorName = {
-    'random': 'Обычный (рандом)',
-    'red': 'Красный',
-    'blue': 'Синий',
-    'green': 'Зелёный',
-    'yellow': 'Жёлтый'
-  };
+  const linkColor = colorHex[selectedColor];
   
   const output = document.getElementById('output');
   output.innerHTML = `
     <div class="ticket-output">
-      <strong><img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Новый билет сгенерирован!</strong><br><br>
-      <strong>Короткий код:</strong> ${randomData}<br>
-      <strong>Тип:</strong> ${colorEmoji[selectedColor]} ${colorName[selectedColor]}<br><br>
-      <a href="${ticketUrl}" target="_blank" class="ticket-link">${ticketUrl}</a><br>
+      <a href="${ticketUrl}" target="_blank" class="ticket-link" style="color: ${linkColor};">${ticketUrl}</a>
       <button class="btn btn-secondary btn-full" onclick="copyToClipboard('${ticketUrl}')">
         <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Memo.webp?raw=true" class="icon"> Скопировать ссылку
       </button>
@@ -423,11 +362,6 @@ function refreshDashboard() {
   const generatedTickets = JSON.parse(localStorage.getItem('generated_tickets') || '[]');
   const usedTickets = JSON.parse(localStorage.getItem('used_tickets') || '[]');
   
-  const activeCount = generatedTickets.filter(t => !usedTickets.includes(t.code)).length;
-  document.getElementById('totalTickets').textContent = generatedTickets.length;
-  document.getElementById('activeTickets').textContent = activeCount;
-  document.getElementById('usedTicketsCount').textContent = usedTickets.length;
-  
   const dashboard = document.getElementById('ticketsDashboard');
   
   if (generatedTickets.length === 0) {
@@ -438,20 +372,11 @@ function refreshDashboard() {
   const currentUrl = window.location.href;
   const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
   
-  const colorEmoji = {
-    'random': '🎲',
-    'red': '🔴',
-    'blue': '🔵',
-    'green': '🟢',
-    'yellow': '🟡'
-  };
-  
   let tableHTML = `
     <table class="tickets-table">
       <thead>
         <tr>
           <th>Код</th>
-          <th>Тип</th>
           <th>Статус</th>
           <th>Создано</th>
           <th>Действия</th>
@@ -470,6 +395,7 @@ function refreshDashboard() {
   sortedTickets.forEach(ticket => {
     const isUsed = usedTickets.includes(ticket.code);
     const ticketColor = ticket.color || 'random';
+    const codeColor = colorHex[ticketColor];
     const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}`;
     const date = new Date(ticket.created).toLocaleString('ru-RU', {
       day: '2-digit',
@@ -481,8 +407,7 @@ function refreshDashboard() {
     
     tableHTML += `
       <tr>
-        <td><span class="ticket-code">${ticket.shortCode || ticket.code.substring(0, 8)}</span></td>
-        <td>${colorEmoji[ticketColor]}</td>
+        <td><span class="ticket-code" style="color: ${codeColor};">${ticket.shortCode || ticket.code.substring(0, 8)}</span></td>
         <td>
           <span class="status-badge ${isUsed ? 'status-used' : 'status-active'}">
             ${isUsed ? '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Cross%20Mark.webp?raw=true" class="icon"> Использован' : '<img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Check%20Mark%20Button.webp?raw=true" class="icon"> Активный'}
