@@ -2779,9 +2779,22 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const centerX = (rect.left + rect.width / 2) / bodyZoom;
   const centerY = (rect.top + rect.height / 2) / bodyZoom;
   
-  // 🔥 СИНХРОНИЗАЦИЯ С CSS: from -90deg означает старт сверху
-  // progress 0% = -90deg (верх), progress 100% = 270deg (полный круг до верха)
-  const angle = -90 + (progress / 100) * 360;
+  // 🔥 Давайте попробуем все возможные варианты:
+  
+  // Вариант 1: Конец "сгоревшей" части (верхняя граница transparent)
+  const angle1 = -90 + progress * 3.6;
+  
+  // Вариант 2: Начало "несгоревшей" части (нижняя граница transparent)
+  const angle2 = -90 + progress * 3.6;
+  
+  // Вариант 3: Может быть наоборот?
+  const angle3 = -90 - progress * 3.6;
+  
+  console.log(`Progress: ${progress.toFixed(2)}%`);
+  console.log(`Angle (gradient formula): ${angle1.toFixed(2)}°`);
+  
+  // Используем первый вариант
+  const angle = angle1;
   const angleRad = (angle * Math.PI) / 180;
   
   // 🎯 РАЗМЕРЫ ПРЯМОУГОЛЬНИКА
@@ -2827,6 +2840,8 @@ function updateFuseMarkerPosition(containerElement, progress) {
   
   const x = centerX + dx * t;
   const y = centerY + dy * t;
+  
+  console.log(`Marker position: (${x.toFixed(2)}, ${y.toFixed(2)})`);
   
   marker.style.position = 'fixed';
   marker.style.left = `${x}px`;
