@@ -942,7 +942,19 @@ textarea {
 .description-wrapper.open .description-toggle .arrow {
   transform: rotate(180deg);
 }
+/* ===== АНИМАЦИЯ ПОКАЧИВАНИЯ СЛАЙДЕРА ===== */
+@keyframes fillings-sway {
+  0%, 100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
 
+.fillings-container.sway-active {
+  animation: fillings-sway 2s ease-in-out infinite;
+}
 
 .catalog-card img {
   width: 64px;
@@ -2745,11 +2757,9 @@ if (cake.fillings && cake.fillings.length) {
   // 🎯 ДЕЛАЕМ ТЕГИ КЛИКАБЕЛЬНЫМИ С DESELECT
   document.querySelectorAll('.filling-tag').forEach(tag => {
     tag.addEventListener('click', function() {
-      // Если уже выбран — снимаем выделение
       if (this.classList.contains('selected')) {
         this.classList.remove('selected');
       } else {
-        // Иначе снимаем у всех и выделяем текущий
         document.querySelectorAll('.filling-tag').forEach(t => t.classList.remove('selected'));
         this.classList.add('selected');
       }
@@ -2759,11 +2769,27 @@ if (cake.fillings && cake.fillings.length) {
   // 🎯 ДОБАВЛЯЕМ ОТСЛЕЖИВАНИЕ СКРОЛЛА
   const fillingsContainer = document.querySelector('.fillings-container');
   if (fillingsContainer) {
-    // Проверяем сразу после отрисовки
-    setTimeout(() => updateFillingsBlur(), 100);
+    // 🎯 ДОБАВЛЯЕМ АНИМАЦИЮ ПОКАЧИВАНИЯ
+    fillingsContainer.classList.add('sway-active');
     
-    // Отслеживаем скролл
-    fillingsContainer.addEventListener('scroll', updateFillingsBlur);
+    // 🎯 СКРОЛЛ НА СЕРЕДИНУ СПИСКА
+    setTimeout(() => {
+      const scrollWidth = fillingsContainer.scrollWidth;
+      const containerWidth = fillingsContainer.clientWidth;
+      const scrollToMiddle = (scrollWidth - containerWidth) / 2;
+      fillingsContainer.scrollLeft = scrollToMiddle;
+      updateFillingsBlur();
+    }, 100);
+    
+    // 🎯 ОСТАНАВЛИВАЕМ АНИМАЦИЮ ПРИ ПЕРВОМ СКРОЛЛЕ
+    let hasScrolled = false;
+    fillingsContainer.addEventListener('scroll', function() {
+      if (!hasScrolled) {
+        hasScrolled = true;
+        fillingsContainer.classList.remove('sway-active');
+      }
+      updateFillingsBlur();
+    });
     
     // Отслеживаем изменение размера окна
     window.addEventListener('resize', updateFillingsBlur);
@@ -2779,8 +2805,7 @@ if (cake.fillings && cake.fillings.length) {
     createCakeStack(cake);
 
 
-// Формируем HTML для скрытого блока (название и описание в одном абзаце)
-let html = `<strong style="color: #6ab2f2; font-size: 16px;">${cake.name}</strong> <span style="color: #6ab2f2;">— ${cake.shortDesc}</span><br>`;
+let html = `<p style="color: #6ab2f2; margin: 0 0 12px 0; line-height: 1.5;"><strong style="font-size: 16px;">${cake.name}</strong> — ${cake.shortDesc}</p>`;
     
    // Ингредиенты
     if(cake.ingredients.length){
