@@ -298,7 +298,6 @@ textarea {
 
 /* ===== ГОРИЗОНТАЛЬНЫЙ СЛАЙДЕР НАЧИНОК ===== */
 .fillings-block {
-  margin-top: -5px; 
   margin-bottom: 5px;
   position: relative;
 }
@@ -371,73 +370,7 @@ textarea {
   transform: scale(1.08);
 }
 
-@keyframes gentle-swing {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-3px);
-  }
-  75% {
-    transform: translateX(3px);
-  }
-}
 
-@keyframes magnify-wave {
-  0%, 100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.08);
-  }
-}
-
-/* Применяем покачивание ко всему контейнеру начинок */
-.fillings-container {
-  animation: gentle-swing 3s ease-in-out infinite;
-}
-
-/* Лупа для начинок — волна пробегает по тегам */
-.filling-tag {
-  animation: magnify-wave 4s ease-in-out infinite;
-}
-
-.filling-tag:nth-child(1) { animation-delay: 0s; }
-.filling-tag:nth-child(2) { animation-delay: 0.3s; }
-.filling-tag:nth-child(3) { animation-delay: 0.6s; }
-.filling-tag:nth-child(4) { animation-delay: 0.9s; }
-.filling-tag:nth-child(5) { animation-delay: 1.2s; }
-.filling-tag:nth-child(6) { animation-delay: 1.5s; }
-.filling-tag:nth-child(7) { animation-delay: 1.8s; }
-.filling-tag:nth-child(8) { animation-delay: 2.1s; }
-.filling-tag:nth-child(9) { animation-delay: 2.4s; }
-.filling-tag:nth-child(10) { animation-delay: 2.7s; }
-.filling-tag:nth-child(11) { animation-delay: 3.0s; }
-.filling-tag:nth-child(12) { animation-delay: 3.3s; }
-.filling-tag:nth-child(13) { animation-delay: 3.6s; }
-
-/* Лупа для форматов — без покачивания, только волна */
-.format-tag {
-  animation: magnify-wave 3s ease-in-out infinite;
-}
-
-.format-tag:nth-child(1) { animation-delay: 0s; }
-.format-tag:nth-child(2) { animation-delay: 0.5s; }
-.format-tag:nth-child(3) { animation-delay: 1s; }
-.format-tag:nth-child(4) { animation-delay: 1.5s; }
-
-/* Останавливаем анимации при выборе или наведении */
-.filling-tag.selected,
-.filling-tag:hover,
-.format-tag.selected,
-.format-tag:hover {
-  animation: none !important;
-}
-
-/* Останавливаем покачивание при скролле начинок */
-.fillings-container.scrolling {
-  animation: none !important;
-}
 
 /* ===== ФОРМАТЫ ТОРТОВ ===== */
 .formats-block {
@@ -2780,18 +2713,7 @@ function updateFillingsBlur() {
   } else if (!atStart && !atEnd) {
     container.classList.add('blur-both'); // с обеих сторон
   }
-// Останавливаем покачивание при скролле
-let scrollTimeout;
-const fillingsContainer = document.querySelector('.fillings-container');
-if (fillingsContainer) {
-  fillingsContainer.addEventListener('scroll', function() {
-    this.classList.add('scrolling');
-    clearTimeout(scrollTimeout);
-    scrollTimeout = setTimeout(() => {
-      this.classList.remove('scrolling');
-    }, 1000);
-  });
-}
+  // если atStart && atEnd (контент влезает целиком) — не добавляем ничего
 }
 
   
@@ -2856,8 +2778,9 @@ if (cake.fillings && cake.fillings.length) {
     currentCakeGallery = cake.gallery || [];
     createCakeStack(cake);
 
-// 🎯 НАЧИНАЕМ HTML С НАЗВАНИЯ И ОПИСАНИЯ (в один абзац)
-let html = `<p style="color: #6ab2f2; margin: 8px 0;"><strong style="font-size: 16px;">${cake.name}</strong> — ${cake.shortDesc}</p>`;
+// Формируем HTML для скрытого блока (начинаем с названия и описания)
+let html = `<strong style="color: #6ab2f2; font-size: 16px;">${cake.name}</strong><br>`;
+html += `<span style="color: #6ab2f2;">${cake.shortDesc}</span><br>`;
     
    // Ингредиенты
     if(cake.ingredients.length){
