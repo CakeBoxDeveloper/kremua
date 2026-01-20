@@ -2778,9 +2778,9 @@ if (cake.fillings && cake.fillings.length) {
     currentCakeGallery = cake.gallery || [];
     createCakeStack(cake);
 
-// Формируем HTML для скрытого блока (начинаем с названия и описания)
+
 // Формируем HTML для скрытого блока (название и описание в одном абзаце)
-let html = `<p style="color: #6ab2f2; margin-bottom: 12px;"><strong style="font-size: 16px;">${cake.name}</strong> — ${cake.shortDesc}</p>`;
+let html = `<strong style="color: #6ab2f2; font-size: 16px;">${cake.name}</strong> <span style="color: #6ab2f2;">— ${cake.shortDesc}</span><br>`;
     
    // Ингредиенты
     if(cake.ingredients.length){
