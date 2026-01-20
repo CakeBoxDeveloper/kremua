@@ -2433,7 +2433,7 @@ function launchCanvasConfetti() {
         y: -(Math.random() * 15 + 15)
       };
       
-      this.opacity = 1; // 👈 ДОДАЛИ opacity
+      this.opacity = 1;
     }
     
     update() {
@@ -2450,9 +2450,9 @@ function launchCanvasConfetti() {
     }
     
     draw() {
-      // 👇 ЗОНИ FADE-OUT (100px зверху і знизу)
-      const fadeZoneTop = 100;
-      const fadeZoneBottom = canvas.height - 100;
+      // 👇 ЗОНИ FADE-OUT (200px зверху і знизу)
+      const fadeZoneTop = 200; // 👈 ЗБІЛЬШИЛИ до 200px
+      const fadeZoneBottom = canvas.height - 200; // 👈 ЗБІЛЬШИЛИ до 200px
       
       let edgeFade = 1;
       
@@ -2464,11 +2464,11 @@ function launchCanvasConfetti() {
       // Fade-out знизу
       if (this.position.y > fadeZoneBottom) {
         const distanceFromBottom = canvas.height - this.position.y;
-        edgeFade = Math.min(edgeFade, distanceFromBottom / 100);
+        edgeFade = Math.min(edgeFade, distanceFromBottom / 200); // 👈 ЗБІЛЬШИЛИ до 200
       }
       
-      // Fade-out з боків (50px)
-      const fadeZoneSide = 50;
+      // Fade-out з боків (200px) 👈 ЗБІЛЬШИЛИ до 200px
+      const fadeZoneSide = 200;
       if (this.position.x < fadeZoneSide) {
         edgeFade = Math.min(edgeFade, this.position.x / fadeZoneSide);
       }
@@ -2477,11 +2477,10 @@ function launchCanvasConfetti() {
         edgeFade = Math.min(edgeFade, distanceFromRight / fadeZoneSide);
       }
       
-      // 👇 КОМБІНУЄМО opacity з edge fade
       const finalOpacity = this.opacity * edgeFade;
       
       ctx.save();
-      ctx.globalAlpha = finalOpacity; // 👈 ЗАСТОСОВУЄМО FADE
+      ctx.globalAlpha = finalOpacity;
       ctx.translate(this.position.x, this.position.y);
       ctx.rotate(this.rotation * Math.PI / 180);
       ctx.scale(this.scale.x, this.scale.y);
@@ -2505,10 +2504,10 @@ function launchCanvasConfetti() {
       piece.update();
       piece.draw();
       
-      // 👇 РАХУЄМО АКТИВНІ (з урахуванням розширених меж)
-      if (piece.position.y < canvas.height + 100 && 
-          piece.position.x > -100 && 
-          piece.position.x < canvas.width + 100) {
+      // 👇 РАХУЄМО АКТИВНІ (з урахуванням 200px меж)
+      if (piece.position.y < canvas.height + 200 && 
+          piece.position.x > -200 && 
+          piece.position.x < canvas.width + 200) {
         activeCount++;
       }
     });
