@@ -858,7 +858,11 @@ textarea {
 .back-btn:active, {
   transform: scale(0.96);
 }
-
+.description-content strong {
+  color: #6ab2f2;
+  display: block;
+  margin-bottom: 8px;
+}
 
   /* Кнопка "Назад" на всю ширину */
 .back-btn-full {
@@ -2996,36 +3000,28 @@ document.addEventListener('keydown', function(e) {
 function toggleDescription() {
   const wrapper = document.querySelector('.description-wrapper');
   const text = document.getElementById('descToggleText');
+  const arrow = document.getElementById('descArrow');
 
   const isOpen = wrapper.classList.contains('open');
 
   if (isOpen) {
     /* СВОРАЧИВАНИЕ */
     wrapper.classList.remove('open');
-    /* СВОРАЧИВАНИЕ — воспроизводим звук закрытия */
-    if (closeSound) {
-      closeSound.currentTime = 0;
-      closeSound.play().catch(e => console.log('Audio play failed:', e));
-    }
     
-    wrapper.classList.remove('open');
-
-    setTimeout(() => {
-      text.innerHTML = `
-        <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/file-text.svg" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(18%) sepia(11%) saturate(1661%) hue-rotate(162deg) brightness(93%) contrast(92%);">
-        Відкрити повний опис
-      `;
-    }, 350);
+    text.innerHTML = `
+      <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/file-text.svg" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(18%) sepia(11%) saturate(1661%) hue-rotate(162deg) brightness(93%) contrast(92%);">
+      Відкрити повний опис
+    `;
   } else {
     /* РАЗВОРАЧИВАНИЕ */
     wrapper.classList.add('open');
+    
     text.innerHTML = `
       <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/file-text.svg" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(18%) sepia(11%) saturate(1661%) hue-rotate(162deg) brightness(93%) contrast(92%);">
       Закрити повний опис
     `;
   }
 }
-
  
 
 
