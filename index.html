@@ -689,6 +689,19 @@ textarea {
   transition: all 0.4s ease;
 }
 
+  @keyframes fillings-sway {
+  0%, 100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+.fillings-container.sway-active {
+  animation: fillings-sway 2s ease-in-out infinite;
+}
+
 .photo-stack.opening .photo-stack-item:nth-child(3) {
   transform: rotate(-2deg) translate(0, calc(var(--card-offset-y) * -0.7));
   opacity: 1;
@@ -2741,7 +2754,17 @@ function openCake(index){
      const cakeIngredients = document.getElementById('cakeIngredients');
     const cakeFillings = document.getElementById('cakeFillings'); // ← ДОБАВЬ
 
-     
+     fillingsContainer.classList.add('sway-active');
+
+// 🎯 ОСТАНАВЛИВАЕМ АНИМАЦИЮ ПРИ ПЕРВОМ СКРОЛЛЕ
+let hasScrolled = false;
+fillingsContainer.addEventListener('scroll', function() {
+  if (!hasScrolled) {
+    hasScrolled = true;
+    fillingsContainer.classList.remove('sway-active');
+  }
+  updateFillingsBlur();
+});
 
   
 
