@@ -2125,9 +2125,6 @@ function showCopyFeedback() {
 // ===== ЭФФЕКТ РАСПАДА НА ЧАСТИЦЫ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 // ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
-// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
-// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
-// ===== ЭФФЕКТ РАСПАДА С МАСКОЙ И ЧАСТИЦАМИ =====
 function disintegratePromo() {
   promoDisintegrated = true;
   console.log('🎬 Начинаем disintegratePromo с маской и частицами');
@@ -2161,13 +2158,13 @@ function disintegratePromo() {
   console.log('📐 SVG Rect для canvas (без zoom):', canvasSvgRect);
   
   const particles = [];
-  const blockSize = 2; // 👈 ЗАЛИШАЄМО розмір 2px
+  const blockSize = 2;
   const totalDuration = 2000;
   const particleColor = selectedCoupon.particleColor;
   
-  // 👇 СТВОРЮЄМО ВДВІЧІ МЕНШЕ ЧАСТИНОК (пропускаємо кожну другу)
-  for (let y = 0; y < canvasSvgRect.height; y += blockSize * 2) { // 👈 *2
-    for (let x = 0; x < canvasSvgRect.width; x += blockSize * 2) { // 👈 *2
+  // 👇 ВДВІЧІ МЕНШЕ ЧАСТИНОК
+  for (let y = 0; y < canvasSvgRect.height; y += blockSize * 2) {
+    for (let x = 0; x < canvasSvgRect.width; x += blockSize * 2) {
       particles.push({
         x: canvasSvgRect.left + x,
         y: canvasSvgRect.top + y,
@@ -2231,12 +2228,33 @@ function disintegratePromo() {
     
     let activeCount = 0;
     
+    // 👇 ЗОНИ FADE-OUT (100px зверху і знизу)
+    const fadeZoneTop = 100;
+    const fadeZoneBottom = canvas.height - 100;
+    
     particles.forEach(p => {
-      if (p.active && p.y < canvas.height + 50 && p.opacity > 0) {
+      if (p.active && p.opacity > 0) {
         activeCount++;
         
+        // 👇 РОЗРАХОВУЄМО FADE-OUT БІЛЯ КРАЇВ ЕКРАНУ
+        let edgeFade = 1;
+        
+        // Fade-out зверху
+        if (p.y < fadeZoneTop) {
+          edgeFade = Math.min(edgeFade, p.y / fadeZoneTop);
+        }
+        
+        // Fade-out знизу
+        if (p.y > fadeZoneBottom) {
+          const distanceFromBottom = canvas.height - p.y;
+          edgeFade = Math.min(edgeFade, distanceFromBottom / 100);
+        }
+        
+        // 👇 КОМБІНУЄМО opacity частинки з edge fade
+        const finalOpacity = p.opacity * edgeFade;
+        
         ctx.save();
-        ctx.globalAlpha = p.opacity;
+        ctx.globalAlpha = finalOpacity; // 👈 ЗАСТОСОВУЄМО КОМБІНОВАНУ ПРОЗОРІСТЬ
         ctx.translate(p.x + p.size / 2, p.y + p.size / 2);
         ctx.rotate(p.rotation * Math.PI / 180);
         ctx.fillStyle = p.color;
@@ -2248,8 +2266,14 @@ function disintegratePromo() {
         p.y += p.velocityY;
         p.rotation += p.rotationSpeed;
         
-        if (p.y > canvas.height - 100) {
-          p.opacity -= 0.02;
+        // 👇 ЗВИЧАЙНИЙ FADE-OUT (тепер можна прибрати або залишити)
+        if (p.y > canvas.height - 150) {
+          p.opacity -= 0.015;
+        }
+        
+        // 👇 ВИДАЛЯЄМО ЧАСТИНКИ ЩО ВИЛЕТІЛИ ЗА МЕЖІ АБО СТАЛИ НЕВИДИМІ
+        if (p.y > canvas.height + 50 || p.opacity <= 0) {
+          p.opacity = 0;
         }
       }
     });
