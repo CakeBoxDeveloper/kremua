@@ -364,13 +364,13 @@ async function generateTicket() {
   
   // Генерация QR-кода в высоком разрешении (1160x1160)
   const qr = new QRCode(tempDiv, {
-    text: shortUrl,
-    width: 1160,
-    height: 1160,
-    colorDark: "#17212b",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.M
-  });
+  text: shortUrl,
+  width: 1160,
+  height: 1160,
+  colorDark: "#000000",    // 👈 ЧЁРНЫЙ вместо #17212b
+  colorLight: "#ffffff",   // 👈 БЕЛЫЙ (уже правильно)
+  correctLevel: QRCode.CorrectLevel.M
+});
   
   // Ждём генерации и копируем в основной контейнер
   setTimeout(() => {
