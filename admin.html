@@ -76,6 +76,7 @@
       font-family: monospace;
       font-size: 14px;
       line-height: 1.6;
+      text-align: center;
     }
     .ticket-link {
       text-decoration: none;
@@ -86,9 +87,13 @@
     }
     .qr-code-container {
       text-align: center;
-      margin: 20px 0;
+      margin: 20px auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    .qr-code-container canvas {
+    .qr-code-container canvas,
+    .qr-code-container img {
       border: 2px solid #6ab2f2;
       border-radius: 8px;
       padding: 10px;
@@ -290,6 +295,19 @@ function encodeColor(color) {
   return colorMap[color] || '0';
 }
 
+// Функция сокращения URL через TinyURL
+async function shortenURL(longUrl) {
+  try {
+    const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+    if (response.ok) {
+      return await response.text();
+    }
+  } catch (error) {
+    console.error('Ошибка сокращения URL:', error);
+  }
+  return longUrl; // Возвращаем оригинальный URL если не удалось сократить
+}
+
 async function generateTicket() {
   const timestamp = Date.now();
   const randomData = generateTicketCode();
@@ -301,42 +319,47 @@ async function generateTicket() {
   const ticketCode = `${ticketData}-${signature}`;
   const created = new Date().toISOString();
   
+  const currentUrl = window.location.href;
+  const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
+  const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}`;
+  
+  // Сокращаем URL
+  const shortUrl = await shortenURL(ticketUrl);
+  
   const generatedTickets = JSON.parse(localStorage.getItem('generated_tickets') || '[]');
   generatedTickets.push({
     code: ticketCode,
     created: created,
     shortCode: randomData,
-    color: selectedColor
+    color: selectedColor,
+    url: ticketUrl,
+    shortUrl: shortUrl
   });
   localStorage.setItem('generated_tickets', JSON.stringify(generatedTickets));
   
-  const currentUrl = window.location.href;
-  const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-  const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticketCode)}`;
-  
-  lastTicket = ticketUrl;
+  lastTicket = shortUrl;
   
   const linkColor = colorHex[selectedColor];
   
   const output = document.getElementById('output');
   output.innerHTML = `
     <div class="ticket-output">
-      <a href="${ticketUrl}" target="_blank" class="ticket-link" style="color: ${linkColor};">${ticketUrl}</a>
+      <a href="${ticketUrl}" target="_blank" class="ticket-link" style="color: ${linkColor};">${shortUrl}</a>
       <div class="qr-code-container" id="qrcode"></div>
-      <button class="btn btn-secondary btn-full" onclick="copyToClipboard('${ticketUrl}')">
+      <button class="btn btn-secondary btn-full" onclick="copyToClipboard('${shortUrl}')">
         Скопировать ссылку
       </button>
     </div>
   `;
   
-  // Генерация QR-кода
+  // Генерация QR-кода с сокращённой ссылкой
   new QRCode(document.getElementById("qrcode"), {
-    text: ticketUrl,
+    text: shortUrl,
     width: 200,
     height: 200,
     colorDark: "#17212b",
     colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
+    correctLevel: QRCode.CorrectLevel.M
   });
   
   refreshDashboard();
@@ -381,9 +404,6 @@ function refreshDashboard() {
     return;
   }
   
-  const currentUrl = window.location.href;
-  const baseUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/') + 1);
-  
   let tableHTML = `
     <table class="tickets-table">
       <thead>
@@ -395,18 +415,16 @@ function refreshDashboard() {
       <tbody>
   `;
   
+  // Сортировка: новые сверху (по дате создания), без перестановки использованных
   const sortedTickets = [...generatedTickets].sort((a, b) => {
-    const aUsed = usedTickets.includes(a.code);
-    const bUsed = usedTickets.includes(b.code);
-    if (aUsed === bUsed) return new Date(b.created) - new Date(a.created);
-    return aUsed ? 1 : -1;
+    return new Date(b.created) - new Date(a.created);
   });
   
   sortedTickets.forEach(ticket => {
     const isUsed = usedTickets.includes(ticket.code);
     const ticketColor = ticket.color || 'random';
     const codeColor = colorHex[ticketColor];
-    const ticketUrl = `${baseUrl}roll.html?ticket=${encodeURIComponent(ticket.code)}`;
+    const ticketUrl = ticket.shortUrl || ticket.url || `${window.location.origin}/roll.html?ticket=${encodeURIComponent(ticket.code)}`;
     
     tableHTML += `
       <tr>
