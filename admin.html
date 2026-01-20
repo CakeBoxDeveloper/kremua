@@ -98,6 +98,10 @@
       border-radius: 8px;
       padding: 10px;
       background: white;
+      width: 200px !important;
+      height: 200px !important;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
     }
     .dashboard {
       background: transparent;
@@ -352,15 +356,51 @@ async function generateTicket() {
     </div>
   `;
   
-  // Генерация QR-кода с сокращённой ссылкой
-  new QRCode(document.getElementById("qrcode"), {
+  // Создаем временный контейнер для генерации QR в высоком разрешении
+  const tempDiv = document.createElement('div');
+  tempDiv.style.position = 'absolute';
+  tempDiv.style.left = '-9999px';
+  document.body.appendChild(tempDiv);
+  
+  // Генерация QR-кода в высоком разрешении (1160x1160)
+  const qr = new QRCode(tempDiv, {
     text: shortUrl,
-    width: 200,
-    height: 200,
+    width: 1160,
+    height: 1160,
     colorDark: "#17212b",
     colorLight: "#ffffff",
     correctLevel: QRCode.CorrectLevel.M
   });
+  
+  // Ждём генерации и копируем в основной контейнер
+  setTimeout(() => {
+    const canvas = tempDiv.querySelector('canvas');
+    if (canvas) {
+      const img = document.createElement('img');
+      img.src = canvas.toDataURL('image/png');
+      img.style.width = '200px';
+      img.style.height = '200px';
+      
+      const container = document.getElementById('qrcode');
+      container.innerHTML = '';
+      container.appendChild(img);
+      
+      // Добавляем кнопку скачивания QR-кода
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn btn-secondary btn-full';
+      downloadBtn.textContent = 'Скачать QR-код (1160x1160)';
+      downloadBtn.onclick = () => {
+        const link = document.createElement('a');
+        link.download = `qr-${randomData}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+      output.querySelector('.ticket-output').appendChild(downloadBtn);
+    }
+    
+    // Удаляем временный контейнер
+    document.body.removeChild(tempDiv);
+  }, 100);
   
   refreshDashboard();
 }
