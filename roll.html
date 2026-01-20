@@ -1269,7 +1269,7 @@ mask-image: linear-gradient(
 <div style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-top: 12px; margin-bottom: 5px;">
 <div style="display: flex; align-items: center; gap: 6px; font-size: 16.5px; color: #d4af37; margin-bottom: 10px;">
   <span class="lottery-participants-count" data-target="843" style="font-weight: 700;">0</span>
-  <span>учасників лотереї сьогоднi</span>
+  <span>учасників крутили коло сьогоднi</span>
 </div>
 </div>
  
@@ -1571,7 +1571,7 @@ async function checkAndUsePromoTicket() {
       console.log('✅ Безкінечний тестовий білет активовано!');
     }
     
-    showTicketModal('success', '🎮 Тестовий білет! Крути барабан!');
+    showTicketModal('success', 'Тестовий оберт! Крути коло!');
     window.history.replaceState({}, document.title, window.location.pathname);
     return true;
   }
@@ -1644,7 +1644,7 @@ async function checkAndUsePromoTicket() {
     localStorage.removeItem('lottery_last_spin');
     
     console.log('✅ Білет активовано!');
-    showTicketModal('success', 'Ти отримуєш один лотерейний білет! Нумо, швидше, крути барабан!');
+    showTicketModal('success', 'Ти отримуєш один бонусний оберт! Нумо, швидше, крути коло!');
     
     window.history.replaceState({}, document.title, window.location.pathname);
     
@@ -1708,7 +1708,7 @@ function showTicketModal(type, message) {
       </div>
       <div class="ticket-modal-text">${message}</div>
       <button class="ticket-modal-btn ${btnClass}" onclick="closeTicketModal()">
-        ${type === 'success' ? 'Крутити барабан!' : 'Ок'}
+        ${type === 'success' ? 'Крутити коло!' : 'Ок'}
       </button>
     </div>
   `;
