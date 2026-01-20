@@ -2743,148 +2743,119 @@ function updateFillingsBlur() {
 
   
 // Открытие торта
+// Открытие торта
 function openCake(index){
   showLoader();
   setTimeout(()=>{
     document.getElementById("catalogScreen").classList.remove("active");
     cakeScreen.classList.add("active");
-    window.scrollTo(0, 0); // 🎯 СКРОЛЛ ВВЕРХ
+    window.scrollTo(0, 0);
 
+    // 🎯 СНАЧАЛА ПОЛУЧАЕМ ТОРТ
     const cake = cakes[index];
-     const cakeIngredients = document.getElementById('cakeIngredients');
-    const cakeFillings = document.getElementById('cakeFillings'); // ← ДОБАВЬ
+    const cakeIngredients = document.getElementById('cakeIngredients');
+    const cakeFillings = document.getElementById('cakeFillings');
 
-     fillingsContainer.classList.add('sway-active');
-
-// 🎯 ОСТАНАВЛИВАЕМ АНИМАЦИЮ ПРИ ПЕРВОМ СКРОЛЛЕ
-let hasScrolled = false;
-fillingsContainer.addEventListener('scroll', function() {
-  if (!hasScrolled) {
-    hasScrolled = true;
-    fillingsContainer.classList.remove('sway-active');
-  }
-  updateFillingsBlur();
-});
-
-  
-
-// Внутри функции openCake, после if (cake.fillings && cake.fillings.length) {...}
-if (cake.fillings && cake.fillings.length) {
-  let fillingsHtml = '';
-  cake.fillings.forEach(filling => {
-    fillingsHtml += `<span class="filling-tag">${filling}</span>`;
-  });
-  cakeFillings.innerHTML = fillingsHtml;
-  document.querySelector('.fillings-block').style.display = 'block';
-  
-  // 🎯 ДЕЛАЕМ ТЕГИ КЛИКАБЕЛЬНЫМИ С DESELECT
-  document.querySelectorAll('.filling-tag').forEach(tag => {
-    tag.addEventListener('click', function() {
-      if (this.classList.contains('selected')) {
-        this.classList.remove('selected');
-      } else {
-        document.querySelectorAll('.filling-tag').forEach(t => t.classList.remove('selected'));
-        this.classList.add('selected');
-      }
-    });
-  });
-
-  // 🎯 ДОБАВЛЯЕМ ОТСЛЕЖИВАНИЕ СКРОЛЛА
-  const fillingsContainer = document.querySelector('.fillings-container');
-  if (fillingsContainer) {
-    // 🎯 ДОБАВЛЯЕМ АНИМАЦИЮ ПОКАЧИВАНИЯ
-    fillingsContainer.classList.add('sway-active');
-    
-    // 🎯 СКРОЛЛ НА СЕРЕДИНУ СПИСКА
-    setTimeout(() => {
-      const scrollWidth = fillingsContainer.scrollWidth;
-      const containerWidth = fillingsContainer.clientWidth;
-      const scrollToMiddle = (scrollWidth - containerWidth) / 2;
-      fillingsContainer.scrollLeft = scrollToMiddle;
-      updateFillingsBlur();
-    }, 100);
-    
-    // 🎯 ОСТАНАВЛИВАЕМ АНИМАЦИЮ ПРИ ПЕРВОМ СКРОЛЛЕ
-    let hasScrolled = false;
-    fillingsContainer.addEventListener('scroll', function() {
-      if (!hasScrolled) {
-        hasScrolled = true;
-        fillingsContainer.classList.remove('sway-active');
-      }
-      updateFillingsBlur();
-    });
-    
-    // Отслеживаем изменение размера окна
-    window.addEventListener('resize', updateFillingsBlur);
-  }
-} else {
-  document.querySelector('.fillings-block').style.display = 'none';
-}
-
-      
-    
-
+    // 🎯 ГАЛЕРЕЯ
     currentCakeGallery = cake.gallery || [];
     createCakeStack(cake);
 
+    // 🎯 НАЧИНКИ
+    if (cake.fillings && cake.fillings.length) {
+      let fillingsHtml = '';
+      cake.fillings.forEach(filling => {
+        fillingsHtml += `<span class="filling-tag">${filling}</span>`;
+      });
+      cakeFillings.innerHTML = fillingsHtml;
+      document.querySelector('.fillings-block').style.display = 'block';
+      
+      // Делаем теги кликабельными
+      document.querySelectorAll('.filling-tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+          if (this.classList.contains('selected')) {
+            this.classList.remove('selected');
+          } else {
+            document.querySelectorAll('.filling-tag').forEach(t => t.classList.remove('selected'));
+            this.classList.add('selected');
+          }
+        });
+      });
 
-let html = `<p style="color: #6ab2f2; margin: 0 0 12px 0; line-height: 1.5;"><strong style="font-size: 16px;">${cake.name}</strong> — ${cake.shortDesc}</p>`;
-    
-   // Ингредиенты
-    if(cake.ingredients.length){
-  html += "<strong style='display: block; text-align: left; margin-top: 12px; margin-bottom: 8px; color: #6ab2f2;'>Інгредієнти:</strong>";
-  html += "<ul style='color: #6ab2f2;'>";
-  cake.ingredients.forEach(item=>{
-    html += `<li>${item}</li>`;
-  });
-  html += "</ul>";
-}
-
-
-
-// 🎯 ЗАМЕНИ ВЕСЬ БЛОК "ФОРМАТЫ" НА ЭТОТ:
-if (cake.formats) {
-  let formatsHtml = '';
-  Object.keys(cake.formats).forEach(format => {
-    formatsHtml += `<span class="format-tag" data-format="${format}" data-price="${cake.formats[format]}">${format}</span>`;
-  });
-  document.getElementById('cakeFormats').innerHTML = formatsHtml;
-  document.querySelector('.formats-block').style.display = 'block';
-  
- // Делаем форматы кликабельными
-  document.querySelectorAll('.format-tag').forEach(tag => {
-    tag.addEventListener('click', function() {
-      if (this.classList.contains('selected')) {
-        this.classList.remove('selected');
-        // Возвращаем базовую цену
-        orderBtn.innerHTML = `
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shopping-cart.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">
-  Замовити від ${cake.price} ₴
-`;
-        orderBtn.dataset.cakePrice = cake.price;
-        orderBtn.dataset.cakeFormat = '#стандарт'; // 🎯 сохраняем формат
-      } else {
-        document.querySelectorAll('.format-tag').forEach(t => t.classList.remove('selected'));
-        this.classList.add('selected');
+      // Добавляем анимацию покачивания и скролл
+      const fillingsContainer = document.querySelector('.fillings-container');
+      if (fillingsContainer) {
+        fillingsContainer.classList.add('sway-active');
         
-        // Обновляем цену на кнопке
-        const price = this.dataset.price;
-        const format = this.dataset.format;
-orderBtn.innerHTML = `
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shopping-cart.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">
-  Замовити від ${price} ₴
-`;
-orderBtn.dataset.cakePrice = price;
-orderBtn.dataset.cakeFormat = format; // 🎯 сохраняем формат
+        setTimeout(() => {
+          const scrollWidth = fillingsContainer.scrollWidth;
+          const containerWidth = fillingsContainer.clientWidth;
+          const scrollToMiddle = (scrollWidth - containerWidth) / 2;
+          fillingsContainer.scrollLeft = scrollToMiddle;
+          updateFillingsBlur();
+        }, 100);
+        
+        let hasScrolled = false;
+        fillingsContainer.addEventListener('scroll', function() {
+          if (!hasScrolled) {
+            hasScrolled = true;
+            fillingsContainer.classList.remove('sway-active');
+          }
+          updateFillingsBlur();
+        });
+        
+        window.addEventListener('resize', updateFillingsBlur);
       }
-    });
-  });
-} else {
-  document.querySelector('.formats-block').style.display = 'none';
-}
-    
+    } else {
+      document.querySelector('.fillings-block').style.display = 'none';
+    }
 
-        // КБЖУ таблица
+    // 🎯 ФОРМАТЫ
+    if (cake.formats) {
+      let formatsHtml = '';
+      Object.keys(cake.formats).forEach(format => {
+        formatsHtml += `<span class="format-tag" data-format="${format}" data-price="${cake.formats[format]}">${format}</span>`;
+      });
+      document.getElementById('cakeFormats').innerHTML = formatsHtml;
+      document.querySelector('.formats-block').style.display = 'block';
+      
+      // Делаем форматы кликабельными
+      document.querySelectorAll('.format-tag').forEach(tag => {
+        tag.addEventListener('click', function() {
+          if (this.classList.contains('selected')) {
+            this.classList.remove('selected');
+            orderBtn.innerHTML = `<img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shopping-cart.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">Замовити від ${cake.price} ₴`;
+            orderBtn.dataset.cakePrice = cake.price;
+            orderBtn.dataset.cakeFormat = '#стандарт';
+          } else {
+            document.querySelectorAll('.format-tag').forEach(t => t.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            const price = this.dataset.price;
+            const format = this.dataset.format;
+            orderBtn.innerHTML = `<img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shopping-cart.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">Замовити від ${price} ₴`;
+            orderBtn.dataset.cakePrice = price;
+            orderBtn.dataset.cakeFormat = format;
+          }
+        });
+      });
+    } else {
+      document.querySelector('.formats-block').style.display = 'none';
+    }
+
+    // 🎯 ОПИСАНИЕ
+    let html = `<p style="color: #6ab2f2; margin: 0 0 12px 0; line-height: 1.5;"><strong style="font-size: 16px;">${cake.name}</strong> — ${cake.shortDesc}</p>`;
+    
+    // Ингредиенты
+    if(cake.ingredients.length){
+      html += "<strong style='display: block; text-align: left; margin-top: 12px; margin-bottom: 8px; color: #6ab2f2;'>Інгредієнти:</strong>";
+      html += "<ul style='color: #6ab2f2;'>";
+      cake.ingredients.forEach(item=>{
+        html += `<li>${item}</li>`;
+      });
+      html += "</ul>";
+    }
+
+    // КБЖУ таблица
     if(cake.kbju) {
       html += '<strong style="display: block; text-align: left; margin-top: 8px; margin-bottom: 8px; color: #6ab2f2;">КБЖВ на 100г:</strong>';
       html += '<table style="width:100%; border-collapse: collapse; margin-top: 8px; color: #6ab2f2;">';
@@ -2898,22 +2869,19 @@ orderBtn.dataset.cakeFormat = format; // 🎯 сохраняем формат
 
     cakeIngredients.innerHTML = html;
 
-// Сохраняем данные торта для модального окна
-orderBtn.dataset.cakeName = cake.name;
-orderBtn.dataset.cakePrice = cake.price;
-orderBtn.dataset.cakeFormat = '#стандарт'; // 🎯 начальный формат
-orderBtn.onclick = function(e) {
-  e.preventDefault();
-  const selectedFormat = document.querySelector('.format-tag.selected');
-  const format = selectedFormat ? selectedFormat.dataset.format : '#стандарт';
-  const price = selectedFormat ? selectedFormat.dataset.price : cake.price;
-  openOrderModal(cake.name, price, format);
-};
+    // 🎯 КНОПКА ЗАКАЗА
+    orderBtn.dataset.cakeName = cake.name;
+    orderBtn.dataset.cakePrice = cake.price;
+    orderBtn.dataset.cakeFormat = '#стандарт';
+    orderBtn.onclick = function(e) {
+      e.preventDefault();
+      const selectedFormat = document.querySelector('.format-tag.selected');
+      const format = selectedFormat ? selectedFormat.dataset.format : '#стандарт';
+      const price = selectedFormat ? selectedFormat.dataset.price : cake.price;
+      openOrderModal(cake.name, price, format);
+    };
     
-orderBtn.innerHTML = `
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shopping-cart.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">
-  Замовити вiд ${cake.price} ₴
-`;
+    orderBtn.innerHTML = `<img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/shopping-cart.svg" style="width: 18px; height: 18px; vertical-align: middle; margin-right: 6px; filter: brightness(0) saturate(100%) invert(78%) sepia(48%) saturate(426%) hue-rotate(72deg) brightness(98%) contrast(93%);">Замовити вiд ${cake.price} ₴`;
 
     hideLoader();
   },500);
