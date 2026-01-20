@@ -1882,6 +1882,19 @@ textarea {
 
 <script>
 
+  window.addEventListener('load', () => {
+  if (window.location.hash === '#catalog') {
+    // Очищаем хеш
+    history.replaceState(null, null, ' ');
+    
+    // Открываем каталог
+    setTimeout(() => {
+      document.getElementById("mainScreen").classList.remove("active");
+      document.getElementById("catalogScreen").classList.add("active");
+      window.scrollTo(0, 0);
+    }, 100);
+  }
+});
 
 const loader = document.getElementById("loader");
 
