@@ -1706,12 +1706,7 @@ textarea {
 </div>
 <br>
 
-<!-- Название и краткое описание -->
-<div class="faq-block">
-  <div class="faq-content1">
-  <div id="cakeShortDesc" style="font-size:14px; line-height:1.5;"></div>
-  </div>
-</div>
+ 
   <!-- Ингредиенты (коллапс) -->
 <div class="faq-block">
   <div class="faq-content1 description-wrapper">
@@ -2731,8 +2726,7 @@ function openCake(index){
     window.scrollTo(0, 0); // 🎯 СКРОЛЛ ВВЕРХ
 
     const cake = cakes[index];
-    const cakeShortDesc = document.getElementById('cakeShortDesc');
-    const cakeIngredients = document.getElementById('cakeIngredients');
+     const cakeIngredients = document.getElementById('cakeIngredients');
     const cakeFillings = document.getElementById('cakeFillings'); // ← ДОБАВЬ
 
     // Название + описание
@@ -2785,16 +2779,19 @@ if (cake.fillings && cake.fillings.length) {
     currentCakeGallery = cake.gallery || [];
     createCakeStack(cake);
 
+// Формируем HTML для скрытого блока (начинаем с названия и описания)
+let html = `<strong style="color: #6ab2f2; font-size: 16px;">${cake.name}</strong><br>`;
+html += `<span style="color: #6ab2f2;">${cake.shortDesc}</span><br>`;
+    
    // Ингредиенты
-    let html = '';
     if(cake.ingredients.length){
-      html += "<strong style='display: block; text-align: left; margin-top: 12px; margin-bottom: 8px; color: #6ab2f2;'>Інгредієнти:</strong>";
-      html += "<ul style='color: #6ab2f2;'>";
-      cake.ingredients.forEach(item=>{
-        html += `<li>${item}</li>`;
-      });
-      html += "</ul>";
-    }
+  html += "<strong style='display: block; text-align: left; margin-top: 12px; margin-bottom: 8px; color: #6ab2f2;'>Інгредієнти:</strong>";
+  html += "<ul style='color: #6ab2f2;'>";
+  cake.ingredients.forEach(item=>{
+    html += `<li>${item}</li>`;
+  });
+  html += "</ul>";
+}
 
 
 
