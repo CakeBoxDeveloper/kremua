@@ -1533,10 +1533,10 @@ textarea {
   
   <!-- Картинка для пассивной кнопки (часы) -->
   <img 
-    src="https://github.com/cakeboxdeveloper/kremua/blob/main/Clock.webp?raw=true" 
+    src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Symbols/Free%20Button.webp" 
     class="lottery-icon lottery-icon-disabled">
   
-  <span id="lotteryBtnText">Крути коло вигравай торт!</span>
+  <span id="lotteryBtnText">Крути коло - вигравай торт!</span>
   <span class="lottery-timer" id="lotteryTimer"></span>
 </a>
 
@@ -3385,7 +3385,7 @@ function updateLotteryButton() {
   if (!lastSpin) {
     // Можно крутить
     lotteryBtn.classList.remove('disabled');
-    lotteryBtnText.textContent = 'Крути коло виграйвай торт!';
+    lotteryBtnText.textContent = 'Крути коло - виграйвай торт!';
     lotteryTimer.textContent = '';
     return;
   }
@@ -3401,7 +3401,7 @@ function updateLotteryButton() {
   } else {
     // Нельзя крутить — показываем таймер
     lotteryBtn.classList.add('disabled');
-    lotteryBtnText.textContent = 'Коло буде доступне через:';
+    lotteryBtnText.textContent = 'Центр бонусiв';
     
     const timeRemaining = oneDay - timePassed;
     const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
