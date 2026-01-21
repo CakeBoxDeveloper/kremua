@@ -2783,7 +2783,7 @@ function saveCouponToStorage(code, discount) {
     code: code,
     discount: discount,
     color: myCouponColors[discount] || selectedCoupon.codeColor,
-    backgroundColor: couponBackgrounds[discount] || 'rgba(106, 178, 242, 0.08)', // 👈 ДОБАВИЛИ ФОН
+    backgroundColor: couponBackgrounds[discount] || 'rgba(106, 178, 242, 0.3)', // 👈 ДОБАВИЛИ ФОН
     date: new Date().toISOString(),
     displayDate: null
   };
