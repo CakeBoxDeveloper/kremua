@@ -236,10 +236,10 @@ body {
 }
 
 /* 3. СТИЛИ ДЛЯ "МОИ КУПОНЫ" */
- .my-coupons-container {
+.my-coupons-container {
   width: 90%;
   max-width: 400px;
-  background: #1d2b3a;
+  background: #1d2b3a; /* 👈 Значение по умолчанию, будет перезаписано JS */
   border-radius: 6px;
   padding: 16px;
   margin: 0 auto 20px;
@@ -248,8 +248,7 @@ body {
   position: relative;
   --coupon-border-color: #6ab2f2;
   --burn-progress: 0;
-  
-  /* 🔥 УБРАЛИ border отсюда - он будет только в ::before */
+  transition: background-color 0.3s ease; /* 👈 ДОБАВИЛИ плавный переход фона */
 }
 
 .my-coupons-container::before {
@@ -2779,16 +2778,15 @@ function saveCouponToStorage(code, discount) {
     '20%': '#6ab2f2',   // Синий
     '50%': '#6af27d'    // Зелёный
   };
-    // 👇 ВЕРНИТЕ ЭТУ СТРОКУ (она была удалена!)
+  
   const newCoupon = {
     code: code,
     discount: discount,
     color: myCouponColors[discount] || selectedCoupon.codeColor,
+    backgroundColor: couponBackgrounds[discount] || 'rgba(106, 178, 242, 0.08)', // 👈 ДОБАВИЛИ ФОН
     date: new Date().toISOString(),
-    displayDate: null  // 👈 displayDate установится в showFinalScreen()
+    displayDate: null
   };
-  
- 
   
   localStorage.setItem('my_coupons', JSON.stringify([newCoupon]));
   console.log('💾 Купон сохранён:', newCoupon);
@@ -2802,6 +2800,29 @@ function updateMyCouponsList() {
   
   const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
   
+  // 🎯 ПРОВЕРЯЕМ СРОК ДЕЙСТВИЯ КУПОНОВ
+  if (coupons.length > 0) {
+    const latestCoupon = coupons[coupons.length - 1];
+    if (latestCoupon.displayDate) {
+      const displayTime = new Date(latestCoupon.displayDate).getTime();
+      const totalDuration = 30 * 60 * 1000; // 30 минут
+      const now = Date.now();
+      const remaining = displayTime + totalDuration - now;
+      
+      // 👇 ЕСЛИ ВРЕМЯ ИСТЕКЛО - УДАЛЯЕМ КУПОН И СКРЫВАЕМ БЛОК
+      if (remaining <= 0) {
+        console.log('⏰ Купон просрочен - удаляем и скрываем блок');
+        localStorage.removeItem('my_coupons');
+        myCouponsContainer.style.display = 'none';
+        stopFuseAnimation();
+        if (couponTimerInterval) {
+          clearInterval(couponTimerInterval);
+        }
+        return;
+      }
+    }
+  }
+  
   // СКРЫВАЕМ БЛОК ЕСЛИ НЕТ КУПОНОВ
   if (coupons.length === 0) {
     myCouponsContainer.style.display = 'none';
@@ -2814,13 +2835,15 @@ function updateMyCouponsList() {
   // Показываем блок если есть купоны
   myCouponsContainer.style.display = 'block';
   
-  // 🎨 ПОЛУЧАЕМ ЦВЕТ ПОСЛЕДНЕГО КУПОНА
+  // 🎨 ПОЛУЧАЕМ ЦВЕТ И ФОН ПОСЛЕДНЕГО КУПОНА
   const latestCoupon = coupons[coupons.length - 1];
   const couponColor = latestCoupon.color || '#6ab2f2';
+  const couponBg = latestCoupon.backgroundColor || 'rgba(106, 178, 242, 0.08)'; // 👈 ДОБАВИЛИ
   
-  // 🎨 ПРИМЕНЯЕМ ЦВЕТ К БЛОКУ И CSS-ПЕРЕМЕННЫМ
+  // 🎨 ПРИМЕНЯЕМ ЦВЕТ И ФОН К БЛОКУ
   myCouponsContainer.style.borderColor = couponColor;
-  myCouponsContainer.style.setProperty('--coupon-border-color', couponColor); // 👈 ДОБАВИЛИ
+  myCouponsContainer.style.backgroundColor = couponBg; // 👈 ДОБАВИЛИ ФОН
+  myCouponsContainer.style.setProperty('--coupon-border-color', couponColor);
   
   const header = myCouponsContainer.querySelector('.my-coupons-header');
   if (header) {
@@ -3159,10 +3182,18 @@ function startCouponTimer() {
 
 // ===== ЦВЕТА КУПОНОВ =====
 const couponColors = {
-  '15%': '#f7a632',   // Жёлтый
-  '10%': '#f27db0',   // Красный
-  '20%': '#6ab2f2',   // Синий
-  '50%': '#6af27d'    // Зелёный
+  '15%': '#f7a632',   // Жёлтый (текст)
+  '10%': '#f27db0',   // Красный (текст)
+  '20%': '#6ab2f2',   // Синий (текст)
+  '50%': '#6af27d'    // Зелёный (текст)
+};
+
+// 🎨 ЦВЕТА ФОНОВ ДЛЯ БЛОКА "МОИ ПРОМОКОДЫ"
+const couponBackgrounds = {
+  '15%': 'rgba(247, 166, 50, 0.08)',   // Жёлтый фон (8% прозрачности)
+  '10%': 'rgba(242, 125, 176, 0.08)',  // Красный фон
+  '20%': 'rgba(106, 178, 242, 0.08)',  // Синий фон
+  '50%': 'rgba(106, 242, 125, 0.08)'   // Зелёный фон
 };
   
   
