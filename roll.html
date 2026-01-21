@@ -2893,9 +2893,10 @@ let currentBurnProgress = 0; // 👈 ДОБАВЬ ЭТУ СТРОКУ
 
  
 // ===== АНІМАЦІЯ ФІТИЛЯ З ФІКСАЦІЄЮ ПОЗИЦІЇ =====
+// ===== АНІМАЦІЯ ФІТИЛЯ БЕЗ РЕАКЦІЇ НА SCROLL =====
 let fuseAnimationId = null;
 let fuseParticles = [];
-let lastFusePos = null; // 👈 ДОДАЛИ: зберігаємо останню позицію
+let fuseSpawnPoint = null; // 👈 ДОДАЛИ: фіксована точка спавну у viewport
 
 function updateFuseMarkerPosition(containerElement, progress) {
   const marker = document.getElementById('fuseMarker');
@@ -2903,7 +2904,7 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const rect = containerElement.getBoundingClientRect();
   const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
   
-  // 🎯 ЦЕНТР КОНТЕЙНЕРА (враховуємо scroll)
+  // 🎯 ЦЕНТР КОНТЕЙНЕРА (у viewport координатах)
   const centerX = (rect.left + rect.width / 2) / bodyZoom;
   const centerY = (rect.top + rect.height / 2) / bodyZoom;
   
@@ -2923,28 +2924,24 @@ function updateFuseMarkerPosition(containerElement, progress) {
   
   let t = Infinity;
   
-  // Правая сторона (x = halfW)
   if (dx > 0) {
     const tRight = halfW / dx;
     const yRight = dy * tRight;
     if (Math.abs(yRight) <= halfH) t = Math.min(t, tRight);
   }
   
-  // Левая сторона (x = -halfW)
   if (dx < 0) {
     const tLeft = -halfW / dx;
     const yLeft = dy * tLeft;
     if (Math.abs(yLeft) <= halfH) t = Math.min(t, tLeft);
   }
   
-  // Нижняя сторона (y = halfH)
   if (dy > 0) {
     const tBottom = halfH / dy;
     const xBottom = dx * tBottom;
     if (Math.abs(xBottom) <= halfW) t = Math.min(t, tBottom);
   }
   
-  // Верхняя сторона (y = -halfH)
   if (dy < 0) {
     const tTop = -halfH / dy;
     const xTop = dx * tTop;
@@ -2954,7 +2951,6 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const x = centerX + dx * t;
   const y = centerY + dy * t;
   
-  // 🎯 МАРКЕР СКРЫТ
   if (marker) {
     marker.style.display = 'none';
   }
@@ -2970,8 +2966,12 @@ function animateFuse(containerElement, color) {
   }
   
   const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  
+  // 👇 ВСТАНОВЛЮЄМО РОЗМІР CANVAS ТІЛЬКИ ОДИН РАЗ
+  if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
   
   // 🔥 ВЫЧИСЛЯЕМ ПРОГРЕСС
   const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
@@ -2997,25 +2997,26 @@ function animateFuse(containerElement, color) {
     }
   }
   
-  // 👇 ОНОВЛЮЄМО ПОЗИЦІЮ КОЖЕН КАДР (враховує scroll)
-  const fusePos = updateFuseMarkerPosition(containerElement, progress);
+  // 👇 ОНОВЛЮЄМО ТОЧКУ СПАВНУ (враховує scroll)
+  fuseSpawnPoint = updateFuseMarkerPosition(containerElement, progress);
   
-  if (!fusePos) {
+  if (!fuseSpawnPoint) {
     fuseAnimationId = requestAnimationFrame(() => animateFuse(containerElement, color));
     return;
   }
   
-  // 👇 ЗБЕРІГАЄМО ПОТОЧНУ ПОЗИЦІЮ
-  lastFusePos = fusePos;
-  
-  // 🔥 ГЕНЕРАЦІЯ ЧАСТИЦ (тільки якщо прогрес > 0 і < 100)
+  // 🔥 ГЕНЕРАЦІЯ ЧАСТИЦ в ПОТОЧНІЙ точці спавну
   if (Math.random() > 0.3 && progress > 0 && progress < 100) {
     const particleCount = Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < particleCount; i++) {
       fuseParticles.push({
-        x: fusePos.x, // 👈 Використовуємо поточну позицію
-        y: fusePos.y,
+        // 👇 ЗБЕРІГАЄМО VIEWPORT координати на момент створення
+        spawnX: fuseSpawnPoint.x,
+        spawnY: fuseSpawnPoint.y,
+        // 👇 ВІДНОСНІ координати для руху
+        offsetX: 0,
+        offsetY: 0,
         vx: (Math.random() - 0.5) * 1,
         vy: (Math.random() - 0.5) * 1 - 0.5,
         life: 1,
@@ -3027,19 +3028,24 @@ function animateFuse(containerElement, color) {
   
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  // 👇 ОНОВЛЮЄМО ЧАСТИНКИ БЕЗ ПРИВ'ЯЗКИ ДО SCROLL
+  // 👇 МАЛЮЄМО ЧАСТИНКИ: spawnX/Y фіксовані, offsetX/Y змінюються
   fuseParticles = fuseParticles.filter(p => {
-    p.x += p.vx;
-    p.y += p.vy;
+    // Оновлюємо ВІДНОСНІ зміщення
+    p.offsetX += p.vx;
+    p.offsetY += p.vy;
     p.vy += 0.05; // гравітація
     p.life -= 0.02;
     
     if (p.life > 0) {
+      // 👇 МАЛЮЄМО: spawn point + offset (НЕ змінюється при scroll)
+      const drawX = p.spawnX + p.offsetX;
+      const drawY = p.spawnY + p.offsetY;
+      
       ctx.save();
       ctx.globalAlpha = p.life;
       ctx.fillStyle = p.color;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.arc(drawX, drawY, p.size, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
       return true;
@@ -3051,8 +3057,6 @@ function animateFuse(containerElement, color) {
     animateFuse(containerElement, color);
   });
 }
-  
-  
 
 function stopFuseAnimation() {
   if (fuseAnimationId) {
@@ -3060,6 +3064,7 @@ function stopFuseAnimation() {
     fuseAnimationId = null;
   }
   fuseParticles = [];
+  fuseSpawnPoint = null; // 👈 ДОДАЛИ
   
   const canvas = document.getElementById('fuseCanvas');
   if (canvas) {
@@ -3072,7 +3077,7 @@ function stopFuseAnimation() {
     marker.style.display = 'none';
   }
   
-  console.log('🛑 Анимация фитиля остановлена');
+  console.log('🛑 Анімація фітіля зупинена');
 }
 
 
