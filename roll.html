@@ -1858,24 +1858,26 @@ function startCountdown() {
 // ===== ПОКАЗ ФИНАЛЬНОГО ЭКРАНА =====
 function showFinalScreen() {
   setTimeout(() => {
-    // 🔥 УСТАНАВЛИВАЕМ displayDate ПРЯМО СЕЙЧАС (в момент показа финального экрана)
     const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
     if (coupons.length > 0) {
       const latestCoupon = coupons[coupons.length - 1];
       
-      // 👇 ВСЕГДА ПЕРЕЗАПИСЫВАЕМ displayDate (даже если она была установлена ранее)
-      latestCoupon.displayDate = new Date().toISOString();
-      coupons[coupons.length - 1] = latestCoupon;
-      localStorage.setItem('my_coupons', JSON.stringify(coupons));
-      console.log('⏰ Время старта купона установлено СЕЙЧАС:', latestCoupon.displayDate);
+      // 👇 ВСТАНОВЛЮЄМО displayDate ТІЛЬКИ ЯКЩО ЇЇ НЕМАЄ
+      if (!latestCoupon.displayDate) {
+        latestCoupon.displayDate = new Date().toISOString();
+        coupons[coupons.length - 1] = latestCoupon;
+        localStorage.setItem('my_coupons', JSON.stringify(coupons));
+        console.log('⏰ Час старту купона встановлено:', latestCoupon.displayDate);
+      } else {
+        console.log('✅ Купон вже має displayDate:', latestCoupon.displayDate);
+      }
     }
     
-    // 🔥 ПОТОМ ПОКАЗЫВАЕМ ФИНАЛЬНЫЙ ЭКРАН
     document.getElementById('finalScreen').classList.add('visible');
     startCountdown();
     initWinnersWidget();
     animateLotteryCounter();
-    updateMyCouponsList(); // 👈 Это запустит startCouponTimer() и animateFuse()
+    updateMyCouponsList();
   }, 500);
 }
 // ===== ГЕНЕРАЦИЯ ПРОМОКОДА =====
@@ -2896,7 +2898,6 @@ let currentBurnProgress = 0; // 👈 ДОБАВЬ ЭТУ СТРОКУ
 // ===== АНІМАЦІЯ ФІТИЛЯ БЕЗ РЕАКЦІЇ НА SCROLL =====
 let fuseAnimationId = null;
 let fuseParticles = [];
-let fuseSpawnPoint = null; // 👈 ДОДАЛИ: фіксована точка спавну у viewport
 
 function updateFuseMarkerPosition(containerElement, progress) {
   const marker = document.getElementById('fuseMarker');
@@ -2904,21 +2905,21 @@ function updateFuseMarkerPosition(containerElement, progress) {
   const rect = containerElement.getBoundingClientRect();
   const bodyZoom = parseFloat(window.getComputedStyle(document.body).zoom || '1');
   
-  // 🎯 ЦЕНТР КОНТЕЙНЕРА (у viewport координатах)
+  // 🎯 ЦЕНТР КОНТЕЙНЕРА
   const centerX = (rect.left + rect.width / 2) / bodyZoom;
   const centerY = (rect.top + rect.height / 2) / bodyZoom;
   
-  // 🔥 УГОЛ ПО ФОРМУЛЕ ГРАДИЕНТА
+  // 🔥 КУТ ЗА ФОРМУЛОЮ ГРАДІЄНТА
   const angle = 270 + progress * 3.6;
   const angleRad = (angle * Math.PI) / 180;
   
-  // 🎯 РАЗМЕРЫ ПРЯМОУГОЛЬНИКА
+  // 🎯 РОЗМІРИ ПРЯМОКУТНИКА
   const width = rect.width / bodyZoom;
   const height = rect.height / bodyZoom;
   const halfW = width / 2;
   const halfH = height / 2;
   
-  // 🔥 НАХОДИМ ПЕРЕСЕЧЕНИЕ ЛУЧА С КОНТУРОМ ПРЯМОУГОЛЬНИКА
+  // 🔥 ЗНАХОДИМО ПЕРЕТИН ПРОМЕНЯ З КОНТУРОМ
   const dx = Math.cos(angleRad);
   const dy = Math.sin(angleRad);
   
@@ -2966,14 +2967,10 @@ function animateFuse(containerElement, color) {
   }
   
   const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
   
-  // 👇 ВСТАНОВЛЮЄМО РОЗМІР CANVAS ТІЛЬКИ ОДИН РАЗ
-  if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  
-  // 🔥 ВЫЧИСЛЯЕМ ПРОГРЕСС
+  // 🔥 ВИРАХОВУЄМО ПРОГРЕС
   const coupons = JSON.parse(localStorage.getItem('my_coupons') || '[]');
   let progress = 0;
   
@@ -2997,26 +2994,23 @@ function animateFuse(containerElement, color) {
     }
   }
   
-  // 👇 ОНОВЛЮЄМО ТОЧКУ СПАВНУ (враховує scroll)
-  fuseSpawnPoint = updateFuseMarkerPosition(containerElement, progress);
+  // 👇 ОТРИМУЄМО ПОТОЧНУ ПОЗИЦІЮ ЕМІТЕРА
+  const currentFusePos = updateFuseMarkerPosition(containerElement, progress);
   
-  if (!fuseSpawnPoint) {
+  if (!currentFusePos) {
     fuseAnimationId = requestAnimationFrame(() => animateFuse(containerElement, color));
     return;
   }
   
   // 🔥 ГЕНЕРАЦІЯ ЧАСТИЦ в ПОТОЧНІЙ точці спавну
-  if (Math.random() > 0.3 && progress > 0 && progress < 100) {
+ if (Math.random() > 0.3 && progress > 0 && progress < 100) {
     const particleCount = Math.floor(Math.random() * 3) + 2;
     
     for (let i = 0; i < particleCount; i++) {
       fuseParticles.push({
-        // 👇 ЗБЕРІГАЄМО VIEWPORT координати на момент створення
-        spawnX: fuseSpawnPoint.x,
-        spawnY: fuseSpawnPoint.y,
-        // 👇 ВІДНОСНІ координати для руху
-        offsetX: 0,
-        offsetY: 0,
+        // 👇 ЗБЕРІГАЄМО АБСОЛЮТНУ позицію на момент створення
+        x: currentFusePos.x,
+        y: currentFusePos.y,
         vx: (Math.random() - 0.5) * 1,
         vy: (Math.random() - 0.5) * 1 - 0.5,
         life: 1,
@@ -3029,23 +3023,19 @@ function animateFuse(containerElement, color) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
   // 👇 МАЛЮЄМО ЧАСТИНКИ: spawnX/Y фіксовані, offsetX/Y змінюються
-  fuseParticles = fuseParticles.filter(p => {
-    // Оновлюємо ВІДНОСНІ зміщення
-    p.offsetX += p.vx;
-    p.offsetY += p.vy;
+   fuseParticles = fuseParticles.filter(p => {
+    // Частинка рухається за власною фізикою
+    p.x += p.vx;
+    p.y += p.vy;
     p.vy += 0.05; // гравітація
     p.life -= 0.02;
     
     if (p.life > 0) {
-      // 👇 МАЛЮЄМО: spawn point + offset (НЕ змінюється при scroll)
-      const drawX = p.spawnX + p.offsetX;
-      const drawY = p.spawnY + p.offsetY;
-      
       ctx.save();
       ctx.globalAlpha = p.life;
       ctx.fillStyle = p.color;
       ctx.beginPath();
-      ctx.arc(drawX, drawY, p.size, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
       return true;
@@ -3064,7 +3054,6 @@ function stopFuseAnimation() {
     fuseAnimationId = null;
   }
   fuseParticles = [];
-  fuseSpawnPoint = null; // 👈 ДОДАЛИ
   
   const canvas = document.getElementById('fuseCanvas');
   if (canvas) {
@@ -3081,14 +3070,13 @@ function stopFuseAnimation() {
 }
 
 
-
   
 function startCouponTimer() {
   const timerElement = document.getElementById('couponTimer');
   const myCouponsContainer = document.getElementById('myCouponsContainer');
   
   if (!timerElement || !myCouponsContainer) {
-    console.log('❌ Элементы таймера не найдены');
+    console.log('❌ Елементи таймера не знайдено');
     return;
   }
   
@@ -3104,25 +3092,22 @@ function startCouponTimer() {
   const latestCoupon = coupons[coupons.length - 1];
   const couponColor = latestCoupon.color || '#6ab2f2';
   
-  // 🔥 ПРОВЕРЯЕМ ЧТО displayDate УЖЕ УСТАНОВЛЕНА
+  // 🔥 ПЕРЕВІРЯЄМО displayDate (не перезаписуємо!)
   if (!latestCoupon.displayDate) {
-    console.log('⚠️ displayDate не установлена! Устанавливаем сейчас...');
-    latestCoupon.displayDate = new Date().toISOString();
-    coupons[coupons.length - 1] = latestCoupon;
-    localStorage.setItem('my_coupons', JSON.stringify(coupons));
+    console.log('⚠️ displayDate відсутня - це не повинно статись!');
+    return;
   }
   
   const displayTime = new Date(latestCoupon.displayDate).getTime();
-  const totalDuration =  30 * 60 * 1000;
+  const totalDuration = 30 * 60 * 1000;
   const expiresAt = displayTime + totalDuration;
   
   const burnDuration = 30 * 60 * 1000;
   const burnStartTime = displayTime;
   const burnEndTime = displayTime + burnDuration;
   
-  console.log('🔥 Таймер купона запущен:', {
+  console.log('🔥 Таймер купона запущено:', {
     displayTime: new Date(displayTime).toISOString(),
-    burnStartTime: new Date(burnStartTime).toISOString(),
     burnEndTime: new Date(burnEndTime).toISOString(),
     now: new Date().toISOString()
   });
@@ -3131,15 +3116,15 @@ function startCouponTimer() {
     const now = Date.now();
     const remaining = expiresAt - now;
     
-    // 🔥 ЗАПУСКАЕМ ФИТИЛЬ ЕСЛИ МЫ В ДИАПАЗОНЕ
+    // 🔥 ЗАПУСКАЄМО ФІТИЛЬ ЯКЩО В ДІАПАЗОНІ
     if (now >= burnStartTime && now <= burnEndTime) {
       if (!fuseAnimationId) {
-        console.log('🔥 Запускаем анимацию фитиля в', new Date().toISOString());
+        console.log('🔥 Запускаємо анімацію фітіля');
         animateFuse(myCouponsContainer, couponColor);
       }
     } else if (now > burnEndTime) {
       if (fuseAnimationId) {
-        console.log('🛑 Останавливаем фитиль - время вышло');
+        console.log('🛑 Зупиняємо фітіль - час вийшов');
         stopFuseAnimation();
       }
     }
@@ -3152,7 +3137,7 @@ function startCouponTimer() {
       localStorage.removeItem('my_coupons');
       myCouponsContainer.style.display = 'none';
       stopFuseAnimation();
-      console.log('⏰ Купон истёк и удалён');
+      console.log('⏰ Купон закінчився і видалений');
       return;
     }
     
