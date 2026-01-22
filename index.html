@@ -689,7 +689,7 @@ textarea {
   transition: all 0.4s ease;
 }
 
-  @keyframes fillings-sway {
+@keyframes fillings-sway {
   0%, 100% {
     transform: translateX(-3px);
   }
@@ -2761,53 +2761,58 @@ function openCake(index){
     createCakeStack(cake);
 
     // 🎯 НАЧИНКИ
-    if (cake.fillings && cake.fillings.length) {
-      let fillingsHtml = '';
-      cake.fillings.forEach(filling => {
-        fillingsHtml += `<span class="filling-tag">${filling}</span>`;
-      });
-      cakeFillings.innerHTML = fillingsHtml;
-      document.querySelector('.fillings-block').style.display = 'block';
-      
-      // Делаем теги кликабельными
-      document.querySelectorAll('.filling-tag').forEach(tag => {
-        tag.addEventListener('click', function() {
-          if (this.classList.contains('selected')) {
-            this.classList.remove('selected');
-          } else {
-            document.querySelectorAll('.filling-tag').forEach(t => t.classList.remove('selected'));
-            this.classList.add('selected');
-          }
-        });
-      });
-
-      // Добавляем анимацию покачивания и скролл
-      const fillingsContainer = document.querySelector('.fillings-container');
-      if (fillingsContainer) {
-        fillingsContainer.classList.add('sway-active');
-        
-        setTimeout(() => {
-          const scrollWidth = fillingsContainer.scrollWidth;
-          const containerWidth = fillingsContainer.clientWidth;
-          const scrollToMiddle = (scrollWidth - containerWidth) / 2;
-          fillingsContainer.scrollLeft = scrollToMiddle;
-          updateFillingsBlur();
-        }, 100);
-        
-        let hasScrolled = false;
-        fillingsContainer.addEventListener('scroll', function() {
-          if (!hasScrolled) {
-            hasScrolled = true;
-            fillingsContainer.classList.remove('sway-active');
-          }
-          updateFillingsBlur();
-        });
-        
-        window.addEventListener('resize', updateFillingsBlur);
+  // 🎯 НАЧИНКИ
+if (cake.fillings && cake.fillings.length) {
+  let fillingsHtml = '';
+  cake.fillings.forEach(filling => {
+    fillingsHtml += `<span class="filling-tag">${filling}</span>`;
+  });
+  cakeFillings.innerHTML = fillingsHtml;
+  document.querySelector('.fillings-block').style.display = 'block';
+  
+  // Делаем теги кликабельными
+  document.querySelectorAll('.filling-tag').forEach(tag => {
+    tag.addEventListener('click', function() {
+      if (this.classList.contains('selected')) {
+        this.classList.remove('selected');
+      } else {
+        document.querySelectorAll('.filling-tag').forEach(t => t.classList.remove('selected'));
+        this.classList.add('selected');
       }
-    } else {
-      document.querySelector('.fillings-block').style.display = 'none';
-    }
+    });
+  });
+
+  // 🎯 ДОБАВЛЯЕМ АНИМАЦИЮ ПОКАЧИВАНИЯ И СКРОЛЛ
+  const fillingsContainer = document.querySelector('.fillings-container');
+  if (fillingsContainer) {
+    // Включаем покачивание
+    fillingsContainer.classList.add('sway-active');
+    
+    // Скроллим к середине
+    setTimeout(() => {
+      const scrollWidth = fillingsContainer.scrollWidth;
+      const containerWidth = fillingsContainer.clientWidth;
+      const scrollToMiddle = (scrollWidth - containerWidth) / 2;
+      fillingsContainer.scrollLeft = scrollToMiddle;
+      updateFillingsBlur();
+    }, 100);
+    
+    // Отключаем покачивание при первом скролле
+    let hasScrolled = false;
+    fillingsContainer.addEventListener('scroll', function() {
+      if (!hasScrolled) {
+        hasScrolled = true;
+        fillingsContainer.classList.remove('sway-active');
+      }
+      updateFillingsBlur();
+    });
+    
+    // Обновляем размытие при ресайзе
+    window.addEventListener('resize', updateFillingsBlur);
+  }
+} else {
+  document.querySelector('.fillings-block').style.display = 'none';
+}
 
     // 🎯 ФОРМАТЫ
     if (cake.formats) {
