@@ -3858,39 +3858,50 @@ function openConstructor() {
 
   // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
+// ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
   
-  // Сначала скрываем ненужные карточки с анимацией
+  // 🎯 ШАГ 1: Последовательно скрываем ненужные карточки (справа налево)
   catalogCards.forEach((card, index) => {
     const cake = cakes[index];
     
     if (category === 'all' || cake.category === category) {
-      // Эту карточку нужно показать
+      // Эту карточку покажем позже
       card.style.opacity = '0';
       card.style.transform = 'scale(0.8)';
       card.style.display = 'block';
     } else {
-      // Эту карточку нужно скрыть
-      card.style.opacity = '0';
-      card.style.transform = 'scale(0.8)';
+      // Скрываем с задержкой (справа налево)
+      const reverseIndex = catalogCards.length - 1 - index;
+      const delay = reverseIndex * 30; // 30ms задержка между карточками
+      
+      setTimeout(() => {
+        card.style.opacity = '0';
+        card.style.transform = 'scale(0.8)';
+      }, delay);
+      
       setTimeout(() => {
         card.style.display = 'none';
-      }, 300);
+      }, delay + 300);
     }
   });
   
-  // Плавно показываем нужные карточки
+  // 🎯 ШАГ 2: Последовательно показываем нужные карточки (слева направо)
   setTimeout(() => {
     catalogCards.forEach((card, index) => {
       const cake = cakes[index];
       
       if (category === 'all' || cake.category === category) {
-        card.style.opacity = '1';
-        card.style.transform = 'scale(1)';
+        const delay = index * 30; // 30ms задержка между карточками
+        
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'scale(1)';
+        }, delay);
       }
     });
-  }, 50);
+  }, 350); // Начинаем показ после того, как скрылись ненужные
 }
 // Обработчики кликов по категориям
 document.querySelectorAll('.category-pill').forEach(pill => {
