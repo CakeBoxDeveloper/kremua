@@ -981,6 +981,7 @@ textarea {
 /* ===== ОБЁРТКА ===== */
 /* ===== ОБЁРТКА ===== */
 .description-wrapper {
+  padding: 0;
   overflow: hidden;
   text-align: left;
 }
@@ -1017,7 +1018,7 @@ textarea {
   max-height: 0;
   overflow: hidden;
   padding: 0 14px;
-  transition: max-height 0.35s ease, padding 0.35s ease; /* 👈 ДОБАВИЛИ padding в transition */
+  transition: max-height 0.35s ease; /* 👈 УБРАЛИ padding из transition */
   font-size: 14px;
   line-height: 1.5;
 }
@@ -2437,7 +2438,15 @@ function openCatalog(){
   setTimeout(()=>{
     document.getElementById("mainScreen").classList.remove("active");
     document.getElementById("catalogScreen").classList.add("active");
-    window.scrollTo(0, 0); // 🎯 СКРОЛЛ ВВЕРХ
+    window.scrollTo(0, 0);
+    
+    // 🎯 СБРАСЫВАЕМ ПОЗИЦИЮ СЛАЙДЕРА КАТЕГОРИЙ НА НАЧАЛО
+    const categoriesSlider = document.querySelector('.categories-slider');
+    if (categoriesSlider) {
+      categoriesSlider.scrollLeft = 0;
+      updateCategoriesBlur();
+    }
+    
     hideLoader();
   },500);
 }
