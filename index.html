@@ -668,6 +668,8 @@ textarea {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+  transition: max-height 0.4s ease, opacity 0.3s ease; /* 👈 ДОБАВЬ */
+  overflow: hidden; /* 👈 ДОБАВЬ */
 }
 .catalog-card {
   background: #1d2b3a;
