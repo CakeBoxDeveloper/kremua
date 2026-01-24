@@ -124,71 +124,6 @@ input, textarea {
   text-align: center;
   margin-top: -40px;
   margin-bottom: -40px;
-  position: relative;
-}
-
-.header-image-wrapper {
-  position: relative;
-  width: 100%;
-  max-width: 620px; /* Увеличено с 588px */
-  margin: 0 auto;
-}
-
-.header-image-wrapper img {
-  width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-.header-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 80px 16px 20px 16px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  mask-image: linear-gradient(to top, black 0%, black 30%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to top, black 0%, black 30%, transparent 100%);
-  pointer-events: none;
-}
-
-.header-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(23, 33, 43, 0.6) 0%, rgba(23, 33, 43, 0.3) 40%, transparent 100%);
-  z-index: -1;
-}
-
-.header-overlay-content {
-  background: transparent;
-  border: none;
-  padding: 0;
-  font-size: 15px;
-  line-height: 1.4;
-  color: #ffffff;
-  pointer-events: auto;
-  text-align: center;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-}
-
-#randomCakeBtn {
-  color: #6ab2f2; 
-  cursor: pointer; 
-  font-weight: 600;
-  transition: all 0.15s ease;
-  display: inline-block;
-}
-
-#randomCakeBtn:hover {
-  color: #8dc5f5;
-}
-
-#randomCakeBtn:active {
-  color: #5a9dd8;
-  transform: scale(0.95);
 }
 
 .header video {
@@ -562,17 +497,21 @@ input, textarea {
 </div>
 
 <div class="app">
-  <div class="header">
-    <br>
-    <div class="header-image-wrapper">
-      <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/WEBPBuilAv2.webp?raw=true" alt="Конструктор тортів">
-      <div class="header-overlay">
-        <div class="header-overlay-content">
-          Щоб побачити, як працює конструктор, спробуйте створити <span id="randomCakeBtn">випадковий торт</span>.
-        </div>
-      </div>
-    </div>
+<div class="header">
+  <br>
+  <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/WEBPBuilAv2.webp?raw=true" style="width: 588px; max-width: 105%; display: block; margin: 0 auto;" alt="Конструктор тортів">
+</div>
+ 
+<br>
+  <br>
+  <br>
+  
+
+ <div class="faq-block">
+  <div class="faq-content1">
+    Щоб побачити, як працює конструктор, спробуйте створити <span id="randomCakeBtn" style="color: #6ab2f2; cursor: pointer; font-weight: 600;">випадковий торт</span>.
   </div>
+</div>
 
   <div class="slider-section">
     <div class="slider-label">Тип торта</div>
