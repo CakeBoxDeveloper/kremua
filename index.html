@@ -583,6 +583,62 @@ textarea {
 .catalog-btn:active { transform: scale(0.96); }
 .catalog-btn:hover { background: #24502f; }
 
+
+  /* ===== КАТЕГОРИИ (СЛАЙДЕР) ===== */
+.categories-slider {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 12px 0;
+  margin-bottom: 12px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.categories-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.category-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 20px;
+  color: #6ab2f2;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.category-pill:hover {
+  background: #22364a;
+  transform: scale(1.02);
+}
+
+.category-pill.active {
+  background: #6ab2f2;
+  color: #17212b;
+  transform: scale(1.05);
+}
+
+.category-pill img {
+  width: 18px;
+  height: 18px;
+  filter: brightness(0) saturate(100%) invert(64%) sepia(66%) saturate(1044%) hue-rotate(178deg) brightness(101%) contrast(93%);
+}
+
+.category-pill.active img {
+  filter: brightness(0) saturate(100%) invert(18%) sepia(11%) saturate(1661%) hue-rotate(162deg) brightness(93%) contrast(92%);
+}
+
 /* ===== КАТАЛОГ ===== */
 .catalog-grid {
   display: grid;
@@ -1636,10 +1692,11 @@ textarea {
     <span>Кекси</span>
   </div>
   
-  <div class="category-pill" data-category="інше">
+    <div class="category-pill" data-category="інше">
     <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg">
     <span>Інше</span>
   </div>
+</div>
   
 <div class="catalog-grid">
   <div class="catalog-card">
