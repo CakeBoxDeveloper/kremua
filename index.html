@@ -2440,11 +2440,16 @@ function openCatalog(){
     document.getElementById("catalogScreen").classList.add("active");
     window.scrollTo(0, 0);
     
-    // 🎯 СБРАСЫВАЕМ ПОЗИЦИЮ СЛАЙДЕРА КАТЕГОРИЙ НА НАЧАЛО
+    // 🎯 ПЕРЕМАТЫВАЕМ СЛАЙДЕР КАТЕГОРИЙ НА СЕРЕДИНУ
     const categoriesSlider = document.querySelector('.categories-slider');
     if (categoriesSlider) {
-      categoriesSlider.scrollLeft = 0;
-      updateCategoriesBlur();
+      setTimeout(() => {
+        const scrollWidth = categoriesSlider.scrollWidth;
+        const containerWidth = categoriesSlider.clientWidth;
+        const scrollToMiddle = (scrollWidth - containerWidth) / 2;
+        categoriesSlider.scrollLeft = scrollToMiddle;
+        updateCategoriesBlur();
+      }, 100);
     }
     
     hideLoader();
