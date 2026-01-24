@@ -16,6 +16,8 @@ body {
   overflow-x: hidden;
   touch-action: pan-y pinch-zoom;
   -webkit-overflow-scrolling: touch;
+  width: 100%;
+  position: relative;
 }
 
   body.modal-open {
@@ -45,6 +47,7 @@ html {
   position: relative;
 }
 
+
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
@@ -62,6 +65,7 @@ input, textarea {
   min-height: 100vh;
   margin: 0 auto;
   padding: 16px;
+  overflow-x: hidden; /* Добавить эту строку */
 }
 
  #guestsSlider::-webkit-slider-thumb {
