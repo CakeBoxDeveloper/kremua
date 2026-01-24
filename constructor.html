@@ -130,6 +130,21 @@ input, textarea {
   margin-bottom: -40px;
   position: relative;
   z-index: 1;
+  overflow: hidden; /* Добавить */
+}
+
+  .header-image-container {
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+.header-image-container img {
+  width: 644px;
+  max-width: 115%;
+  display: block;
+  height: auto;
 }
 
 .header video {
@@ -509,7 +524,9 @@ input, textarea {
 <div class="app">
 <div class="header">
   <br>
-   <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/WEBPBuilAv2.webp?raw=true" style="width: 644px; max-width: 115%; display: block; margin-left: -7.5%; margin-right: -7.5%;" alt="Конструктор тортів">
+  <div class="header-image-container">
+    <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/WEBPBuilAv2.webp?raw=true" alt="Конструктор тортів">
+  </div>
 </div>
  
 <br>
