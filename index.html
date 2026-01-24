@@ -3860,63 +3860,54 @@ function openConstructor() {
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
+// ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
+  const catalogGrid = document.querySelector('.catalog-grid');
   
-  // 🎯 Считаем максимальную задержку для скрытия
-  let maxHideDelay = 0;
-  
-  // 🎯 ШАГ 1: Последовательно скрываем ненужные карточки (справа налево)
+  // 🎯 ШАГ 1: Текущие карточки "уезжают вверх"
   catalogCards.forEach((card, index) => {
     const cake = cakes[index];
+    const delay = index * 20; // небольшая задержка между карточками
     
-    if (category !== 'all' && cake.category !== category) {
-      // Скрываем с задержкой (справа налево)
-      const reverseIndex = catalogCards.length - 1 - index;
-      const delay = reverseIndex * 30; // 30ms задержка между карточками
-      maxHideDelay = Math.max(maxHideDelay, delay);
-      
-      setTimeout(() => {
-        card.style.opacity = '0';
-        card.style.transform = 'scale(0.8)';
-      }, delay);
-      
-      setTimeout(() => {
-        card.style.display = 'none';
-      }, delay + 300);
-    }
-  });
-  
-  // 🎯 ШАГ 2: Сначала подготавливаем нужные карточки (скрытыми)
-  catalogCards.forEach((card, index) => {
-    const cake = cakes[index];
-    
-    if (category === 'all' || cake.category === category) {
+    setTimeout(() => {
       card.style.opacity = '0';
-      card.style.transform = 'scale(0.8)';
-      card.style.display = 'block';
-    }
+      card.style.transform = 'translateY(-100vh)'; // уезжают вверх за экран
+    }, delay);
   });
   
-  // 🎯 ШАГ 3: Показываем нужные карточки ПОСЛЕ полного скрытия старых
-  const startShowDelay = maxHideDelay + 350; // Ждём пока все скроются
-  
+  // 🎯 ШАГ 2: Через 400ms меняем display и готовим новые карточки снизу
   setTimeout(() => {
     catalogCards.forEach((card, index) => {
       const cake = cakes[index];
       
       if (category === 'all' || cake.category === category) {
-        const delay = index * 30; // 30ms задержка между карточками
-        
-        setTimeout(() => {
-          card.style.opacity = '1';
-          card.style.transform = 'scale(1)';
-        }, delay);
+        card.style.display = 'block';
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(100vh)'; // стартуют снизу за экраном
+      } else {
+        card.style.display = 'none';
       }
     });
-  }, startShowDelay);
+    
+    // 🎯 ШАГ 3: Новые карточки "влетают снизу"
+    setTimeout(() => {
+      catalogCards.forEach((card, index) => {
+        const cake = cakes[index];
+        
+        if (category === 'all' || cake.category === category) {
+          const delay = index * 20; // задержка между карточками
+          
+          setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)'; // влетают на место
+          }, delay);
+        }
+      });
+    }, 50);
+    
+  }, 400);
 }
-
 
 
 
