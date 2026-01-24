@@ -585,6 +585,7 @@ textarea {
 
 
   /* ===== КАТЕГОРИИ (СЛАЙДЕР) ===== */
+/* ===== КАТЕГОРИИ (СЛАЙДЕР) ===== */
 .categories-slider {
   display: flex;
   gap: 8px;
@@ -594,10 +595,33 @@ textarea {
   scrollbar-width: none;
   -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
+  
+  /* 🎯 ИЗНАЧАЛЬНО БЕЗ РАЗМЫТИЯ */
+  mask-image: none;
+  -webkit-mask-image: none;
+  transition: mask-image 0.3s ease, -webkit-mask-image 0.3s ease;
 }
 
 .categories-slider::-webkit-scrollbar {
   display: none;
+}
+
+/* 🎯 РАЗМЫТИЕ СЛЕВА */
+.categories-slider.blur-left {
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 100%);
+}
+
+/* 🎯 РАЗМЫТИЕ СПРАВА */
+.categories-slider.blur-right {
+  mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 0%, black 90%, transparent 100%);
+}
+
+/* 🎯 РАЗМЫТИЕ С ОБЕИХ СТОРОН */
+.categories-slider.blur-both {
+  mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
 
 .category-pill {
@@ -607,7 +631,7 @@ textarea {
   padding: 8px 16px;
   background: #1d2b3a;
   border: 1px solid #6ab2f2;
-  border-radius: 20px;
+  border-radius: 4px; /* 👈 БЫЛО 20px, СТАЛО 4px */
   color: #6ab2f2;
   font-size: 14px;
   font-weight: 600;
@@ -3844,6 +3868,44 @@ document.querySelectorAll('.category-pill').forEach(pill => {
     const category = this.dataset.category;
     filterCatalog(category);
   });
+});
+
+  // 🎯 ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЫТИЯ КАТЕГОРИЙ
+function updateCategoriesBlur() {
+  const container = document.querySelector('.categories-slider');
+  if (!container) return;
+  
+  const scrollLeft = container.scrollLeft;
+  const maxScroll = container.scrollWidth - container.clientWidth;
+  const threshold = 5;
+  
+  const atStart = scrollLeft <= threshold;
+  const atEnd = scrollLeft >= maxScroll - threshold;
+  
+  container.classList.remove('blur-left', 'blur-right', 'blur-both');
+  
+  if (atStart && !atEnd) {
+    container.classList.add('blur-right');
+  } else if (atEnd && !atStart) {
+    container.classList.add('blur-left');
+  } else if (!atStart && !atEnd) {
+    container.classList.add('blur-both');
+  }
+}
+
+// Добавьте в конец скрипта:
+document.addEventListener('DOMContentLoaded', () => {
+  const categoriesContainer = document.querySelector('.categories-slider');
+  if (categoriesContainer) {
+    // Обновляем размытие при скролле
+    categoriesContainer.addEventListener('scroll', updateCategoriesBlur);
+    
+    // Обновляем размытие при ресайзе
+    window.addEventListener('resize', updateCategoriesBlur);
+    
+    // Первичное обновление
+    setTimeout(updateCategoriesBlur, 100);
+  }
 });
 
 </script>
