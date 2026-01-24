@@ -3892,7 +3892,20 @@ function filterCatalog(category) {
     });
   }, 50);
 }
-
+// Обработчики кликов по категориям
+document.querySelectorAll('.category-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    // Убираем active у всех
+    document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+    
+    // Добавляем active к текущей
+    this.classList.add('active');
+    
+    // Фильтруем каталог
+    const category = this.dataset.category;
+    filterCatalog(category);
+  });
+});
   // 🎯 ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЫТИЯ КАТЕГОРИЙ
 function updateCategoriesBlur() {
   const container = document.querySelector('.categories-slider');
