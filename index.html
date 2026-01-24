@@ -3859,9 +3859,6 @@ function openConstructor() {
   // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
-// ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
-// ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
-// ===== УЛУЧШЕННАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ПРАВИЛЬНАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
@@ -3931,57 +3928,59 @@ function filterCatalog(category) {
     card.style.transition = 'none';
   });
   
-  // 🎯 ШАГ 5: Запускаем движение вверх КАСКАДОМ
-  setTimeout(() => {
+  // 🎯 ШАГ 5: Запускаем движение БЕЗ ЗАДЕРЖКИ
+  requestAnimationFrame(() => {
     // Плавно меняем высоту СИНХРОННО с движением
-    catalogGrid.style.transition = 'height 0.7s cubic-bezier(0.4, 0, 0.2, 1)';
+    catalogGrid.style.transition = 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
     catalogGrid.style.height = `${newHeight}px`;
     
-    // Старые карточки уезжают вверх и исчезают
-    const oldColumnGroups = [[], [], []];
+    // 🎯 ВСЕ КАРТОЧКИ (старые и новые) двигаются ОДНОВРЕМЕННО
+    const allCards = [];
+    
+    // Добавляем старые карточки (которые исчезнут)
     currentVisible.forEach(({ card, index }, visualIndex) => {
       const shouldBeVisible = category === 'all' || cakes[index].category === category;
       if (!shouldBeVisible) {
         const col = visualIndex % columns;
-        oldColumnGroups[col].push({ card, visualIndex });
+        const row = Math.floor(visualIndex / columns);
+        allCards.push({ card, col, row, isOld: true });
       }
     });
     
-    oldColumnGroups.forEach((column, colIndex) => {
-      column.forEach(({ card }, rowIndex) => {
-        const delay = colIndex * 60 + rowIndex * 30;
-        
-        setTimeout(() => {
-          card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 1, 1)';
-          card.style.opacity = '0';
-          card.style.transform = 'translateY(-100vh)';
-        }, delay);
-      });
-    });
-    
-    // Новые карточки едут вверх и становятся видимыми
-    const newColumnGroups = [[], [], []];
+    // Добавляем новые карточки (которые появятся)
     newVisible.forEach(({ card }, visualIndex) => {
       const col = visualIndex % columns;
-      newColumnGroups[col].push({ card, visualIndex });
+      const row = Math.floor(visualIndex / columns);
+      allCards.push({ card, col, row, isOld: false, visualIndex });
     });
     
-    newColumnGroups.forEach((column, colIndex) => {
-      column.forEach(({ card, visualIndex }, rowIndex) => {
-        const delay = colIndex * 60 + rowIndex * 30;
+    // Запускаем каскадом по столбцам (все вместе!)
+    const columnGroups = [[], [], []];
+    allCards.forEach(item => {
+      columnGroups[item.col].push(item);
+    });
+    
+    columnGroups.forEach((column, colIndex) => {
+      column.forEach((item, rowIndex) => {
+        const delay = colIndex * 50 + rowIndex * 25; // Уменьшенные задержки
         
         setTimeout(() => {
-          const finalRow = Math.floor(visualIndex / columns);
-          const finalOffset = finalRow * (cardHeight + gap);
-          
-          card.style.transition = 'all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1)';
-          card.style.opacity = '1';
-          card.style.transform = `translateY(${finalOffset}px)`;
+          if (item.isOld) {
+            // Старые карточки уезжают вверх и исчезают
+            item.card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 1, 1)';
+            item.card.style.opacity = '0';
+            item.card.style.transform = 'translateY(-100vh)';
+          } else {
+            // Новые карточки едут на свои места и появляются
+            const finalOffset = item.row * (cardHeight + gap);
+            item.card.style.transition = 'all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            item.card.style.opacity = '1';
+            item.card.style.transform = `translateY(${finalOffset}px)`;
+          }
         }, delay);
       });
     });
-    
-  }, 50);
+  });
   
   // 🎯 ШАГ 6: Убираем старые карточки после анимации
   setTimeout(() => {
@@ -3991,9 +3990,9 @@ function filterCatalog(category) {
         card.style.display = 'none';
       }
     });
-  }, 800);
+  }, 700);
   
-  // 🎯 ШАГ 7: Финальная очистка — возвращаем к grid
+  // 🎯 ШАГ 7: Финальная очистка СРАЗУ после анимации
   setTimeout(() => {
     catalogGrid.style.height = '';
     catalogGrid.style.overflow = '';
@@ -4009,7 +4008,7 @@ function filterCatalog(category) {
         card.style.opacity = '';
       }
     });
-  }, 1400);
+  }, 800); // Уменьшено с 1400ms до 800ms
 }
 
 
