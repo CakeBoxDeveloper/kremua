@@ -3862,123 +3862,135 @@ function openConstructor() {
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== УЛУЧШЕННАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
+// ===== ИСПРАВЛЕННАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
   const catalogGrid = document.querySelector('.catalog-grid');
   
-  // 🎯 ШАГ 1: Определяем какие карточки показывать
-  const newVisibleCards = [];
+  // 🎯 ШАГ 1: Определяем текущие и новые карточки
+  const currentVisible = [];
+  const newVisible = [];
+  
   catalogCards.forEach((card, index) => {
     const cake = cakes[index];
-    if (category === 'all' || cake.category === category) {
-      newVisibleCards.push({ card, index });
+    const isCurrentlyVisible = card.style.display !== 'none' && window.getComputedStyle(card).display !== 'none';
+    const shouldBeVisible = category === 'all' || cake.category === category;
+    
+    if (isCurrentlyVisible) {
+      currentVisible.push({ card, index });
+    }
+    if (shouldBeVisible) {
+      newVisible.push({ card, index });
     }
   });
   
-  // 🎯 ШАГ 2: Рассчитываем высоту новой сетки
-  const cardHeight = catalogCards[0].offsetHeight;
-  const gap = 14; // из CSS
-  const columns = 3;
-  const rows = Math.ceil(newVisibleCards.length / columns);
-  const newHeight = rows * cardHeight + (rows - 1) * gap;
-  
-  // 🎯 ШАГ 3: Позиционируем новые карточки ПОД текущими
+  // 🎯 ШАГ 2: Фиксируем текущие размеры
+  const gridRect = catalogGrid.getBoundingClientRect();
   const currentHeight = catalogGrid.offsetHeight;
-  newVisibleCards.forEach(({ card, index }, visualIndex) => {
-    const row = Math.floor(visualIndex / columns);
-    const col = visualIndex % columns;
-    
-    card.style.position = 'absolute';
-    card.style.left = `calc(${col * 33.333}% + ${col * gap}px)`;
-    card.style.top = `${currentHeight + row * (cardHeight + gap)}px`;
-    card.style.opacity = '0';
-    card.style.transform = 'scale(0.95)';
-    card.style.display = 'block';
-  });
   
-  // 🎯 ШАГ 4: Увеличиваем высоту контейнера
-  catalogGrid.style.height = `${currentHeight + newHeight + gap * 2}px`;
-  catalogGrid.style.position = 'relative';
-  catalogGrid.style.transition = 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+  catalogGrid.style.height = `${currentHeight}px`;
+  catalogGrid.style.overflow = 'hidden';
   
-  // 🎯 ШАГ 5: Старые карточки улетают вверх КАСКАДОМ ПО СТОЛБЦАМ
-  const columnsMap = [[], [], []]; // 3 столбца
-  catalogCards.forEach((card, index) => {
-    const cake = cakes[index];
-    const isVisible = category === 'all' || cake.category === category;
-    
-    if (!isVisible && card.style.display !== 'none') {
-      const currentCol = index % columns;
-      columnsMap[currentCol].push({ card, index });
+  // 🎯 ШАГ 3: Старые карточки улетают вверх КАСКАДОМ ПО СТОЛБЦАМ
+  const columns = 3;
+  const columnsToHide = [[], [], []];
+  
+  currentVisible.forEach(({ card, index }) => {
+    const shouldBeVisible = category === 'all' || cakes[index].category === category;
+    if (!shouldBeVisible) {
+      const col = currentVisible.findIndex(item => item.index === index) % columns;
+      columnsToHide[col].push(card);
     }
   });
   
-  // Запускаем анимацию по столбцам
-  columnsMap.forEach((column, colIndex) => {
-    column.forEach(({ card }, rowIndex) => {
-      const delay = colIndex * 80 + rowIndex * 40; // каскад: сначала по столбцам, потом по строкам
+  columnsToHide.forEach((column, colIndex) => {
+    column.forEach((card, rowIndex) => {
+      const delay = colIndex * 60 + rowIndex * 30;
       
       setTimeout(() => {
         card.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 1, 1)';
         card.style.opacity = '0';
-        card.style.transform = 'translateY(-100vh) scale(0.8)';
+        card.style.transform = 'translateY(-50vh)';
       }, delay);
     });
   });
   
-  // 🎯 ШАГ 6: Через 500ms начинаем поднимать новые карточки на место
+  // 🎯 ШАГ 4: Через 450ms скрываем старые и готовим новые
   setTimeout(() => {
-    // Скрываем старые карточки
+    // Скрываем старые
     catalogCards.forEach((card, index) => {
       const cake = cakes[index];
       if (category !== 'all' && cake.category !== category) {
         card.style.display = 'none';
-        card.style.position = '';
-        card.style.left = '';
-        card.style.top = '';
+        card.style.transform = '';
+        card.style.transition = '';
       }
     });
     
-    // Уменьшаем высоту до финальной
-    catalogGrid.style.height = `${newHeight}px`;
-    
-    // Новые карточки поднимаются на место КАСКАДОМ ПО СТОЛБЦАМ
-    const newColumnsMap = [[], [], []];
-    newVisibleCards.forEach(({ card, index }, visualIndex) => {
-      const col = visualIndex % columns;
-      newColumnsMap[col].push({ card, visualIndex });
+    // Показываем новые (но делаем невидимыми внизу)
+    newVisible.forEach(({ card }) => {
+      card.style.display = 'block';
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(50vh)';
+      card.style.transition = 'none';
     });
     
-    newColumnsMap.forEach((column, colIndex) => {
-      column.forEach(({ card, visualIndex }, rowIndex) => {
-        const delay = colIndex * 80 + rowIndex * 40;
-        const row = Math.floor(visualIndex / columns);
-        const finalCol = visualIndex % columns;
-        
-        setTimeout(() => {
-          card.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
-          card.style.left = `calc(${finalCol * 33.333}% + ${finalCol * gap}px)`;
-          card.style.top = `${row * (cardHeight + gap)}px`;
-          card.style.opacity = '1';
-          card.style.transform = 'scale(1)';
-        }, delay);
+    // 🎯 ШАГ 5: Рассчитываем новую высоту
+    const rows = Math.ceil(newVisible.length / columns);
+    const gap = 14;
+    
+    // Временно убираем transform чтобы посчитать реальную высоту
+    const tempCard = newVisible[0]?.card;
+    if (tempCard) {
+      const tempTransform = tempCard.style.transform;
+      tempCard.style.transform = 'none';
+      const cardHeight = tempCard.offsetHeight;
+      tempCard.style.transform = tempTransform;
+      
+      const newHeight = rows * cardHeight + (rows - 1) * gap;
+      
+      // Плавно меняем высоту
+      setTimeout(() => {
+        catalogGrid.style.transition = 'height 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        catalogGrid.style.height = `${newHeight}px`;
+      }, 50);
+    }
+    
+    // 🎯 ШАГ 6: Новые карточки влетают снизу КАСКАДОМ
+    setTimeout(() => {
+      const columnsToShow = [[], [], []];
+      
+      newVisible.forEach(({ card }, visualIndex) => {
+        const col = visualIndex % columns;
+        columnsToShow[col].push(card);
       });
-    });
+      
+      columnsToShow.forEach((column, colIndex) => {
+        column.forEach((card, rowIndex) => {
+          const delay = colIndex * 60 + rowIndex * 30;
+          
+          setTimeout(() => {
+            card.style.transition = 'all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, delay);
+        });
+      });
+    }, 100);
     
-  }, 500);
+  }, 450);
   
   // 🎯 ШАГ 7: Финальная очистка через 1200ms
   setTimeout(() => {
-    catalogGrid.style.position = '';
     catalogGrid.style.height = '';
+    catalogGrid.style.overflow = '';
     catalogGrid.style.transition = '';
     
     catalogCards.forEach((card) => {
-      card.style.position = '';
-      card.style.left = '';
-      card.style.top = '';
-      card.style.transition = '';
-      card.style.transform = '';
+      if (card.style.display !== 'none') {
+        card.style.transition = '';
+        card.style.transform = '';
+      }
     });
   }, 1200);
 }
