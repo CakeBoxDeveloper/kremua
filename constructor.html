@@ -124,6 +124,49 @@ input, textarea {
   text-align: center;
   margin-top: -40px;
   margin-bottom: -40px;
+  position: relative;
+}
+  .header-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 588px; /* 560px * 1.05 */
+  margin: 0 auto;
+}
+
+.header-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.header-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px 16px 16px 16px;
+  background: linear-gradient(to top, #17212b 0%, #17212b 60%, rgba(23, 33, 43, 0) 100%);
+  pointer-events: none;
+}
+
+.header-overlay-content {
+  background: #1d2b3a;
+  border: 1px solid #6ab2f2;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #ffffff;
+  pointer-events: auto;
+}
+
+#randomCakeBtn {
+  color: #6ab2f2; 
+  cursor: pointer; 
+  font-weight: 600;
+  transition: all 0.15s ease;
+  display: inline-block;
 }
 
 .header video {
@@ -507,9 +550,15 @@ input, textarea {
   <br>
   
 
- <div class="faq-block">
-  <div class="faq-content1">
-    Щоб побачити, як працює конструктор, спробуйте створити <span id="randomCakeBtn" style="color: #6ab2f2; cursor: pointer; font-weight: 600;">випадковий торт</span>.
+<div class="header">
+  <br>
+  <div class="header-image-wrapper">
+    <img src="https://github.com/CakeBoxDeveloper/kremua/blob/main/WEBPBuilAv2.webp?raw=true" alt="Конструктор тортів">
+    <div class="header-overlay">
+      <div class="header-overlay-content">
+        Щоб побачити, як працює конструктор, спробуйте створити <span id="randomCakeBtn">випадковий торт</span>.
+      </div>
+    </div>
   </div>
 </div>
 
