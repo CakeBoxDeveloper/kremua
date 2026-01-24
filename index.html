@@ -1291,63 +1291,6 @@ textarea {
   transform: scale(0.96);
 }
 
-  /* ===== КАТЕГОРИИ ===== */
-.categories-container {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  overflow-x: auto;
-  padding: 4px 0;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.categories-container::-webkit-scrollbar {
-  display: none;
-}
-
-.category-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 12px 16px;
-  background: #1d2b3a;
-  border: 1px solid #6ab2f2;
-  border-radius: 6px;
-  color: #6ab2f2;
-  font-size: 13px;
-  font-weight: 600;
-  white-space: nowrap;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-  min-width: 80px;
-}
-
-.category-btn:hover {
-  background: #22364a;
-  transform: scale(1.02);
-}
-
-.category-btn.active {
-  background: #6ab2f2;
-  color: #17212b;
-  transform: scale(1.05);
-}
-
-.category-icon {
-  width: 24px;
-  height: 24px;
-  filter: brightness(0) saturate(100%) invert(64%) sepia(66%) saturate(1044%) hue-rotate(178deg) brightness(101%) contrast(93%);
-  transition: filter 0.2s ease;
-}
-
-.category-btn.active .category-icon {
-  filter: brightness(0) saturate(100%) invert(18%) sepia(11%) saturate(1661%) hue-rotate(162deg) brightness(93%) contrast(92%);
-}
-
 /* Предсказание на чеке */
 .order-fortune {
   margin-top: 12px;
@@ -1669,29 +1612,6 @@ textarea {
    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/wand-sparkles.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: brightness(0) saturate(100%) invert(68%) sepia(82%) saturate(433%) hue-rotate(359deg) brightness(101%) contrast(93%);">
   Конструктор тортів
 </a>
-
-    <!-- КАТЕГОРИИ -->
-<div class="categories-container">
-  <div class="category-btn active" data-category="cakes">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/cake.svg" class="category-icon">
-    <span>Торти</span>
-  </div>
-  
-  <div class="category-btn" data-category="cupcakes">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/cherry.svg" class="category-icon">
-    <span>Кекси</span>
-  </div>
-  
-  <div class="category-btn" data-category="waffles">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/square-stack.svg" class="category-icon">
-    <span>Вафлі</span>
-  </div>
-  
-  <div class="category-btn" data-category="other">
-    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/cookie.svg" class="category-icon">
-    <span>Інше</span>
-  </div>
-</div>
   
 <div class="catalog-grid">
   <div class="catalog-card">
@@ -1769,7 +1689,7 @@ textarea {
     <span>Антреме</span>
   </div>
 
-  <div class="catalog-card">
+<div class="catalog-card">
   <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Waffle.webp?raw=true" alt="Бельгійські вафлі">
   <span>Бельгійські вафлі</span>
 </div>
@@ -1815,14 +1735,8 @@ textarea {
   <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Pretzel.webp?raw=true" alt="Бретцелі">
   <span>Бретцелі</span>
 </div>
-
-
-
   
-  <!--КОНЕЦ GRID-->
-  <!--КОНЕЦ GRID-->
-  <!--КОНЕЦ GRID-->
-</div> 
+</div>
 
 
     <br>
@@ -2833,6 +2747,7 @@ const cakes = [
     "https://github.com/CakeBoxDeveloper/kremua/blob/main/WepbDummy.webp?raw=true"
   ]
 },
+
   // ВАФЛИ
 {
   name:"Бельгійські вафлі", 
@@ -3073,208 +2988,6 @@ const cakes = [
   ]
 }
 ];
-  
-
-  // ===== КЕКСЫ =====
-const cupcakes = [
-  {
-    name: "Червоний оксамит",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cupcake.webp?raw=true",
-    shortDesc: "яскравий червоний кекс з вершковим сиром та какао.",
-    ingredients: ["Борошно", "Какао", "Цукор", "Яйця", "Вершковий сир", "Барвник"],
-    fillings: ["#базовий", "#шоколад", "#ваніль"],
-    formats: {
-      "#міні": 35,
-      "#стандарт": 50,
-      "#XL": 75
-    },
-    kbju: { calories: 380, protein: 5, fat: 18, carbs: 52 },
-    price: 50,
-    preview: "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?w=400",
-    preview2: "https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?w=400",
-      "https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=400",
-      "https://images.unsplash.com/photo-1587241321921-91a834d82be7?w=400"
-    ]
-  },
-  {
-    name: "Шоколадний фондан",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Chocolate%20Bar.webp?raw=true",
-    shortDesc: "кекс з рідкою шоколадною серцевиною.",
-    ingredients: ["Шоколад", "Масло", "Яйця", "Цукор", "Борошно"],
-    fillings: ["#базовий", "#карамель", "#горіх"],
-    formats: {
-      "#міні": 40,
-      "#стандарт": 60,
-      "#XL": 90
-    },
-    kbju: { calories: 420, protein: 6, fat: 24, carbs: 48 },
-    price: 60,
-    preview: "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=400",
-    preview2: "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=400",
-      "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400",
-      "https://images.unsplash.com/photo-1519869325930-281384150729?w=400"
-    ]
-  },
-  {
-    name: "Лимонний",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Lemon.webp?raw=true",
-    shortDesc: "освіжаючий кекс з лимонною цедрою.",
-    ingredients: ["Борошно", "Лимон", "Цукор", "Яйця", "Вершкове масло"],
-    fillings: ["#базовий", "#лимонний курд", "#маракуя"],
-    formats: {
-      "#міні": 30,
-      "#стандарт": 45,
-      "#XL": 70
-    },
-    kbju: { calories: 340, protein: 4, fat: 16, carbs: 46 },
-    price: 45,
-    preview: "https://images.unsplash.com/photo-1519869325930-281384150729?w=400",
-    preview2: "https://images.unsplash.com/photo-1587241321921-91a834d82be7?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1519869325930-281384150729?w=400",
-      "https://images.unsplash.com/photo-1587241321921-91a834d82be7?w=400",
-      "https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=400"
-    ]
-  }
-];
-
-// ===== ВАФЛИ =====
-const waffles = [
-  {
-    name: "Бельгійські",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Waffle.webp?raw=true",
-    shortDesc: "класичні хрусткі вафлі з глибокими кишеньками.",
-    ingredients: ["Борошно", "Молоко", "Яйця", "Цукор", "Масло", "Дріжджі"],
-    fillings: ["#нутелла", "#мед", "#кленовий сироп", "#полуниця"],
-    formats: {
-      "#1шт": 45,
-      "#2шт": 80,
-      "#4шт": 150
-    },
-    kbju: { calories: 290, protein: 6, fat: 12, carbs: 38 },
-    price: 45,
-    preview: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400",
-    preview2: "https://images.unsplash.com/photo-1588195538326-c5b1e5b80c11?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400",
-      "https://images.unsplash.com/photo-1588195538326-c5b1e5b80c11?w=400",
-      "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400"
-    ]
-  },
-  {
-    name: "Льєзькі",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cookie.webp?raw=true",
-    shortDesc: "тонкі хрусткі вафлі з карамеллю всередині.",
-    ingredients: ["Борошно", "Цукор", "Масло", "Ваніль", "Корица"],
-    fillings: ["#базовий", "#шоколад", "#ваніль"],
-    formats: {
-      "#5шт": 60,
-      "#10шт": 110,
-      "#20шт": 200
-    },
-    kbju: { calories: 320, protein: 3, fat: 14, carbs: 46 },
-    price: 60,
-    preview: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400",
-    preview2: "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400",
-      "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400",
-      "https://images.unsplash.com/photo-1588195538326-c5b1e5b80c11?w=400"
-    ]
-  },
-  {
-    name: "Венські",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Shortcake.webp?raw=true",
-    shortDesc: "м'які вафлі з вершками та ягодами.",
-    ingredients: ["Борошно", "Яйця", "Молоко", "Цукор", "Вершки", "Ягоди"],
-    fillings: ["#полуниця", "#малина", "#чорниця", "#банан"],
-    formats: {
-      "#1шт": 55,
-      "#2шт": 100,
-      "#4шт": 180
-    },
-    kbju: { calories: 270, protein: 5, fat: 11, carbs: 36 },
-    price: 55,
-    preview: "https://images.unsplash.com/photo-1588195538326-c5b1e5b80c11?w=400",
-    preview2: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1588195538326-c5b1e5b80c11?w=400",
-      "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400",
-      "https://images.unsplash.com/photo-1562376552-0d160a2f238d?w=400"
-    ]
-  }
-];
-
-// ===== ІНШЕ =====
-const other = [
-  {
-    name: "Макаруни",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Doughnut.webp?raw=true",
-    shortDesc: "французькі мигдалеві тістечка з ніжною начинкою.",
-    ingredients: ["Мигдальне борошно", "Яєчні білки", "Цукор", "Барвники"],
-    fillings: ["#малина", "#фісташка", "#шоколад", "#лаванда", "#солона карамель"],
-    formats: {
-      "#6шт": 120,
-      "#12шт": 220,
-      "#24шт": 400
-    },
-    kbju: { calories: 310, protein: 5, fat: 16, carbs: 38 },
-    price: 120,
-    preview: "https://images.unsplash.com/photo-1519869325930-281384150729?w=400",
-    preview2: "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1519869325930-281384150729?w=400",
-      "https://images.unsplash.com/photo-1558636508-e0db3814bd1d?w=400",
-      "https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?w=400"
-    ]
-  },
-  {
-    name: "Еклери",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Custard.webp?raw=true",
-    shortDesc: "заварні тістечка з кремом та глазур'ю.",
-    ingredients: ["Борошно", "Яйця", "Масло", "Молоко", "Вершки", "Шоколад"],
-    fillings: ["#ваніль", "#шоколад", "#кава", "#карамель"],
-    formats: {
-      "#3шт": 90,
-      "#6шт": 170,
-      "#12шт": 320
-    },
-    kbju: { calories: 350, protein: 6, fat: 20, carbs: 38 },
-    price: 90,
-    preview: "https://images.unsplash.com/photo-1587241321921-91a834d82be7?w=400",
-    preview2: "https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1587241321921-91a834d82be7?w=400",
-      "https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=400",
-      "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?w=400"
-    ]
-  },
-  {
-    name: "Профітролі",
-    img: "https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Bubble%20Tea.webp?raw=true",
-    shortDesc: "міні-еклери з різноманітними начинками.",
-    ingredients: ["Борошно", "Яйця", "Масло", "Вода", "Вершки", "Цукор"],
-    fillings: ["#заварний крем", "#шоколад", "#карамель", "#фрукти"],
-    formats: {
-      "#10шт": 80,
-      "#20шт": 150,
-      "#40шт": 280
-    },
-    kbju: { calories: 280, protein: 5, fat: 15, carbs: 32 },
-    price: 80,
-    preview: "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?w=400",
-    preview2: "https://images.unsplash.com/photo-1587241321921-91a834d82be7?w=400",
-    gallery: [
-      "https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?w=400",
-      "https://images.unsplash.com/photo-1587241321921-91a834d82be7?w=400",
-      "https://images.unsplash.com/photo-1603532648955-039310d9ed75?w=400"
-    ]
-  }
-];
 
 // 🎯 ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЫТИЯ СЛАЙДЕРА
 function updateFillingsBlur() {
@@ -3305,14 +3018,15 @@ function updateFillingsBlur() {
   
 // Открытие торта
 // Открытие торта
-function openCake(index, category = 'cakes'){
+function openCake(index){
   showLoader();
   setTimeout(()=>{
     document.getElementById("catalogScreen").classList.remove("active");
     cakeScreen.classList.add("active");
     window.scrollTo(0, 0);
 
-    const cake = allProducts[category][index];
+    // 🎯 СНАЧАЛА ПОЛУЧАЕМ ТОРТ
+    const cake = cakes[index];
     const cakeIngredients = document.getElementById('cakeIngredients');
     const cakeFillings = document.getElementById('cakeFillings');
 
@@ -3990,49 +3704,6 @@ function openConstructor() {
   const constructorUrl = 'https://cakeboxdeveloper.github.io/kremua/constructor';
   window.location.href = constructorUrl;
 }
-
-
-  // ===== ПЕРЕКЛЮЧЕНИЕ КАТЕГОРИЙ =====
-let currentCategory = 'cakes';
-const allProducts = {
-  cakes: cakes,
-  cupcakes: cupcakes,
-  waffles: waffles,
-  other: other
-};
-
-function renderCatalog(category) {
-  const catalogGrid = document.querySelector('.catalog-grid');
-  const products = allProducts[category];
-  
-  catalogGrid.innerHTML = '';
-  
-  products.forEach((item, index) => {
-    const card = document.createElement('div');
-    card.className = 'catalog-card';
-    card.innerHTML = `
-      <img src="${item.img}" alt="${item.name}">
-      <span>${item.name}</span>
-    `;
-    card.addEventListener('click', () => openCake(index, category));
-    catalogGrid.appendChild(card);
-  });
-}
-
-// Обработчики кнопок категорий
-document.querySelectorAll('.category-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active');
-    
-    const category = this.dataset.category;
-    currentCategory = category;
-    renderCatalog(category);
-  });
-});
-
-// Первоначальная отрисовка
-renderCatalog('cakes');
 
 </script>
 
