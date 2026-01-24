@@ -590,7 +590,7 @@ textarea {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding: 4px 0 12px 0;
+  padding: 4px 2px 12px 2px; /* 👈 БЫЛО: 4px 0 12px 0, СТАЛО: 4px 2px 12px 2px */
   margin-bottom: 12px;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -687,7 +687,18 @@ textarea {
 }
 .catalog-card span { display: block; font-size: 13px; }
 
+@keyframes fillings-sway {
+  0%, 100% {
+    transform: translateX(-3px);
+  }
+  50% {
+    transform: translateX(3px);
+  }
+}
 
+.fillings-container.sway-active {
+  animation: fillings-sway 2s ease-in-out infinite;
+}
 
 
 /* ===== ГАЛЕРЕЯ ТОРТОВ ===== */
@@ -968,10 +979,10 @@ textarea {
 }
 
 /* ===== ОБЁРТКА ===== */
+/* ===== ОБЁРТКА ===== */
 .description-wrapper {
-  padding: 0;
   overflow: hidden;
-  text-align: left; /* 🔑 возвращаем нормальное форматирование */
+  text-align: left;
 }
 
 /* ===== КНОПКА ===== */
@@ -1006,11 +1017,10 @@ textarea {
   max-height: 0;
   overflow: hidden;
   padding: 0 14px;
-  transition: max-height 0.35s ease;
+  transition: max-height 0.35s ease, padding 0.35s ease; /* 👈 ДОБАВИЛИ padding в transition */
   font-size: 14px;
   line-height: 1.5;
 }
-
 /* ===== ОТКРЫТО ===== */
 .description-wrapper.open .description-content {
   max-height: 1200px;
@@ -1024,19 +1034,7 @@ textarea {
 .description-wrapper.open .description-toggle .arrow {
   transform: rotate(180deg);
 }
-/* ===== АНИМАЦИЯ ПОКАЧИВАНИЯ СЛАЙДЕРА ===== */
-@keyframes fillings-sway {
-  0%, 100% {
-    transform: translateX(-3px);
-  }
-  50% {
-    transform: translateX(3px);
-  }
-}
-
-.fillings-container.sway-active {
-  animation: fillings-sway 2s ease-in-out infinite;
-}
+ 
 
 .catalog-card img {
   width: 64px;
