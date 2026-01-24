@@ -130,7 +130,7 @@ input, textarea {
 .header-image-wrapper {
   position: relative;
   width: 100%;
-  max-width: 588px; /* 560px * 1.05 */
+  max-width: 620px; /* Увеличено с 588px */
   margin: 0 auto;
 }
 
@@ -146,13 +146,23 @@ input, textarea {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 60px 16px 20px 16px;
-  background: linear-gradient(to top, #17212b 0%, rgba(23, 33, 43, 0.95) 40%, rgba(23, 33, 43, 0.7) 70%, transparent 100%);
+  padding: 80px 16px 20px 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  mask-image: linear-gradient(to top, black 0%, black 30%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 30%, transparent 100%);
   pointer-events: none;
 }
 
+.header-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(23, 33, 43, 0.6) 0%, rgba(23, 33, 43, 0.3) 40%, transparent 100%);
+  z-index: -1;
+}
+
 .header-overlay-content {
-  /* Убираем рамку и фон */
   background: transparent;
   border: none;
   padding: 0;
@@ -161,6 +171,7 @@ input, textarea {
   color: #ffffff;
   pointer-events: auto;
   text-align: center;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 #randomCakeBtn {
