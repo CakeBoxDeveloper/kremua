@@ -1612,6 +1612,34 @@ textarea {
    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/wand-sparkles.svg" style="width: 18px; height: 18px; margin-right: 6px; filter: brightness(0) saturate(100%) invert(68%) sepia(82%) saturate(433%) hue-rotate(359deg) brightness(101%) contrast(93%);">
   Конструктор тортів
 </a>
+
+
+    <!-- СЛАЙДЕР КАТЕГОРИЙ -->
+<div class="categories-slider">
+  <div class="category-pill active" data-category="all">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/circle-dot.svg">
+    <span>Всі</span>
+  </div>
+  
+  <div class="category-pill" data-category="торти">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/cake.svg">
+    <span>Торти</span>
+  </div>
+  
+  <div class="category-pill" data-category="вафлі">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/square-stack.svg">
+    <span>Вафлі</span>
+  </div>
+  
+  <div class="category-pill" data-category="кекси">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/cup-soda.svg">
+    <span>Кекси</span>
+  </div>
+  
+  <div class="category-pill" data-category="інше">
+    <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/sparkles.svg">
+    <span>Інше</span>
+  </div>
   
 <div class="catalog-grid">
   <div class="catalog-card">
@@ -2338,6 +2366,7 @@ function openCatalog(){
 const cakes = [
 {
   name:"Наполеон", 
+  category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Bubble%20Tea.webp?raw=true", 
   shortDesc:"класичний торт з найтоншими шарами листкового тіста та ніжним заварним кремом.", 
   ingredients:["Тісто слоєне","Молоко","Коньяк","Яйця","Цукор","Борошно","Масло вершкове","Ванілін"],
@@ -2365,6 +2394,7 @@ const cakes = [
 },
  {
   name:"Медовик", 
+   category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Hot%20Beverage.webp?raw=true", 
   shortDesc:"ароматний багатошаровий торт з медовими коржами та сметанним кремом.", 
   ingredients:["Мед", "Борошно", "Яйця", "Цукор", "Сметана", "Масло вершкове"],
@@ -2392,6 +2422,7 @@ const cakes = [
 },
  {
   name:"Естерхазі", 
+   category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Canned%20Food.webp?raw=true", 
   shortDesc:"вишуканий угорський торт з горіховими коржами та ніжним вершковим кремом.", 
   ingredients:["Мигдальне борошно", "Фундук", "Яйця", "Цукор", "Вершкове масло", "Коньяк", "Ванілін"],
@@ -2419,6 +2450,7 @@ const cakes = [
 },
  {
   name:"Чізкейк", 
+   category: "торти",
   img:"https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Food%20and%20Drink/Tropical%20Drink.webp?raw=true", 
   shortDesc:"ніжний сирний торт на пісочній основі з делікатною кремовою текстурою.", 
   ingredients:["Вершковий сир", "Цукор", "Яйця", "Вершки", "Печиво", "Масло вершкове", "Ванілін", "Циртуси"],
@@ -2446,6 +2478,7 @@ const cakes = [
 },
  {
   name:"Тірамісу", 
+   category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cookie.webp?raw=true", 
   shortDesc:"легендарний італійський десерт з кавовою пропиткою та ніжним кремом маскарпоне.", 
   ingredients:["Маскарпоне", "Печиво Савоярді", "Кава", "Яйця", "Цукор", "Какао", "Марсала"],
@@ -2474,6 +2507,7 @@ const cakes = [
 },
  {
   name:"Прага", 
+   category: "торти",
   img:"https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Food%20and%20Drink/Bubble%20Tea.webp?raw=true", 
   shortDesc:"легендарний шоколадний торт з насиченим какао-смаком та глазур'ю.", 
   ingredients:["Борошно", "Какао", "Яйця", "Цукор", "Згущене молоко", "Масло вершкове", "Коньяк", "Джем"],
@@ -2501,6 +2535,7 @@ const cakes = [
 },
   {
   name:"Захер", 
+    category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Dango.webp?raw=true", 
   shortDesc:"знаменитий віденський шоколадний торт з абрикосовим джемом та глянсовою глазур'ю.", 
   ingredients:["Шоколад 98%", "Яйця", "Цукор", "Борошно", "Масло вершкове", "Джем", "Какао"],
@@ -2528,6 +2563,7 @@ const cakes = [
 },
   {
   name:"Трюфельний", 
+    category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Custard.webp?raw=true", 
   shortDesc:"розкішний шоколадний торт з насиченим трюфельним кремом та какао.", 
   ingredients:["Темний шоколад", "Вершки", "Яйця", "Цукор", "Борошно", "Масло вершкове", "Какао", "Коньяк"],
@@ -2556,6 +2592,7 @@ const cakes = [
 },
  {
   name:"Пінчер", 
+   category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Mate.webp?raw=true", 
   shortDesc:"легкий бісквітний торт з комбінованою начинкою та  глазур'ю.", 
   ingredients:["Борошно", "Яйця", "Цукор", "Вершки", "Фрукти", "Ванілін", "Сметана", "Горіхи", "Чорнослив"],
@@ -2584,6 +2621,7 @@ const cakes = [
 },
   {
   name:"Київський", 
+    category: "торти",
   img:"https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Food%20and%20Drink/Wine%20Glass.webp?raw=true", 
   shortDesc:"легендарний український торт з хрусткими горіховими коржами безе та кремом.", 
   ingredients:["Фундук", "Яйця", "Цукор", "Масло вершкове", "Згущене молоко", "Ванілін"],
@@ -2611,6 +2649,7 @@ const cakes = [
 },
  {
   name:"Піраміда", 
+   category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Doughnut.webp?raw=true", 
   shortDesc:"антична загадка яка цікавить гурманів і в наш час.", 
   ingredients:["Борошно","Масло вершкове","Цукор","Сметана","Сіль","Варене згущене молоко","Мак","Горіхи","Фініки"],
@@ -2638,6 +2677,7 @@ const cakes = [
 },
   {
   name:"Пралiне", 
+    category: "торти",
   img:"https://raw.githubusercontent.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/main/Food%20and%20Drink/Birthday%20Cake.webp?raw=true", 
   shortDesc:"торт на основі горіхово-шоколадної начинки.", 
   ingredients:["Борошно", "Яйця", "Цукор", "Какао", "Вершки", "Горіхи", "Сметана"],
@@ -2666,6 +2706,7 @@ const cakes = [
 },
 {
   name:"Ледi Мiлк", 
+  category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Strawberry.webp?raw=true", 
   shortDesc:"леді з характером. Бісквітний торт із екстра молочним смаком.", 
   ingredients:["Борошно", "Яйця", "Цукор", "Згущене молоко", "Масло вершкове", "Вершки"],
@@ -2694,6 +2735,7 @@ const cakes = [
 },
 {
   name:"Панакота", 
+  category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Pie.webp?raw=true", 
   shortDesc:"ніжний торт зі смаком італійської панакоти та ягідним соусом.", 
   ingredients:["Вершки", "Желатин", "Ванілін", "Цукор", "Печиво", "Ягоди", "Молоко", "Масло вершкове"],
@@ -2721,6 +2763,7 @@ const cakes = [
 },
 {
   name:"Антреме", 
+  category: "торти",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cream.webp?raw=true", 
   shortDesc:"легендарний французький репепт, який підкорив серця ласунів по всьому світу", 
   ingredients:["Яйця", "Вершки", "Цукор", "Ванілін", "Борошно", "Масло вершкове", "Карамель"],
@@ -2751,6 +2794,7 @@ const cakes = [
   // ВАФЛИ
 {
   name:"Бельгійські вафлі", 
+  category: "вафлі",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Waffle.webp?raw=true", 
   shortDesc:"класичні хрусткі вафлі з глибокими кишеньками для начинки.", 
   ingredients:["Борошно", "Молоко", "Яйця", "Цукор", "Масло", "Дріжджі", "Ванілін"],
@@ -2777,6 +2821,7 @@ const cakes = [
 },
 {
   name:"Гонконгські вафлі", 
+  category: "вафлі",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cookie.webp?raw=true", 
   shortDesc:"м'які вафлі з повітряними кульками, популярні в Азії.", 
   ingredients:["Борошно", "Яйця", "Молоко", "Цукор", "Вершкове масло", "Розпушувач"],
@@ -2803,6 +2848,7 @@ const cakes = [
 },
 {
   name:"Вафельні трубочки", 
+  category: "вафлі",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Shortcake.webp?raw=true", 
   shortDesc:"хрусткі трубочки з ніжним кремовим наповненням.", 
   ingredients:["Борошно", "Цукор", "Яйця", "Масло", "Ванілін", "Вершки"],
@@ -2831,6 +2877,7 @@ const cakes = [
 // ДЕСЕРТЫ
 {
   name:"Блонді", 
+  category: "кекси",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Butter.webp?raw=true", 
   shortDesc:"білий брауні з карамельним смаком та горіхами.", 
   ingredients:["Біле шоколад", "Масло", "Цукор", "Яйця", "Борошно", "Ваніль", "Горіхи"],
@@ -2857,6 +2904,7 @@ const cakes = [
 },
 {
   name:"Брауні", 
+   category: "кекси",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Chocolate%20Bar.webp?raw=true", 
   shortDesc:"насичений шоколадний десерт з ніжною серединкою.", 
   ingredients:["Темний шоколад", "Масло", "Цукор", "Яйця", "Борошно", "Какао", "Горіхи"],
@@ -2883,6 +2931,7 @@ const cakes = [
 },
 {
   name:"День і ніч", 
+   category: "кекси",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Doughnut.webp?raw=true", 
   shortDesc:"двошаровий десерт: темний шоколад і біла ваніль.", 
   ingredients:["Шоколад темний", "Біле шоколад", "Масло", "Яйця", "Цукор", "Борошно"],
@@ -2911,6 +2960,7 @@ const cakes = [
 // ВЫПЕЧКА
 {
   name:"Кейк-попс", 
+   category: "інше",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Lollipop.webp?raw=true", 
   shortDesc:"міні-тістечка на паличці в яскравій глазурі.", 
   ingredients:["Бісквіт", "Вершковий сир", "Цукор", "Шоколадна глазур", "Посипка"],
@@ -2937,6 +2987,7 @@ const cakes = [
 },
 {
   name:"Круасани", 
+  category: "інше",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Croissant.webp?raw=true", 
   shortDesc:"класична французька випічка з хрусткою скоринкою.", 
   ingredients:["Борошно", "Масло вершкове", "Молоко", "Дріжджі", "Цукор", "Сіль"],
@@ -2963,6 +3014,7 @@ const cakes = [
 },
 {
   name:"Бретцелі", 
+  category: "інше",
   img:"https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Pretzel.webp?raw=true", 
   shortDesc:"традиційна німецька випічка з морською сіллю.", 
   ingredients:["Борошно", "Дріжджі", "Вода", "Сода", "Масло", "Морська сіль"],
@@ -3704,6 +3756,38 @@ function openConstructor() {
   const constructorUrl = 'https://cakeboxdeveloper.github.io/kremua/constructor';
   window.location.href = constructorUrl;
 }
+
+
+
+  // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
+function filterCatalog(category) {
+  const catalogCards = document.querySelectorAll('.catalog-card');
+  
+  catalogCards.forEach((card, index) => {
+    const cake = cakes[index];
+    
+    if (category === 'all' || cake.category === category) {
+      card.style.display = 'block';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// Обработчики кликов по категориям
+document.querySelectorAll('.category-pill').forEach(pill => {
+  pill.addEventListener('click', function() {
+    // Убираем active у всех
+    document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
+    
+    // Добавляем active к текущей
+    this.classList.add('active');
+    
+    // Фильтруем каталог
+    const category = this.dataset.category;
+    filterCatalog(category);
+  });
+});
 
 </script>
 
