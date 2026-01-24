@@ -678,7 +678,9 @@ textarea {
   text-align: center;
   color: #6ab2f2;
   cursor: pointer;
-  transition: transform 0.15s ease, background 0.3s ease;
+  transition: all 0.3s ease; /* 👈 ИЗМЕНЕНО: было 0.15s, стало 0.3s */
+  opacity: 1; /* 👈 ДОБАВЬ */
+  transform: scale(1); /* 👈 ДОБАВЬ */
 }
 .catalog-card:hover { background: #22364a; }
 .catalog-card:active { transform: scale(0.95); }
@@ -3855,34 +3857,41 @@ function openConstructor() {
 
 
   // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
+// ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
   
+  // Сначала скрываем ненужные карточки с анимацией
   catalogCards.forEach((card, index) => {
     const cake = cakes[index];
     
     if (category === 'all' || cake.category === category) {
+      // Эту карточку нужно показать
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.8)';
       card.style.display = 'block';
     } else {
-      card.style.display = 'none';
+      // Эту карточку нужно скрыть
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.8)';
+      setTimeout(() => {
+        card.style.display = 'none';
+      }, 300);
     }
   });
+  
+  // Плавно показываем нужные карточки
+  setTimeout(() => {
+    catalogCards.forEach((card, index) => {
+      const cake = cakes[index];
+      
+      if (category === 'all' || cake.category === category) {
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+      }
+    });
+  }, 50);
 }
-
-// Обработчики кликов по категориям
-document.querySelectorAll('.category-pill').forEach(pill => {
-  pill.addEventListener('click', function() {
-    // Убираем active у всех
-    document.querySelectorAll('.category-pill').forEach(p => p.classList.remove('active'));
-    
-    // Добавляем active к текущей
-    this.classList.add('active');
-    
-    // Фильтруем каталог
-    const category = this.dataset.category;
-    filterCatalog(category);
-  });
-});
 
   // 🎯 ФУНКЦИЯ ОБНОВЛЕНИЯ РАЗМЫТИЯ КАТЕГОРИЙ
 function updateCategoriesBlur() {
