@@ -63,6 +63,16 @@ textarea {
   transition: opacity 0.4s ease;
 }
 
+  .catalog-grid.animating .catalog-card {
+  pointer-events: none !important;
+}
+
+.catalog-grid.animating .catalog-card:hover,
+.catalog-grid.animating .catalog-card:active {
+  background: #1d2b3a !important;
+  transform: none !important;
+}
+
 .promo-overlay.active {
   opacity: 1;
   pointer-events: all;
@@ -3863,6 +3873,9 @@ function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
   const catalogGrid = document.querySelector('.catalog-grid');
   
+  // 🎯 ОТКЛЮЧАЕМ HOVER И ACTIVE ЭФФЕКТЫ НА ВРЕМЯ АНИМАЦИИ
+  catalogGrid.classList.add('animating');
+  
   // 🎯 ШАГ 1: Определяем текущие и новые карточки
   const currentVisible = [];
   const newVisible = [];
@@ -4041,6 +4054,9 @@ function filterCatalog(category) {
         card.style.opacity = '';
       }
     });
+    
+    // 🎯 ВКЛЮЧАЕМ ОБРАТНО HOVER И ACTIVE ЭФФЕКТЫ
+    catalogGrid.classList.remove('animating');
   }, 700);
 }
 
