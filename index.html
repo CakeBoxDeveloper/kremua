@@ -63,8 +63,9 @@ textarea {
   transition: opacity 0.4s ease;
 }
 
-  .catalog-grid.animating .catalog-card {
+.catalog-grid.animating .catalog-card {
   pointer-events: none !important;
+  transform: none !important;
 }
 
 .catalog-grid.animating .catalog-card:hover,
@@ -3931,32 +3932,32 @@ function filterCatalog(category) {
   catalogGrid.style.transition = 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1), mask-image 0.6s ease, -webkit-mask-image 0.6s ease';
   
   // 🎯 ШАГ 4: Позиционируем ВСЕ текущие карточки абсолютно
-  currentVisible.forEach(({ card }, visualIndex) => {
-    const col = visualIndex % columns;
-    const row = Math.floor(visualIndex / columns);
-    
-    card.style.position = 'absolute';
-    card.style.left = `calc(${col * 33.333}%)`;
-    card.style.top = `${row * (cardHeight + gap)}px`;
-    card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
-    card.style.transition = 'none';
-  });
+currentVisible.forEach(({ card }, visualIndex) => {
+  const col = visualIndex % columns;
+  const row = Math.floor(visualIndex / columns);
+  
+  card.style.position = 'absolute';
+  card.style.left = `calc(${col * 33.333}%)`;
+  card.style.top = `${row * (cardHeight + gap)}px`;
+  card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
+  card.style.transition = 'none';
+  card.style.transform = 'none'; // 👈 ДОБАВЬТЕ ЭТУ СТРОКУ
+});
   
   // 🎯 ШАГ 5: Позиционируем новые карточки СНИЗУ (плотно к текущим, БЕЗ ПРОБЕЛОВ)
-  newVisible.forEach(({ card }, visualIndex) => {
-    const col = visualIndex % columns;
-    const row = Math.floor(visualIndex / columns);
-    
-    card.style.display = 'block';
-    card.style.position = 'absolute';
-    card.style.left = `calc(${col * 33.333}%)`;
-    card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
-    
-    // Новые карточки начинают СРАЗУ под текущими (без пробела!)
-    card.style.top = `${currentHeight + row * (cardHeight + gap)}px`;
-    card.style.opacity = '0';
-    card.style.transition = 'none';
-  });
+newVisible.forEach(({ card }, visualIndex) => {
+  const col = visualIndex % columns;
+  const row = Math.floor(visualIndex / columns);
+  
+  card.style.display = 'block';
+  card.style.position = 'absolute';
+  card.style.left = `calc(${col * 33.333}%)`;
+  card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
+  card.style.top = `${currentHeight + row * (cardHeight + gap)}px`;
+  card.style.opacity = '0';
+  card.style.transition = 'none';
+  card.style.transform = 'none'; // 👈 ДОБАВЬТЕ ЭТУ СТРОКУ
+});
   
   // 🎯 ШАГ 6: Запускаем движение МГНОВЕННО
   requestAnimationFrame(() => {
