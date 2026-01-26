@@ -3941,7 +3941,14 @@ currentVisible.forEach(({ card }, visualIndex) => {
   card.style.top = `${row * (cardHeight + gap)}px`;
   card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
   card.style.transition = 'none';
-  card.style.transform = 'none'; // 👈 ДОБАВЬТЕ ЭТУ СТРОКУ
+  card.style.transform = 'none';
+  
+  // 🎯 ФИКСИРУЕМ РАЗМЕР ИКОНКИ
+  const img = card.querySelector('img');
+  if (img) {
+    img.style.transform = 'none';
+    img.style.transition = 'none';
+  }
 });
   
   // 🎯 ШАГ 5: Позиционируем новые карточки СНИЗУ (плотно к текущим, БЕЗ ПРОБЕЛОВ)
@@ -3956,7 +3963,14 @@ newVisible.forEach(({ card }, visualIndex) => {
   card.style.top = `${currentHeight + row * (cardHeight + gap)}px`;
   card.style.opacity = '0';
   card.style.transition = 'none';
-  card.style.transform = 'none'; // 👈 ДОБАВЬТЕ ЭТУ СТРОКУ
+  card.style.transform = 'none';
+  
+  // 🎯 ФИКСИРУЕМ РАЗМЕР ИКОНКИ
+  const img = card.querySelector('img');
+  if (img) {
+    img.style.transform = 'none';
+    img.style.transition = 'none';
+  }
 });
   
   // 🎯 ШАГ 6: Запускаем движение МГНОВЕННО
@@ -4044,17 +4058,24 @@ newVisible.forEach(({ card }, visualIndex) => {
     catalogGrid.style.webkitMaskImage = '';
     catalogGrid.style.transition = '';
     
-    catalogCards.forEach((card) => {
-      if (card.style.display !== 'none') {
-        card.style.position = '';
-        card.style.left = '';
-        card.style.top = '';
-        card.style.width = '';
-        card.style.transition = '';
-        card.style.transform = '';
-        card.style.opacity = '';
-      }
-    });
+   catalogCards.forEach((card) => {
+  if (card.style.display !== 'none') {
+    card.style.position = '';
+    card.style.left = '';
+    card.style.top = '';
+    card.style.width = '';
+    card.style.transition = '';
+    card.style.transform = '';
+    card.style.opacity = '';
+    
+    // 🎯 СБРАСЫВАЕМ СТИЛИ ИКОНКИ
+    const img = card.querySelector('img');
+    if (img) {
+      img.style.transform = '';
+      img.style.transition = '';
+    }
+  }
+});
     
     // 🎯 ВКЛЮЧАЕМ ОБРАТНО HOVER И ACTIVE ЭФФЕКТЫ
     catalogGrid.classList.remove('animating');
