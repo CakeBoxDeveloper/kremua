@@ -689,9 +689,13 @@ textarea {
   text-align: center;
   color: #6ab2f2;
   cursor: pointer;
-  transition: all 0.3s ease; /* 👈 ИЗМЕНЕНО: было 0.15s, стало 0.3s */
-  opacity: 1; /* 👈 ДОБАВЬ */
-  transform: scale(1); /* 👈 ДОБАВЬ */
+  transition: all 0.3s ease;
+  opacity: 1;
+  transform: scale(1);
+  display: flex;           /* 🎯 ДОБАВЬ */
+  flex-direction: column;  /* 🎯 ДОБАВЬ */
+  align-items: center;     /* 🎯 ДОБАВЬ */
+  justify-content: center; /* 🎯 ДОБАВЬ */
 }
 .catalog-card:hover { background: #22364a; }
 .catalog-card:active { transform: scale(0.95); }
