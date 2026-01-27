@@ -3874,6 +3874,7 @@ function openConstructor() {
   // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ПРАВИЛЬНАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
+// ===== ПРАВИЛЬНАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
   const catalogGrid = document.querySelector('.catalog-grid');
@@ -3935,55 +3936,53 @@ function filterCatalog(category) {
   catalogGrid.style.webkitMaskImage = 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)';
   catalogGrid.style.transition = 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1), mask-image 0.6s ease, -webkit-mask-image 0.6s ease';
   
-  // 🎯 ШАГ 4: Позиционируем ВСЕ текущие карточки абсолютно
-currentVisible.forEach(({ card }, visualIndex) => {
-  const col = visualIndex % columns;
-  const row = Math.floor(visualIndex / columns);
+  // 🎯 ШАГ 4: ФИКСИРУЕМ РАЗМЕРЫ ВСЕХ ИКОНОК ПЕРЕД АНИМАЦИЕЙ
+  catalogCards.forEach(card => {
+    const img = card.querySelector('img');
+    if (img) {
+      const currentWidth = img.offsetWidth;
+      const currentHeight = img.offsetHeight;
+      img.style.width = `${currentWidth}px`;
+      img.style.height = `${currentHeight}px`;
+      img.style.flexShrink = '0'; // запрещаем сжатие
+    }
+  });
   
-  card.style.position = 'absolute';
-  card.style.left = `calc(${col * 33.333}%)`;
-  card.style.top = `${row * (cardHeight + gap)}px`;
-  card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
-  card.style.transition = 'none';
-  card.style.transform = 'none';
+  // 🎯 ШАГ 5: Позиционируем ВСЕ текущие карточки абсолютно
+  currentVisible.forEach(({ card }, visualIndex) => {
+    const col = visualIndex % columns;
+    const row = Math.floor(visualIndex / columns);
+    
+    card.style.position = 'absolute';
+    card.style.left = `calc(${col * 33.333}%)`;
+    card.style.top = `${row * (cardHeight + gap)}px`;
+    card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
+    card.style.transition = 'none';
+    card.style.transform = 'none';
+  });
   
-  // 🎯 ФИКСИРУЕМ РАЗМЕР ИКОНКИ
-  const img = card.querySelector('img');
-  if (img) {
-    img.style.transform = 'none';
-    img.style.transition = 'none';
-  }
-});
+  // 🎯 ШАГ 6: Позиционируем новые карточки СНИЗУ
+  newVisible.forEach(({ card }, visualIndex) => {
+    const col = visualIndex % columns;
+    const row = Math.floor(visualIndex / columns);
+    
+    card.style.display = 'block';
+    card.style.position = 'absolute';
+    card.style.left = `calc(${col * 33.333}%)`;
+    card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
+    card.style.top = `${currentHeight + row * (cardHeight + gap)}px`;
+    card.style.opacity = '0';
+    card.style.transition = 'none';
+    card.style.transform = 'none';
+  });
   
-  // 🎯 ШАГ 5: Позиционируем новые карточки СНИЗУ (плотно к текущим, БЕЗ ПРОБЕЛОВ)
-newVisible.forEach(({ card }, visualIndex) => {
-  const col = visualIndex % columns;
-  const row = Math.floor(visualIndex / columns);
-  
-  card.style.display = 'block';
-  card.style.position = 'absolute';
-  card.style.left = `calc(${col * 33.333}%)`;
-  card.style.width = `calc(33.333% - ${gap * 2 / 3}px)`;
-  card.style.top = `${currentHeight + row * (cardHeight + gap)}px`;
-  card.style.opacity = '0';
-  card.style.transition = 'none';
-  card.style.transform = 'none';
-  
-  // 🎯 ФИКСИРУЕМ РАЗМЕР ИКОНКИ
-  const img = card.querySelector('img');
-  if (img) {
-    img.style.transform = 'none';
-    img.style.transition = 'none';
-  }
-});
-  
-  // 🎯 ШАГ 6: Запускаем движение МГНОВЕННО
+  // 🎯 ШАГ 7: Запускаем движение МГНОВЕННО
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       // Меняем высоту контейнера
       catalogGrid.style.height = `${newHeight}px`;
       
-      // Рассчитываем расстояние сдвига (на сколько все едут вверх)
+      // Рассчитываем расстояние сдвига
       const shiftDistance = currentHeight;
       
       // 🎯 Все карточки (старые и новые) двигаются ВМЕСТЕ каскадом
@@ -4040,7 +4039,7 @@ newVisible.forEach(({ card }, visualIndex) => {
     });
   });
   
-  // 🎯 ШАГ 7: Очистка СРАЗУ после анимации
+  // 🎯 ШАГ 8: Очистка СРАЗУ после анимации
   setTimeout(() => {
     // Убираем старые карточки
     catalogCards.forEach((card, index) => {
@@ -4062,30 +4061,30 @@ newVisible.forEach(({ card }, visualIndex) => {
     catalogGrid.style.webkitMaskImage = '';
     catalogGrid.style.transition = '';
     
-   catalogCards.forEach((card) => {
-  if (card.style.display !== 'none') {
-    card.style.position = '';
-    card.style.left = '';
-    card.style.top = '';
-    card.style.width = '';
-    card.style.transition = '';
-    card.style.transform = '';
-    card.style.opacity = '';
-    
-    // 🎯 СБРАСЫВАЕМ СТИЛИ ИКОНКИ
-    const img = card.querySelector('img');
-    if (img) {
-      img.style.transform = '';
-      img.style.transition = '';
-    }
-  }
-});
+    catalogCards.forEach((card) => {
+      if (card.style.display !== 'none') {
+        card.style.position = '';
+        card.style.left = '';
+        card.style.top = '';
+        card.style.width = '';
+        card.style.transition = '';
+        card.style.transform = '';
+        card.style.opacity = '';
+        
+        // 🎯 СБРАСЫВАЕМ ФИКСИРОВАННЫЕ РАЗМЕРЫ ИКОНОК
+        const img = card.querySelector('img');
+        if (img) {
+          img.style.width = '';
+          img.style.height = '';
+          img.style.flexShrink = '';
+        }
+      }
+    });
     
     // 🎯 ВКЛЮЧАЕМ ОБРАТНО HOVER И ACTIVE ЭФФЕКТЫ
     catalogGrid.classList.remove('animating');
   }, 700);
 }
-
   
   
 // Обработчики кликов по категориям
