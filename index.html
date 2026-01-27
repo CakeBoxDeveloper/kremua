@@ -3874,7 +3874,6 @@ function openConstructor() {
   // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ПРАВИЛЬНАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
-// ===== ПРАВИЛЬНАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 function filterCatalog(category) {
   const catalogCards = document.querySelectorAll('.catalog-card');
   const catalogGrid = document.querySelector('.catalog-grid');
@@ -3915,6 +3914,7 @@ function filterCatalog(category) {
   tempCard.style.opacity = '1';
   tempCard.style.display = 'block';
   const cardHeight = tempCard.offsetHeight;
+  const cardWidth = tempCard.offsetWidth;
   
   tempCard.style.transform = savedStyles.transform;
   tempCard.style.opacity = savedStyles.opacity;
@@ -3936,22 +3936,15 @@ function filterCatalog(category) {
   catalogGrid.style.webkitMaskImage = 'linear-gradient(to bottom, transparent 0%, black 30%, black 100%)';
   catalogGrid.style.transition = 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1), mask-image 0.6s ease, -webkit-mask-image 0.6s ease';
   
-  // 🎯 ШАГ 4: ФИКСИРУЕМ РАЗМЕРЫ ВСЕХ ИКОНОК ПЕРЕД АНИМАЦИЕЙ
-  catalogCards.forEach(card => {
-    const img = card.querySelector('img');
-    if (img) {
-      const currentWidth = img.offsetWidth;
-      const currentHeight = img.offsetHeight;
-      img.style.width = `${currentWidth}px`;
-      img.style.height = `${currentHeight}px`;
-      img.style.flexShrink = '0'; // запрещаем сжатие
-    }
-  });
-  
-  // 🎯 ШАГ 5: Позиционируем ВСЕ текущие карточки абсолютно
+  // 🎯 ШАГ 4: Позиционируем ВСЕ текущие карточки абсолютно + ФИКСИРУЕМ ИХ РАЗМЕРЫ
   currentVisible.forEach(({ card }, visualIndex) => {
     const col = visualIndex % columns;
     const row = Math.floor(visualIndex / columns);
+    
+    // 🎯 ФИКСИРУЕМ ВЫСОТУ И ШИРИНУ КАРТОЧКИ
+    card.style.height = `${cardHeight}px`;
+    card.style.minHeight = `${cardHeight}px`;
+    card.style.boxSizing = 'border-box';
     
     card.style.position = 'absolute';
     card.style.left = `calc(${col * 33.333}%)`;
@@ -3961,10 +3954,15 @@ function filterCatalog(category) {
     card.style.transform = 'none';
   });
   
-  // 🎯 ШАГ 6: Позиционируем новые карточки СНИЗУ
+  // 🎯 ШАГ 5: Позиционируем новые карточки СНИЗУ + ФИКСИРУЕМ ИХ РАЗМЕРЫ
   newVisible.forEach(({ card }, visualIndex) => {
     const col = visualIndex % columns;
     const row = Math.floor(visualIndex / columns);
+    
+    // 🎯 ФИКСИРУЕМ ВЫСОТУ И ШИРИНУ КАРТОЧКИ
+    card.style.height = `${cardHeight}px`;
+    card.style.minHeight = `${cardHeight}px`;
+    card.style.boxSizing = 'border-box';
     
     card.style.display = 'block';
     card.style.position = 'absolute';
@@ -3976,7 +3974,7 @@ function filterCatalog(category) {
     card.style.transform = 'none';
   });
   
-  // 🎯 ШАГ 7: Запускаем движение МГНОВЕННО
+  // 🎯 ШАГ 6: Запускаем движение МГНОВЕННО
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       // Меняем высоту контейнера
@@ -4039,7 +4037,7 @@ function filterCatalog(category) {
     });
   });
   
-  // 🎯 ШАГ 8: Очистка СРАЗУ после анимации
+  // 🎯 ШАГ 7: Очистка СРАЗУ после анимации
   setTimeout(() => {
     // Убираем старые карточки
     catalogCards.forEach((card, index) => {
@@ -4050,6 +4048,9 @@ function filterCatalog(category) {
         card.style.left = '';
         card.style.top = '';
         card.style.width = '';
+        card.style.height = '';
+        card.style.minHeight = '';
+        card.style.boxSizing = '';
       }
     });
     
@@ -4067,17 +4068,12 @@ function filterCatalog(category) {
         card.style.left = '';
         card.style.top = '';
         card.style.width = '';
+        card.style.height = '';
+        card.style.minHeight = '';
+        card.style.boxSizing = '';
         card.style.transition = '';
         card.style.transform = '';
         card.style.opacity = '';
-        
-        // 🎯 СБРАСЫВАЕМ ФИКСИРОВАННЫЕ РАЗМЕРЫ ИКОНОК
-        const img = card.querySelector('img');
-        if (img) {
-          img.style.width = '';
-          img.style.height = '';
-          img.style.flexShrink = '';
-        }
       }
     });
     
