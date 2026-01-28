@@ -3874,33 +3874,51 @@ function openConstructor() {
   // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
 // ===== ПРАВИЛЬНАЯ ФИЛЬТРАЦИЯ ПО КАТЕГОРИЯМ =====
+let isAnimating = false; // Флаг для предотвращения одновременных анимаций
+let animationTimeout = null;
+
 function filterCatalog(category) {
+  // 🎯 ПРЕДОТВРАЩАЕМ ОДНОВРЕМЕННЫЕ АНИМАЦИИ
+  if (isAnimating) {
+    clearTimeout(animationTimeout);
+    // Немедленно завершаем предыдущую анимацию
+    finishAnimation();
+  }
+  
+  isAnimating = true;
+  
   const catalogCards = document.querySelectorAll('.catalog-card');
   const catalogGrid = document.querySelector('.catalog-grid');
   
-  // 🎯 ОТКЛЮЧАЕМ HOVER И ACTIVE ЭФФЕКТЫ НА ВРЕМЯ АНИМАЦИИ
+  // 🎯 ОТКЛЮЧАЕМ HOVER И ACTIVE ЭФФЕКТЫ
   catalogGrid.classList.add('animating');
   
-  // 🎯 ШАГ 1: СОХРАНЯЕМ РАЗМЕРЫ ВСЕХ КАРТОЧЕК ДО ИЗМЕНЕНИЙ
+  // 🎯 ШАГ 1: СОХРАНЯЕМ РАЗМЕРЫ
   const cardSizes = new Map();
   catalogCards.forEach(card => {
     if (card.style.display !== 'none' && window.getComputedStyle(card).display !== 'none') {
       const rect = card.getBoundingClientRect();
       const computedStyle = window.getComputedStyle(card);
       const img = card.querySelector('img');
-      const imgRect = img ? img.getBoundingClientRect() : null;
+      const span = card.querySelector('span');
       
       cardSizes.set(card, {
         width: rect.width,
         height: rect.height,
         padding: computedStyle.padding,
-        imgWidth: imgRect ? imgRect.width : null,
-        imgHeight: imgRect ? imgRect.height : null
+        img: img ? {
+          width: img.offsetWidth,
+          height: img.offsetHeight,
+          marginBottom: window.getComputedStyle(img).marginBottom
+        } : null,
+        span: span ? {
+          fontSize: window.getComputedStyle(span).fontSize
+        } : null
       });
     }
   });
   
-  // 🎯 ШАГ 2: Определяем текущие и новые карточки
+  // 🎯 ШАГ 2: Определяем видимые карточки
   const currentVisible = [];
   const newVisible = [];
   
@@ -3921,8 +3939,18 @@ function filterCatalog(category) {
   const columns = 3;
   const gap = 14;
   
-  // Берём сохранённую высоту первой карточки
-  const firstCardSize = cardSizes.get(currentVisible[0].card);
+  const firstCardSize = cardSizes.get(currentVisible[0]?.card);
+  if (!firstCardSize) {
+    // Если нет данных, просто показываем без анимации
+    catalogCards.forEach((card, index) => {
+      const cake = cakes[index];
+      card.style.display = (category === 'all' || cake.category === category) ? 'flex' : 'none';
+    });
+    catalogGrid.classList.remove('animating');
+    isAnimating = false;
+    return;
+  }
+  
   const cardHeight = firstCardSize.height;
   
   const currentRows = Math.ceil(currentVisible.length / columns);
@@ -3931,63 +3959,77 @@ function filterCatalog(category) {
   const currentHeight = currentRows * cardHeight + (currentRows - 1) * gap;
   const newHeight = newRows * cardHeight + (newRows - 1) * gap;
   
-  // 🎯 ШАГ 4: Фиксируем контейнер и добавляем fade-out СВЕРХУ И СНИЗУ
+  // 🎯 ШАГ 4: Фиксируем контейнер
   catalogGrid.style.height = `${currentHeight}px`;
   catalogGrid.style.overflow = 'hidden';
   catalogGrid.style.position = 'relative';
-  
-  // 🎯 ГРАДИЕНТ СВЕРХУ И СНИЗУ
   catalogGrid.style.maskImage = 'linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)';
   catalogGrid.style.webkitMaskImage = 'linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%)';
-  catalogGrid.style.transition = 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1), mask-image 0.6s ease, -webkit-mask-image 0.6s ease';
+  catalogGrid.style.transition = 'height 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
   
-  // 🎯 ШАГ 5: ПРИМЕНЯЕМ СОХРАНЁННЫЕ РАЗМЕРЫ КО ВСЕМ КАРТОЧКАМ
+  // 🎯 ШАГ 5: ФИКСИРУЕМ РАЗМЕРЫ ВСЕХ КАРТОЧЕК (включая содержимое)
   catalogCards.forEach(card => {
     const sizes = cardSizes.get(card);
     if (sizes) {
-      // Фиксируем размеры карточки
       card.style.width = `${sizes.width}px`;
       card.style.height = `${sizes.height}px`;
       card.style.minHeight = `${sizes.height}px`;
       card.style.padding = sizes.padding;
       card.style.boxSizing = 'border-box';
+      card.style.flexShrink = '0';
       
-      // Фиксируем размеры иконки
       const img = card.querySelector('img');
-      if (img && sizes.imgWidth && sizes.imgHeight) {
-        img.style.width = `${sizes.imgWidth}px`;
-        img.style.height = `${sizes.imgHeight}px`;
-        img.style.minWidth = `${sizes.imgWidth}px`;
-        img.style.minHeight = `${sizes.imgHeight}px`;
+      const span = card.querySelector('span');
+      
+      if (img && sizes.img) {
+        img.style.width = `${sizes.img.width}px`;
+        img.style.height = `${sizes.img.height}px`;
+        img.style.minWidth = `${sizes.img.width}px`;
+        img.style.minHeight = `${sizes.img.height}px`;
+        img.style.marginBottom = sizes.img.marginBottom;
         img.style.flexShrink = '0';
+        img.style.display = 'block';
+      }
+      
+      if (span && sizes.span) {
+        span.style.fontSize = sizes.span.fontSize;
+        span.style.display = 'block';
       }
     }
   });
   
-  // 🎯 ШАГ 6: Показываем новые карточки и применяем к ним те же размеры
+  // 🎯 ШАГ 6: Показываем новые карточки и применяем размеры
   newVisible.forEach(({ card }) => {
     if (!cardSizes.has(card)) {
-      card.style.display = 'flex'; // показываем временно
-      const rect = card.getBoundingClientRect();
-      const img = card.querySelector('img');
-      const imgRect = img ? img.getBoundingClientRect() : null;
+      card.style.display = 'flex';
       
-      card.style.width = `${rect.width}px`;
+      card.style.width = `${firstCardSize.width}px`;
       card.style.height = `${cardHeight}px`;
       card.style.minHeight = `${cardHeight}px`;
       card.style.boxSizing = 'border-box';
+      card.style.flexShrink = '0';
       
-      if (img && imgRect) {
-        img.style.width = `${imgRect.width}px`;
-        img.style.height = `${imgRect.height}px`;
-        img.style.minWidth = `${imgRect.width}px`;
-        img.style.minHeight = `${imgRect.height}px`;
+      const img = card.querySelector('img');
+      const span = card.querySelector('span');
+      
+      if (img && firstCardSize.img) {
+        img.style.width = `${firstCardSize.img.width}px`;
+        img.style.height = `${firstCardSize.img.height}px`;
+        img.style.minWidth = `${firstCardSize.img.width}px`;
+        img.style.minHeight = `${firstCardSize.img.height}px`;
+        img.style.marginBottom = firstCardSize.img.marginBottom;
         img.style.flexShrink = '0';
+        img.style.display = 'block';
+      }
+      
+      if (span && firstCardSize.span) {
+        span.style.fontSize = firstCardSize.span.fontSize;
+        span.style.display = 'block';
       }
     }
   });
   
-  // 🎯 ШАГ 7: Позиционируем ВСЕ текущие карточки абсолютно
+  // 🎯 ШАГ 7: Позиционируем текущие карточки
   currentVisible.forEach(({ card }, visualIndex) => {
     const col = visualIndex % columns;
     const row = Math.floor(visualIndex / columns);
@@ -4021,7 +4063,6 @@ function filterCatalog(category) {
       const shiftDistance = currentHeight;
       const allCards = [];
       
-      // Старые карточки
       currentVisible.forEach(({ card, index }, visualIndex) => {
         const shouldBeVisible = category === 'all' || cakes[index].category === category;
         if (!shouldBeVisible) {
@@ -4030,7 +4071,6 @@ function filterCatalog(category) {
         }
       });
       
-      // Новые карточки
       newVisible.forEach(({ card }, visualIndex) => {
         const col = visualIndex % columns;
         const row = Math.floor(visualIndex / columns);
@@ -4043,13 +4083,11 @@ function filterCatalog(category) {
         });
       });
       
-      // Группируем по столбцам
       const columnGroups = [[], [], []];
       allCards.forEach(item => {
         columnGroups[item.col].push(item);
       });
       
-      // Запускаем каскад
       columnGroups.forEach((column, colIndex) => {
         column.forEach((item) => {
           const delay = colIndex * 50;
@@ -4071,11 +4109,19 @@ function filterCatalog(category) {
   });
   
   // 🎯 ШАГ 10: Очистка после анимации
-  setTimeout(() => {
+  animationTimeout = setTimeout(() => {
+    finishAnimation();
+  }, 800); // Увеличили до 800ms для надёжности
+  
+  function finishAnimation() {
     catalogCards.forEach((card, index) => {
       const cake = cakes[index];
-      if (category !== 'all' && cake.category !== category) {
+      const shouldBeVisible = category === 'all' || cake.category === category;
+      
+      if (!shouldBeVisible) {
         card.style.display = 'none';
+      } else {
+        card.style.display = 'flex';
       }
       
       // Сбрасываем ВСЕ инлайн-стили
@@ -4090,6 +4136,7 @@ function filterCatalog(category) {
       card.style.transition = '';
       card.style.transform = '';
       card.style.opacity = '';
+      card.style.flexShrink = '';
       
       const img = card.querySelector('img');
       if (img) {
@@ -4097,7 +4144,15 @@ function filterCatalog(category) {
         img.style.height = '';
         img.style.minWidth = '';
         img.style.minHeight = '';
+        img.style.marginBottom = '';
         img.style.flexShrink = '';
+        img.style.display = '';
+      }
+      
+      const span = card.querySelector('span');
+      if (span) {
+        span.style.fontSize = '';
+        span.style.display = '';
       }
     });
     
@@ -4109,9 +4164,9 @@ function filterCatalog(category) {
     catalogGrid.style.transition = '';
     
     catalogGrid.classList.remove('animating');
-  }, 700);
+    isAnimating = false;
+  }
 }
-  
   
 // Обработчики кликов по категориям
 document.querySelectorAll('.category-pill').forEach(pill => {
