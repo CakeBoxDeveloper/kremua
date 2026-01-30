@@ -8,6 +8,85 @@
 <link rel="shortcut icon" href="https://github.com/cakeboxdeveloper/kremua/raw/refs/heads/main/AFav.ico" type="image/x-icon">
 
 <style>
+  /* ===== ПЛАШКА COOKIES ===== */
+.cookies-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1d2b3a;
+  border-top: 2px solid #6ab2f2;
+  padding: 16px;
+  z-index: 9998;
+  transform: translateY(100%);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.cookies-banner.active {
+  transform: translateY(0);
+}
+
+.cookies-content {
+  max-width: 390px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cookies-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.cookies-text {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+.cookies-text a {
+  color: #6ab2f2;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cookies-accept-btn {
+  padding: 10px 20px;
+  background: #6ab2f2;
+  color: #17212b;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cookies-accept-btn:active {
+  transform: scale(0.96);
+}
+
+.cookies-accept-btn:hover {
+  background: #5a9fd9;
+}
+
+/* Адаптив для очень маленьких экранов */
+@media (max-width: 360px) {
+  .cookies-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .cookies-accept-btn {
+    width: 100%;
+  }
+}
 body { 
   margin: 0;
   font-family: Arial, sans-serif; 
@@ -1541,6 +1620,21 @@ textarea {
 </head>
 <body>
 
+
+<!-- ПЛАШКА COOKIES -->
+<div id="cookiesBanner" class="cookies-banner">
+  <div class="cookies-content">
+    <img 
+      src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cookie.webp?raw=true" 
+      class="cookies-icon" 
+      alt="Cookie">
+    <div class="cookies-text">
+      Ми використовуємо cookies, а ще bretzels і waffles — <a href="#catalog" onclick="acceptCookies(); openCatalog(); return false;">загляни до каталогу</a> та переконайся сам.
+    </div>
+    <button class="cookies-accept-btn" onclick="acceptCookies()">Прийняти</button>
+  </div>
+</div>
+  
 <!-- ЛОАДЕР -->
 <div id="loader" class="loader active">
   <img src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Objects/Hourglass%20Done.webp?raw=true" alt="Загрузка">
@@ -4165,6 +4259,32 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ===== ПЛАШКА COOKIES =====
+function checkCookiesConsent() {
+  const consent = localStorage.getItem('cookies_accepted');
+  if (!consent) {
+    setTimeout(() => {
+      document.getElementById('cookiesBanner').classList.add('active');
+    }, 1000); // показываем через 1 секунду после загрузки
+  }
+}
+
+function acceptCookies() {
+  localStorage.setItem('cookies_accepted', 'true');
+  const banner = document.getElementById('cookiesBanner');
+  banner.classList.remove('active');
+  
+  // Полностью удаляем баннер из DOM через 0.5 сек
+  setTimeout(() => {
+    banner.remove();
+  }, 500);
+}
+
+// Проверяем при загрузке страницы
+window.addEventListener('load', () => {
+  checkCookiesConsent();
+});
+  
 </script>
 
  
