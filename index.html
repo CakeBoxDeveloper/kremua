@@ -90,6 +90,33 @@
 .cookies-accept-btn:hover {
   background: #5a9fd9;
 }
+
+  .cookies-buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.cookies-decline-btn {
+  flex: 1;
+  padding: 14px 0;
+  background: transparent;
+  color: #6ab2f2;
+  border: 1px solid #6ab2f2;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cookies-decline-btn:active {
+  transform: scale(0.96);
+}
+
+.cookies-decline-btn:hover {
+  background: rgba(106, 178, 242, 0.1);
+}
 body { 
   margin: 0;
   font-family: Arial, sans-serif; 
@@ -1636,8 +1663,10 @@ textarea {
         Ми використовуємо cookies, а ще bretzels і waffles — <a href="#catalog" onclick="acceptCookies(); openCatalog(); return false;">загляни до каталогу</a> та переконайся сам.
       </div>
     </div>
-    <button class="cookies-accept-btn" onclick="acceptCookies()">Прийняти</button>
-    <button class="cookies-accept-btn" onclick="acceptCookies()">Теж прийняти</button>
+   <div class="cookies-buttons">
+  <button class="cookies-decline-btn" onclick="declineCookies()">Теж прийняти</button>
+  <button class="cookies-accept-btn" onclick="acceptCookies()">Прийняти</button>
+</div>
   </div>
 </div>
   
@@ -4290,6 +4319,14 @@ function acceptCookies() {
 window.addEventListener('load', () => {
   checkCookiesConsent();
 });
+function declineCookies() {
+  const banner = document.getElementById('cookiesBanner');
+  banner.classList.remove('active');
+  setTimeout(() => {
+    banner.remove();
+  }, 500);
+}
+
   
 </script>
 
