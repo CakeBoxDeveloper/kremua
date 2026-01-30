@@ -9,12 +9,15 @@
 
 <style>
   /* ===== ПЛАШКА COOKIES ===== */
+/* ===== ПЛАШКА COOKIES ===== */
 .cookies-banner {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: #1d2b3a;
+  background: rgba(29, 43, 58, 0.95); /* 👈 полупрозрачный фон */
+  backdrop-filter: blur(10px); /* 👈 размытие фона */
+  -webkit-backdrop-filter: blur(10px);
   border-top: 2px solid #6ab2f2;
   padding: 16px;
   z-index: 9998;
@@ -28,8 +31,14 @@
 }
 
 .cookies-content {
-  max-width: 390px;
+  max-width: 390px; /* 👈 та же ширина как у .app */
   margin: 0 auto;
+  display: flex;
+  flex-direction: column; /* 👈 вертикальная раскладка */
+  gap: 12px;
+}
+
+.cookies-top-row {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -55,17 +64,16 @@
 }
 
 .cookies-accept-btn {
-  padding: 10px 20px;
+  width: 100%; /* 👈 на всю ширину */
+  padding: 14px 0;
   background: #6ab2f2;
   color: #17212b;
   border: none;
   border-radius: 6px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
 }
 
 .cookies-accept-btn:active {
@@ -74,18 +82,6 @@
 
 .cookies-accept-btn:hover {
   background: #5a9fd9;
-}
-
-/* Адаптив для очень маленьких экранов */
-@media (max-width: 360px) {
-  .cookies-content {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .cookies-accept-btn {
-    width: 100%;
-  }
 }
 body { 
   margin: 0;
@@ -1624,12 +1620,14 @@ textarea {
 <!-- ПЛАШКА COOKIES -->
 <div id="cookiesBanner" class="cookies-banner">
   <div class="cookies-content">
-    <img 
-      src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cookie.webp?raw=true" 
-      class="cookies-icon" 
-      alt="Cookie">
-    <div class="cookies-text">
-      Ми використовуємо cookies, а ще bretzels і waffles — <a href="#catalog" onclick="acceptCookies(); openCatalog(); return false;">загляни до каталогу</a> та переконайся сам.
+    <div class="cookies-top-row">
+      <img 
+        src="https://github.com/Tarikul-Islam-Anik/Telegram-Animated-Emojis/blob/main/Food%20and%20Drink/Cookie.webp?raw=true" 
+        class="cookies-icon" 
+        alt="Cookie">
+      <div class="cookies-text">
+        Ми використовуємо cookies, а ще bretzels і waffles — <a href="#catalog" onclick="acceptCookies(); openCatalog(); return false;">загляни до каталогу</a> та переконайся сам.
+      </div>
     </div>
     <button class="cookies-accept-btn" onclick="acceptCookies()">Прийняти</button>
   </div>
