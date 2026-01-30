@@ -12,25 +12,27 @@
 .cookies-banner {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(29, 43, 58, 0.95); /* 👈 полупрозрачный фон */
-  backdrop-filter: blur(10px); /* 👈 размытие фона */
-  -webkit-backdrop-filter: blur(10px);
-  border-top: 2px solid rgba(106, 178, 242, 0.3); /* 👈 полупрозрачная граница */
+  left: 50%;
+  transform: translateX(-50%) translateY(100%);
+  max-width: 390px;
+  width: 100%;
+  background: rgba(29, 43, 58, 0.85);  /* 👈 прозоріший */
+  backdrop-filter: blur(20px);         /* 👈 більше розмиття */
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 2px solid rgba(106, 178, 242, 0.3);
   padding: 16px;
   z-index: 9998;
-  transform: translateY(100%);
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+  border-radius: 8px 8px 0 0;  /* 👈 заокруглення зверху */
 }
 
 .cookies-banner.active {
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);  /* 👈 оновлено */
 }
 
 .cookies-content {
-  max-width: 358px; /* 👈 390px - 32px (padding по 16px с каждой стороны) */
+ 
   margin: 0 auto;
   display: flex;
   flex-direction: column;
